@@ -15,6 +15,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  flexBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   /*-------------------------------------------------------------------------- */
   flexFull: {
     flex: 1,
@@ -117,11 +122,31 @@ const styles = StyleSheet.create({
   },
 
   /*-------------------------------------------------------------------------- */
+  fw300: {
+    fontWeight: 300,
+  },
+  fw400: {
+    fontWeight: 400,
+  },
+  fw500: {
+    fontWeight: 500,
+  },
+  fw600: {
+    fontWeight: 600,
+  },
+  fw700: {
+    fontWeight: 700,
+  },
+
+  /*-------------------------------------------------------------------------- */
   fs11: {
     fontSize: 11,
   },
   fs12: {
     fontSize: 12,
+  },
+  fs15: {
+    fontSize: 15,
   },
   fs16: {
     fontSize: 16,
@@ -132,8 +157,55 @@ const styles = StyleSheet.create({
   fs24: {
     fontSize: 24,
   },
+  fs27: {
+    fontSize: 27,
+  },
   fs28: {
     fontSize: 28,
+  },
+  /*-------------------------------------------------------------------------- */
+  p5: {
+    padding: 5,
+  },
+  px5: {
+    paddingHorizontal: 5,
+  },
+  py5: {
+    paddingVertical: 5,
+  },
+  pt5: {
+    paddingTop: 5,
+  },
+  pb5: {
+    paddingBottom: 5,
+  },
+  pl5: {
+    paddingLeft: 5,
+  },
+  pr5: {
+    paddingRight: 5,
+  },
+
+  m5: {
+    margin: 5,
+  },
+  mx5: {
+    marginHorizontal: 5,
+  },
+  my5: {
+    marginVertical: 5,
+  },
+  mt5: {
+    marginTop: 5,
+  },
+  mb5: {
+    marginBottom: 5,
+  },
+  ml5: {
+    marginLeft: 5,
+  },
+  mr5: {
+    marginRight: 5,
   },
 
   /*-------------------------------------------------------------------------- */
@@ -179,6 +251,51 @@ const styles = StyleSheet.create({
   },
   mr10: {
     marginRight: 10,
+  },
+
+  /*-------------------------------------------------------------------------- */
+  p12: {
+    padding: 12,
+  },
+  px12: {
+    paddingHorizontal: 12,
+  },
+  py12: {
+    paddingVertical: 12,
+  },
+  pt12: {
+    paddingTop: 12,
+  },
+  pb12: {
+    paddingBottom: 12,
+  },
+  pl12: {
+    paddingLeft: 12,
+  },
+  pr12: {
+    paddingRight: 12,
+  },
+
+  m12: {
+    margin: 12,
+  },
+  mx12: {
+    marginHorizontal: 12,
+  },
+  my12: {
+    marginVertical: 12,
+  },
+  mt12: {
+    marginTop: 12,
+  },
+  mb12: {
+    marginBottom: 12,
+  },
+  ml12: {
+    marginLeft: 12,
+  },
+  mr12: {
+    marginRight: 12,
   },
 
   /*-------------------------------------------------------------------------- */
@@ -414,7 +531,9 @@ const styles = StyleSheet.create({
   lh32: {
     lineHeight: 32,
   },
-
+  lh40: {
+    lineHeight: 40,
+  },
   /*-------------------------------------------------------------------------- */
   border4: {
     borderRadius: 4,
