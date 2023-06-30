@@ -3,14 +3,13 @@ import React from 'react';
 import { MapPinIcon } from 'react-native-heroicons/outline';
 import styles from '../../styles';
 
-const Result = ({ results, navigation }) => {
+const ResultDefault = ({ data, navigation }) => {
   return (
     <View style={[styles.flexFull]}>
       <FlatList
-        contentContainerStyle={{ paddingBottom: 80 }}
-        data={results}
+        data={data}
         showsVerticalScrollIndicator={false}
-        keyExtractor={(item) => item.name.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
@@ -21,9 +20,9 @@ const Result = ({ results, navigation }) => {
               <MapPinIcon size={24} color={'white'} />
               <View style={[styles.ml5, styles.flexFull]}>
                 <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                  {item?.name}
+                  {item.address}
                 </Text>
-                <Text style={[styles.textGray77, styles.fs15]}>{item?.address}</Text>
+                <Text style={[styles.textGray77, styles.fs15]}>{item.location}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -33,4 +32,4 @@ const Result = ({ results, navigation }) => {
   );
 };
 
-export default Result;
+export default ResultDefault;
