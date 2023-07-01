@@ -11,6 +11,7 @@ import DiaryScreen from '../screens/DiaryScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import DriverScreen from '../screens/DriverScreen';
 import UserScreen from '../screens/UserScreen';
+import MapScreen from '../screens/MapScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -69,6 +70,7 @@ const AppNavigation = () => {
         <Stack.Screen name="Book" component={BookScreen} />
         <Stack.Screen name="DriverScreen" component={DriverScreen} />
         <Stack.Screen name="UserScreen" component={UserScreen} />
+        <Stack.Screen name="MapScreen" component={MapScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

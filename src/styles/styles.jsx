@@ -539,6 +539,10 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
 
+  underline: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'white',
+  },
   /*-------------------------------------------------------------------------- */
   logoPrimary: {
     width: 227,

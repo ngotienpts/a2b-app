@@ -1,9 +1,11 @@
-import { FlatList, Text, TouchableHighlight, View } from 'react-native';
+import { Text, TouchableOpacity, View, Platform } from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import styles from '../../styles';
 import { useNavigation } from '@react-navigation/native';
+
+const ios = Platform.OS == 'ios';
 
 const LoginBtn = () => {
   const navigation = useNavigation();
@@ -22,28 +24,36 @@ const LoginBtn = () => {
     },
   ];
 
-  const handleButtonClick = (form) => () => {
+  const handleButtonClick = () => {
     // chuyển sang home page
-    navigation.navigate('Home', form);
+    navigation.navigate('Home');
   };
 
   return (
     <View style={styles.mt60}>
-      <FlatList
-        data={btnList}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item, index }) => (
-          <TouchableHighlight
-            onPress={handleButtonClick(item)}
-            style={index > 0 ? [item.styleView, { marginTop: 20 }] : item.styleView}
+      <TouchableOpacity onPress={handleButtonClick}>
+        <View style={[styles.bgRed, styles.flexCenter, styles.w250, styles.h48, styles.border4]}>
+          <Icon name={'google'} style={[styles.textWhite, styles.fs28, styles.mr10]} />
+          <Text style={[styles.fs16, styles.lh24, styles.textWhite]}>Đăng nhập qua Google</Text>
+        </View>
+      </TouchableOpacity>
+      {ios ? (
+        <TouchableOpacity onPress={handleButtonClick}>
+          <View
+            style={[
+              styles.bgGray,
+              styles.flexCenter,
+              styles.w250,
+              styles.h48,
+              styles.border4,
+              styles.mt20,
+            ]}
           >
-            <>
-              <Icon name={item.icon} style={[styles.textWhite, styles.fs28, styles.mr10]} />
-              <Text style={[styles.fs16, styles.lh24, styles.textWhite]}>{item.text}</Text>
-            </>
-          </TouchableHighlight>
-        )}
-      />
+            <Icon name={'apple'} style={[styles.textWhite, styles.fs28, styles.mr10]} />
+            <Text style={[styles.fs16, styles.lh24, styles.textWhite]}>Đăng nhập qua Apple</Text>
+          </View>
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 };
