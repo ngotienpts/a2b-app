@@ -91,6 +91,9 @@ const styles = StyleSheet.create({
   bgGray: {
     backgroundColor: '#5F5F5F',
   },
+  bgGray161: {
+    backgroundColor: '#161E28',
+  },
   /*-------------------------------------------------------------------------- */
   textWhite: {
     color: 'white',
@@ -542,6 +545,11 @@ const styles = StyleSheet.create({
   underline: {
     borderBottomWidth: 1,
     borderBottomColor: 'white',
+  },
+  /*-------------------------------------------------------------------------- */
+  borderBot: {
+    borderBottomColor: 'rgba(34,43,53,1)',
+    borderBottomWidth: 1,
   },
   /*-------------------------------------------------------------------------- */
   logoPrimary: {

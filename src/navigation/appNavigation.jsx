@@ -12,6 +12,7 @@ import NotificationScreen from '../screens/NotificationScreen';
 import DriverScreen from '../screens/DriverScreen';
 import UserScreen from '../screens/UserScreen';
 import MapScreen from '../screens/MapScreen';
+import PreMapScreen from '../screens/PreMapScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -71,6 +72,7 @@ const AppNavigation = () => {
         <Stack.Screen name="DriverScreen" component={DriverScreen} />
         <Stack.Screen name="UserScreen" component={UserScreen} />
         <Stack.Screen name="MapScreen" component={MapScreen} />
+        <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

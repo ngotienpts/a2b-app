@@ -15,3 +15,21 @@ export const searchData = [
     location: 'Phú Minh, Sóc Sơn, Hà Nội',
   },
 ];
+
+export const transportations = [
+  {
+    id: 1,
+    name: 'Xe sedan',
+    description: 'Yêu cầu sedan hạng B trở lên, xe sạch sẽ, tài xế lịch sự',
+  },
+  {
+    id: 2,
+    name: 'Xe SUV',
+    description: 'Yêu cầu xe 7 chỗ rộng rãi',
+  },
+  {
+    id: 3,
+    name: 'Xe khách',
+    description: 'Xe 16 chỗ đi tỉnh',
+  },
+];
