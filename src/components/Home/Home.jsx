@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
@@ -11,11 +11,14 @@ import ResultDefault from './ResultDefault';
 import { searchData } from '../../constants';
 import { debounce } from 'lodash';
 import { fetchSearchEndpoint } from '../../api/DataFetching';
+import { TokenContext } from '../../redux/tokenContext';
 
 const Home = () => {
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
   const [inputValue, setInputValue] = useState('');
+  const context = useContext(TokenContext);
+  console.log(context.token);
 
   const handleSearch = (payload) => {
     if (payload && payload.length > 0) {
