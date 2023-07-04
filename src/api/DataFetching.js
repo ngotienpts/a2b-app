@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 // endpoint
-const baseUrl = 'https://api.beta-a2b.work/f13a8144ad84e2a97df6805f5';
-const searchEndpoint = `${baseUrl}/search/info?`;
+const api_key = 'f13a8144ad84e2a97df6805f5';
+const baseUrl = 'https://api.beta-a2b.work';
+const searchEndpoint = `${baseUrl}/${api_key}/search/info?`;
 
 // fallback Image
 export const fallbackImage =

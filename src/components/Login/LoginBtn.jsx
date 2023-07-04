@@ -9,21 +9,6 @@ const ios = Platform.OS == 'ios';
 
 const LoginBtn = () => {
   const navigation = useNavigation();
-  const btnList = [
-    {
-      id: 1,
-      icon: 'google',
-      text: 'Đăng nhập qua Google',
-      styleView: [styles.bgRed, styles.flexCenter, styles.w250, styles.h48, styles.border4],
-    },
-    {
-      id: 2,
-      icon: 'apple',
-      text: 'Đăng nhập qua Apple',
-      styleView: [styles.bgGray, styles.flexCenter, styles.w250, styles.h48, styles.border4],
-    },
-  ];
-
   const handleButtonClick = () => {
     // chuyển sang home page
     navigation.navigate('Home');

@@ -1,18 +1,27 @@
 export const searchData = [
   {
-    id: 1,
-    address: 'Nhà riêng',
-    location: '286 Nguyễn Xiển, Thanh Trì, Hà Nội',
+    name: 'Nhà riêng',
+    address: '286 Nguyễn Xiển, Thanh Trì, Hà Nội',
+    coordinates: {
+      lat: 20.98354,
+      lng: 105.80868,
+    },
   },
   {
-    id: 2,
-    address: 'Khu đô thị Royal City',
-    location: '72 Nguyễn Trãi, Thanh Xuân, Hà Nội',
+    name: 'Khu đô thị Royal City',
+    address: '72 Nguyễn Trãi, Thanh Xuân, Hà Nội',
+    coordinates: {
+      lat: 21.0035,
+      lng: 105.81575,
+    },
   },
   {
-    id: 3,
-    address: 'Cảng hàng không quốc tế Nội Bài',
-    location: 'Phú Minh, Sóc Sơn, Hà Nội',
+    name: 'Cảng hàng không quốc tế Nội Bài',
+    address: 'Phú Minh, Sóc Sơn, Hà Nội',
+    coordinates: {
+      lat: 21.23123,
+      lng: 105.81404,
+    },
   },
 ];
 

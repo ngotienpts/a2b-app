@@ -94,6 +94,9 @@ const styles = StyleSheet.create({
   bgGray161: {
     backgroundColor: '#161E28',
   },
+  bgGray0c1: {
+    backgroundColor: '#0C1116',
+  },
   /*-------------------------------------------------------------------------- */
   textWhite: {
     color: 'white',
@@ -537,6 +540,12 @@ const styles = StyleSheet.create({
   lh40: {
     lineHeight: 40,
   },
+
+  /*-------------------------------------------------------------------------- */
+  uppercase: {
+    textTransform: 'uppercase',
+  },
+
   /*-------------------------------------------------------------------------- */
   border4: {
     borderRadius: 4,
@@ -563,6 +572,12 @@ const styles = StyleSheet.create({
     width: 1,
     height: 15,
     marginHorizontal: 12,
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: 'top', // Để đoạn văn bản bắt đầu từ đầu của hộp văn bản
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
 });
 export default styles;

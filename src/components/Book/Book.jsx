@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import styles from '../../styles';
 import Header from '../header/Header';
@@ -9,6 +9,7 @@ import Location from './Location';
 import BookSelectes from './BookSelectes';
 
 const Book = () => {
+  const { params: item } = useRoute();
   const navigation = useNavigation();
   return (
     <SafeAreaView style={[styles.flexFull, styles.relative]}>
@@ -23,7 +24,7 @@ const Book = () => {
           </Text>
 
           {/* location */}
-          <Location navigation={navigation} />
+          <Location navigation={navigation} data={item} />
 
           {/* select */}
           <BookSelectes />
