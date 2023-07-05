@@ -97,6 +97,12 @@ const styles = StyleSheet.create({
   bgGray0c1: {
     backgroundColor: '#0C1116',
   },
+  bgGray2727: {
+    backgroundColor: 'rgba(27, 27, 27, 0.00)',
+  },
+  bgBlue212: {
+    backgroundColor: '#212E48',
+  },
   /*-------------------------------------------------------------------------- */
   textWhite: {
     color: 'white',
@@ -550,16 +556,35 @@ const styles = StyleSheet.create({
   border4: {
     borderRadius: 4,
   },
+  border10: {
+    borderRadius: 10,
+  },
 
   underline: {
     borderBottomWidth: 1,
     borderBottomColor: 'white',
   },
   /*-------------------------------------------------------------------------- */
+  doted: {
+    borderStyle: 'dotted',
+  },
+  dashed: {
+    borderStyle: 'dashed',
+  },
+  border1: {
+    borderWidth: 1,
+  },
   borderBot: {
     borderBottomColor: 'rgba(34,43,53,1)',
     borderBottomWidth: 1,
   },
+  borderColor3e9: {
+    borderColor: '#3E97FF',
+  },
+  borderColor777: {
+    borderColor: '#777D92',
+  },
+
   /*-------------------------------------------------------------------------- */
   logoPrimary: {
     width: 227,

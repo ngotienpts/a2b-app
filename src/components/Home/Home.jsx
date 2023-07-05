@@ -11,14 +11,11 @@ import ResultDefault from './ResultDefault';
 import { searchData } from '../../constants';
 import { debounce } from 'lodash';
 import { fetchSearchEndpoint } from '../../api/DataFetching';
-import { TokenContext } from '../../redux/tokenContext';
 
 const Home = () => {
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const context = useContext(TokenContext);
-  console.log(context.token);
 
   const handleSearch = (payload) => {
     if (payload && payload.length > 0) {

@@ -4,16 +4,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import styles from '../../styles';
 import { useNavigation } from '@react-navigation/native';
-import { TokenContext } from '../../redux/tokenContext';
 
 const ios = Platform.OS == 'ios';
 
 const LoginBtn = () => {
   const navigation = useNavigation();
-  const context = useContext(TokenContext);
   const handleButtonClick = () => {
     // chuyển sang home page
-    navigation.navigate('Home', context.token);
+    navigation.navigate('Home');
   };
 
   return (

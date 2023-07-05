@@ -18,7 +18,10 @@ const Book = () => {
         <Header navigation={navigation} title="Đặt chuyến" />
 
         {/* body */}
-        <ScrollView style={[styles.flexFull, styles.pt15, styles.px15]}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={[styles.flexFull, styles.pt15, styles.px15]}
+        >
           <Text style={[styles.fs27, styles.textWhite, styles.lh32, styles.mb24, styles.fw300]}>
             Bạn đang đặt chuyến
           </Text>
