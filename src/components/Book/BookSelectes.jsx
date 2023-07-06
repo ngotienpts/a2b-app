@@ -21,16 +21,34 @@ const BookSelects = () => {
   const [isTimeDropdownVisible, setTimeDropdownVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Xe sedan');
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activeElement, setActiveElement] = useState('RANGE_ELEMENT');
   const [note, setNote] = useState('');
   const [timeRange, setTimeRange] = useState(30);
   const [timeString, setTimeString] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+  const [showPickerTime, setShowPickerTime] = useState(false);
+
+  const getActiveText = useCallback(() => {
+    switch (activeElement) {
+      case 'NOW_ELEMENT':
+        return 'Tôi cần đi luôn';
+      case 'RANGE_ELEMENT':
+        return timeString;
+      case 'TIME_ELEMENT':
+        return `${format(date, 'dd-MM-yyyy')} ${time.toLocaleTimeString()}`;
+      default:
+        return 'Vui lòng lựa chọn';
+    }
+  }, [activeElement, date, time, timeString]);
 
   const toggleDropdown = () => {
-    setDropdownVisible(!isDropdownVisible);
+    setDropdownVisible((prevVisible) => !prevVisible);
   };
 
   const toggleTimeModal = () => {
-    setTimeDropdownVisible(!isTimeDropdownVisible);
+    setTimeDropdownVisible((prevVisible) => !prevVisible);
   };
 
   const handleOptionPress = useCallback(
@@ -42,22 +60,20 @@ const BookSelects = () => {
     []
   );
 
-  const handleTimeRangeChange = (newValue) => {
-    const hours = Math.floor(newValue / 60);
-    const minutes = newValue % 60;
+  const handleElementPress = (element) => {
+    setActiveElement(element);
+    setTimeDropdownVisible(false);
+  };
+
+  useEffect(() => {
+    const hours = Math.floor(timeRange / 60);
+    const minutes = timeRange % 60;
 
     const hoursString = hours > 0 ? `${hours} giờ` : '';
     const minutesString = minutes > 0 ? `${minutes} phút` : '';
     const newTimeString = `Sau ${hoursString} ${minutesString} nữa`;
     setTimeString(newTimeString);
-  };
-
-  useEffect(() => {
-    handleTimeRangeChange(timeRange);
   }, [timeRange]);
-
-  const [date, setDate] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
 
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -65,9 +81,23 @@ const BookSelects = () => {
     setDate(currentDate);
   };
 
+  const onChangeTime = (event, selectedTime) => {
+    if (selectedTime !== undefined) {
+      setShowPickerTime(Platform.OS === 'ios');
+      setTime(selectedTime);
+    } else {
+      setShowPickerTime(false);
+    }
+  };
+
   const showDatepicker = () => {
     setShowPicker(true);
   };
+
+  const showTimePicker = () => {
+    setShowPickerTime(true);
+  };
+
   return (
     <View style={[styles.pt24]}>
       {/* type car */}
@@ -103,7 +133,7 @@ const BookSelects = () => {
         </Collapsible>
       </View>
 
-      {/*lich trinh */}
+      {/* lich trinh */}
       <View style={[styles.mb24]}>
         <TouchableOpacity onPress={toggleTimeModal}>
           <View style={[styles.flexRow]}>
@@ -112,14 +142,14 @@ const BookSelects = () => {
               <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
                 Thời gian khởi hành
               </Text>
-              <Text style={[styles.textGray77, styles.fs15]}>{timeString}</Text>
+              <Text style={[styles.textGray77, styles.fs15]}>{getActiveText()}</Text>
             </View>
           </View>
         </TouchableOpacity>
         <Collapsible collapsed={!isTimeDropdownVisible} duration={500}>
           <View style={[styles.bgBlack, styles.mt24]}>
             {/* now */}
-            <View
+            <TouchableOpacity
               style={[
                 styles.flexRow,
                 styles.itemsCenter,
@@ -129,7 +159,10 @@ const BookSelects = () => {
                 styles.dashed,
                 styles.borderColor3e9,
                 styles.bgBlue212,
+                activeElement === 'NOW_ELEMENT' ? styles.borderColor3e9 : styles.borderColor777,
+                activeElement === 'NOW_ELEMENT' ? styles.bgBlue212 : styles.bgGray2727,
               ]}
+              onPress={() => handleElementPress('NOW_ELEMENT')}
             >
               <RocketLaunchIcon size={50} color={'white'} />
               <View style={[styles.ml10, styles.flexFull]}>
@@ -140,10 +173,10 @@ const BookSelects = () => {
                   Ưu tiên xe ở gần và đến sớm nhất có thể
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
 
             {/* range */}
-            <View
+            <TouchableOpacity
               style={[
                 styles.flexRow,
                 styles.itemsCenter,
@@ -152,9 +185,10 @@ const BookSelects = () => {
                 styles.p12,
                 styles.border1,
                 styles.dashed,
-                styles.borderColor777,
-                styles.bgGray2727,
+                activeElement === 'RANGE_ELEMENT' ? styles.borderColor3e9 : styles.borderColor777,
+                activeElement === 'RANGE_ELEMENT' ? styles.bgBlue212 : styles.bgGray2727,
               ]}
+              onPress={() => handleElementPress('RANGE_ELEMENT')}
             >
               <CubeTransparentIcon size={50} color={'white'} />
               <View style={[styles.ml10, styles.flexFull]}>
@@ -174,10 +208,10 @@ const BookSelects = () => {
                   maximumTrackTintColor="rgba(255, 255, 255, 0.50)"
                 />
               </View>
-            </View>
+            </TouchableOpacity>
 
             {/* time */}
-            <View
+            <TouchableOpacity
               style={[
                 styles.flexRow,
                 styles.itemsCenter,
@@ -186,44 +220,70 @@ const BookSelects = () => {
                 styles.p12,
                 styles.border1,
                 styles.dashed,
-                styles.borderColor777,
-                styles.bgGray2727,
+                activeElement === 'TIME_ELEMENT' ? styles.borderColor3e9 : styles.borderColor777,
+                activeElement === 'TIME_ELEMENT' ? styles.bgBlue212 : styles.bgGray2727,
               ]}
+              onPress={() => handleElementPress('TIME_ELEMENT')}
             >
               <ClockIcon size={50} color={'white'} />
               <View style={[styles.ml10, styles.flexFull]}>
                 <Text style={[styles.fs15, styles.fw700, styles.textWhite, styles.mb10]}>
                   Lịch trình của tôi
                 </Text>
-                <View>
-                  <TouchableOpacity onPress={showDatepicker}>
-                    <Text
-                      style={[
-                        styles.textWhite,
-                        styles.fs15,
-                        styles.bgGray161,
-                        styles.py5,
-                        styles.px10,
-                      ]}
-                    >
-                      {format(date, 'dd-MM-yyyy')}
-                    </Text>
-                  </TouchableOpacity>
-                  {showPicker && (
-                    <DateTimePicker
-                      value={date}
-                      mode="date"
-                      display="default"
-                      onChange={onChangeDate}
-                    />
-                  )}
+                <View style={[styles.flexRow]}>
+                  <View>
+                    <TouchableOpacity onPress={showDatepicker}>
+                      <Text
+                        style={[
+                          styles.textWhite,
+                          styles.fs15,
+                          styles.bgGray161,
+                          styles.py5,
+                          styles.px10,
+                        ]}
+                      >
+                        {format(date, 'dd-MM-yyyy')}
+                      </Text>
+                    </TouchableOpacity>
+                    {showPicker && (
+                      <DateTimePicker
+                        value={date}
+                        mode="date"
+                        display="default"
+                        onChange={onChangeDate}
+                      />
+                    )}
+                  </View>
+                  <View>
+                    <TouchableOpacity onPress={showTimePicker}>
+                      <Text
+                        style={[
+                          styles.textWhite,
+                          styles.fs15,
+                          styles.bgGray161,
+                          styles.py5,
+                          styles.px10,
+                          styles.ml12,
+                        ]}
+                      >
+                        {time.toLocaleTimeString()}
+                      </Text>
+                    </TouchableOpacity>
+                    {showPickerTime && (
+                      <DateTimePicker
+                        value={time}
+                        mode="time"
+                        display="default"
+                        onChange={onChangeTime}
+                      />
+                    )}
+                  </View>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
         </Collapsible>
       </View>
-
       {/* note */}
       <View style={{ paddingBottom: 40 }}>
         <View style={[styles.flexRow, styles.mb10]}>
@@ -235,7 +295,7 @@ const BookSelects = () => {
           </View>
         </View>
         <TextInput
-          style={[styles.textGray77, styles.fs15, styles.textArea, styles.p15]}
+          style={[styles.textGray77, styles.bg161e, styles.fs15, styles.textArea, styles.p15]}
           placeholder="VD: Gọi trước khi đến, không mang thú cưng"
           placeholderTextColor={'rgba(119,125,146,0.8)'}
           multiline

@@ -14,6 +14,7 @@ import UserScreen from '../screens/UserScreen';
 import MapScreen from '../screens/MapScreen';
 import PreMapScreen from '../screens/PreMapScreen';
 import TokenProvider from '../redux/tokenContext';
+import FindSreen from '../screens/FindSreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -75,6 +76,7 @@ const AppNavigation = () => {
           <Stack.Screen name="UserScreen" component={UserScreen} />
           <Stack.Screen name="MapScreen" component={MapScreen} />
           <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
+          <Stack.Screen name="FindScreen" component={FindSreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </TokenProvider>

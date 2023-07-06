@@ -43,6 +43,7 @@ const Book = () => {
               styles.itemsCenter,
               styles.justifyCenter,
             ]}
+            onPress={() => navigation.goBack()}
           >
             <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
           </TouchableOpacity>
@@ -54,6 +55,7 @@ const Book = () => {
               styles.itemsCenter,
               styles.justifyCenter,
             ]}
+            onPress={() => navigation.navigate('FindScreen')}
           >
             <Text style={[styles.fs16, styles.textWhite]}>Tìm tài xế</Text>
           </TouchableOpacity>

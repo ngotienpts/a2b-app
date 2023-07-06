@@ -1,4 +1,5 @@
 import React from 'react';
+import { StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Login from '../components/Login';
@@ -6,7 +7,8 @@ import styles from '../styles';
 
 const LoginScreen = () => {
   return (
-    <SafeAreaView style={[styles.flexFull, styles.relative]}>
+    <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+      <StatusBar barStyle="light-content" animated={true} />
       <Login />
     </SafeAreaView>
   );
