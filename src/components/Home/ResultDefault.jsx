@@ -9,7 +9,7 @@ const ResultDefault = ({ data, navigation }) => {
       <FlatList
         data={data}
         showsVerticalScrollIndicator={false}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.name.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
@@ -20,9 +20,9 @@ const ResultDefault = ({ data, navigation }) => {
               <MapPinIcon size={24} color={'white'} />
               <View style={[styles.ml5, styles.flexFull]}>
                 <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                  {item.address}
+                  {item?.name}
                 </Text>
-                <Text style={[styles.textGray77, styles.fs15]}>{item.location}</Text>
+                <Text style={[styles.textGray77, styles.fs15]}>{item?.address}</Text>
               </View>
             </View>
           </TouchableOpacity>

@@ -1,11 +1,12 @@
 import { Text, TouchableOpacity, View, Platform } from 'react-native';
-import React, { useEffect } from 'react';
+import React, {useEffect, useContext } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Google from 'expo-auth-session/providers/google';
 import styles from '../../styles';
 import { useNavigation } from '@react-navigation/native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import jwtDecode from 'jwt-decode';
+import { TokenContext } from '../../redux/tokenContext';
 
 const ios = Platform.OS == 'ios';
 
@@ -64,12 +65,13 @@ const LoginBtn = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
       const user = await request.json();
-      console.log(user);
       await login(user);
     } catch (err) {
 
     }
   }
+
+  const context = useContext(TokenContext);
 
   const login = async (user) => {
     const url = 'https://api.beta-a2b.work/login?email=' + encodeURIComponent(user.email) + '&fullname=' + encodeURIComponent(user.name) + '&picture=' + encodeURIComponent(user.picture) + '&123';
@@ -77,10 +79,8 @@ const LoginBtn = () => {
     const result = await responseUrl.json();
     // console.log(1);
     if (result.res == 'success') {
-      console.log(result.token);
-      navigation.navigate('Home',{
-        token: result.token,
-      });
+      // console.log(result.token);
+      navigation.navigate('Home', context.setToken(result.token));
     }
   }
 

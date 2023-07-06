@@ -1,10 +1,7 @@
 import axios from 'axios';
 
 // endpoint
-const apiKey = 'e1358385819f12b01db7990c1';
 const baseUrl = 'https://api.beta-a2b.work';
-const searchEndpoint = `${baseUrl}/${apiKey}/search/info?`;
-const profileEndpoint = `${baseUrl}/${apiKey}/profile/get`;
 
 // fallback Image
 export const fallbackImage =
@@ -26,10 +23,13 @@ const apiCall = async (endpoint, params) => {
   }
 };
 //api tim kiem
-export const fetchSearchEndpoint = (params) => {
-  return apiCall(searchEndpoint, params);
+export const fetchSearchEndpoint = (params,token) => {
+  const searchEndpoint = `${baseUrl}/${token}/search/info`;
+  return params
+  // return apiCall(searchEndpoint,params);
 };
 //api thong tin khach hang
-export const fetchProfileUser = () => { // nhan tham so la params la 1 object
+export const fetchProfileUser = (token) => { // nhan tham so la params la 1 object
+  const profileEndpoint = `${baseUrl}/${token}/profile/get`;
   return apiCall(profileEndpoint);
 }

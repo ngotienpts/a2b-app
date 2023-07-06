@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
 import * as Location from 'expo-location';
 import styles from '../../styles';
@@ -11,19 +11,30 @@ import ResultDefault from './ResultDefault';
 import { searchData } from '../../constants';
 import { debounce } from 'lodash';
 import { fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
+import { TokenContext } from '../../redux/tokenContext';
 
 const Home = () => {
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
+  const [coordinates, setCoordinates] = useState({lat: 21.9933774, lng: 103.8082981});
   const [name, setName] = useState('');
+  const [hasProfile, setHasProfile] = useState(false);
+  const context = useContext(TokenContext);
+  useEffect(() => {
+    // console.log('token123',context.token)
+    if(!hasProfile){
+      showProfile();
+      setHasProfile(true);
+    }
+  },[]) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
 
   useEffect(() => {
     requestLocationService();
-    showProfile();
-  },[])
+    console.log(coordinates);
+  },[coordinates])
+
+
 
   const requestLocationService = async () => {
     try {
@@ -41,54 +52,55 @@ const Home = () => {
           console.log('You cannot use Geolocation');
           return false;
         }
-        await getLocation();
       } else if (Platform.OS == 'macos' || Platform.OS == 'ios') {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
-          return;
+          console.log('Bạn chưa bật GPS');
         }else{
-          console.log('Success GPS');
+          console.log('Bạn đã bật GPS');
         }
-        await getLocation(); 
       }
+      let { coords } = await Location.getCurrentPositionAsync({});
+      setCoordinates({lat: coords.latitude,lng: coords.longitude})
     } catch (error) {
       return false;
     }
   }
 
-  const getLocation = async () => {
-    let location = await Location.getCurrentPositionAsync({});
-    setLatitude(location.coords.latitude);
-    setLongitude(location.coords.longitude); 
-  }
 
   const showProfile = () => {
-    fetchProfileUser()
+    fetchProfileUser(context.token)
     .then((data) => {
       if(data.res == 'success'){
         setName(data.result.fullname)
-      }else{
-        console.log(2);
       }
     })
   }
 
   const handleSearch = (payload) => {
+
     if (payload && payload.length > 0) {
-      fetchSearchEndpoint({
+      console.log('kinh độ', coordinates.lat);
+      console.log('vĩ độ', coordinates.lng);
+      console.log(fetchSearchEndpoint({
         keyword: payload,
-        lat: latitude,
-        lng: longitude,
-      }).then((data) => {
-        if (data && data.result) setResults(data.result);
-      });
+        lat: coordinates.lat,
+        lng: coordinates.lng,
+      },1));
+      // fetchSearchEndpoint({
+      //   keyword: payload,
+      //   lat: latitude,
+      //   lng: longitude,
+      // },1).then((data) => {
+      //   // console.log(data);
+      //   if (data && data.result) setResults(data.result);
+      // });
     } else {
       setResults([]);
     }
   };
 
-  const handleSearchDebounce = useCallback(debounce(handleSearch, 400), []); 
+  const handleSearchDebounce = useCallback(debounce(handleSearch, 300), []); 
   //debounce la sẽ tạo ra 1 phiên bản mới của hàm và ham co kha nang tri hoan việc thực thi và sẽ thực thi sau độ trễ đã xác định.
   //Trong TH nếu có thêm 1 hàm được gọi thì cái trước sẽ bị hủy và hàm mới sẽ chạy 
 

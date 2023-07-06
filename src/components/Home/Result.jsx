@@ -3,14 +3,14 @@ import React from 'react';
 import { MapPinIcon } from 'react-native-heroicons/outline';
 import styles from '../../styles';
 
-const Result = ({ results, navigation }) => {
+const Result = ({ results, coordinates, navigation }) => {
   return (
     <View style={[styles.flexFull]}>
       <FlatList
         contentContainerStyle={{ paddingBottom: 80 }}
         data={results}
         showsVerticalScrollIndicator={false}
-        keyExtractor={(item) => item.name.toString()}
+        keyExtractor={(item) => item.name.toString()+Math.random()}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {

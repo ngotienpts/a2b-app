@@ -3,11 +3,13 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StopCircleIcon, MapPinIcon } from 'react-native-heroicons/solid';
-
 import styles from '../../styles';
 import Header from '../header/Header';
+import Location from './Location';
+import BookSelectes from './BookSelectes';
 
 const Book = () => {
+  const { params: item } = useRoute();
   const navigation = useNavigation();
   const {params} = useRoute();
   // console.log(params);
@@ -22,32 +24,39 @@ const Book = () => {
           <Text style={[styles.fs27, styles.textWhite, styles.lh32, styles.mb24, styles.fw300]}>
             Bạn đang đặt chuyến
           </Text>
-          {/*  */}
-          <View>
-            <TouchableOpacity onPress={() => navigation.navigate('MapScreen')}>
-              <View style={[styles.flexRow, styles.mb24]}>
-                <StopCircleIcon size={20} color={'white'} style={{ marginTop: 3 }} />
-                <View style={[styles.ml5, styles.flexFull]}>
-                  <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                    Vị trí hiện tại
-                  </Text>
-                  <Text style={[styles.textGray77, styles.fs15]}>286 Nguyễn xiển</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={[styles.flexRow, styles.mb24]}>
-                <MapPinIcon size={22} color={'white'} style={{ marginTop: 3 }} />
-                <View style={[styles.ml5, styles.flexFull]}>
-                  <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                    Cảng hàng không quốc tế Nội Bài
-                  </Text>
-                  <Text style={[styles.textGray77, styles.fs15]}>286 Nguyễn xiển</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
+
+          {/* location */}
+          <Location navigation={navigation} data={item} />
+
+          {/* select */}
+          <BookSelectes />
         </ScrollView>
+
+        {/* buttom  huy chuyen & tim tai xe*/}
+        <View style={[styles.flexRow]}>
+          <TouchableOpacity
+            style={[
+              styles.h48,
+              styles.bgGray161,
+              styles.flexFull,
+              styles.itemsCenter,
+              styles.justifyCenter,
+            ]}
+          >
+            <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.h48,
+              styles.bgRed,
+              styles.flexFull,
+              styles.itemsCenter,
+              styles.justifyCenter,
+            ]}
+          >
+            <Text style={[styles.fs16, styles.textWhite]}>Tìm tài xế</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
