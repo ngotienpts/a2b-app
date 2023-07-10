@@ -15,72 +15,77 @@ import MapScreen from '../screens/MapScreen';
 import PreMapScreen from '../screens/PreMapScreen';
 import TokenProvider from '../redux/tokenContext';
 import FindSreen from '../screens/FindSreen';
+import FindDetailScreen from '../screens/FindDetailScreen';
+import BookingFormProvider from '../redux/bookingFormContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const HomeStackNavigation = () => {
-  const [hasUnreadNotification, setHasUnreadNotification] = useState(true);
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: '#fff',
-        tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: '#161E28',
-          borderTopColor: '#161E28',
-        },
-      }}
-      initialRouteName="Home"
-    >
-      <Tab.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-        options={{
-          tabBarLabel: 'Trang chủ',
-          tabBarIcon: ({ color, size }) => <HomeIcon color={color} size={size} />,
-        }}
-      />
-      <Tab.Screen
-        name="DiaryScreen"
-        component={DiaryScreen}
-        options={{
-          tabBarLabel: 'Nhật ký',
-          tabBarIcon: ({ color, size }) => <CalendarIcon color={color} size={size} />,
-        }}
-      />
-      <Tab.Screen
-        name="NotificationScreen"
-        component={NotificationScreen}
-        options={{
-          tabBarLabel: 'Thông báo',
-          tabBarIcon: ({ color, size }) => <BellIcon color={color} size={size} />,
-          tabBarBadge: hasUnreadNotification ? 1 : null,
-          tabBarBadgeStyle: { fontSize: 10 },
-        }}
-      />
-    </Tab.Navigator>
-  );
+    const [hasUnreadNotification, setHasUnreadNotification] = useState(true);
+    return (
+        <Tab.Navigator
+            screenOptions={{
+                headerShown: false,
+                tabBarActiveTintColor: '#fff',
+                tabBarStyle: {
+                    position: 'absolute',
+                    backgroundColor: '#161E28',
+                    borderTopColor: '#161E28',
+                },
+            }}
+            initialRouteName="Home"
+        >
+            <Tab.Screen
+                name="HomeScreen"
+                component={HomeScreen}
+                options={{
+                    tabBarLabel: 'Trang chủ',
+                    tabBarIcon: ({ color, size }) => <HomeIcon color={color} size={size} />,
+                }}
+            />
+            <Tab.Screen
+                name="DiaryScreen"
+                component={DiaryScreen}
+                options={{
+                    tabBarLabel: 'Nhật ký',
+                    tabBarIcon: ({ color, size }) => <CalendarIcon color={color} size={size} />,
+                }}
+            />
+            <Tab.Screen
+                name="NotificationScreen"
+                component={NotificationScreen}
+                options={{
+                    tabBarLabel: 'Thông báo',
+                    tabBarIcon: ({ color, size }) => <BellIcon color={color} size={size} />,
+                    tabBarBadge: hasUnreadNotification ? 1 : null,
+                    tabBarBadgeStyle: { fontSize: 10 },
+                }}
+            />
+        </Tab.Navigator>
+    );
 };
 
 const AppNavigation = () => {
-  return (
-    <TokenProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Home" component={HomeStackNavigation} />
-          <Stack.Screen name="Book" component={BookScreen} />
-          <Stack.Screen name="DriverScreen" component={DriverScreen} />
-          <Stack.Screen name="UserScreen" component={UserScreen} />
-          <Stack.Screen name="MapScreen" component={MapScreen} />
-          <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
-          <Stack.Screen name="FindScreen" component={FindSreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </TokenProvider>
-  );
+    return (
+        <TokenProvider>
+            <BookingFormProvider>
+                <NavigationContainer>
+                    <Stack.Navigator screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="Login" component={LoginScreen} />
+                        <Stack.Screen name="Home" component={HomeStackNavigation} />
+                        <Stack.Screen name="Book" component={BookScreen} />
+                        <Stack.Screen name="DriverScreen" component={DriverScreen} />
+                        <Stack.Screen name="UserScreen" component={UserScreen} />
+                        <Stack.Screen name="MapScreen" component={MapScreen} />
+                        <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
+                        <Stack.Screen name="FindScreen" component={FindSreen} />
+                        <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </BookingFormProvider>
+        </TokenProvider>
+    );
 };
 
 export default AppNavigation;
