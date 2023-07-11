@@ -4,7 +4,7 @@ import { StopCircleIcon, MapPinIcon } from 'react-native-heroicons/solid';
 
 import styles from '../../styles';
 
-const Location = ({ navigation, data }) => {
+const Location = ({ navigation, data, currentPosition }) => {
     return (
         <View style={[styles.borderBot]}>
             <TouchableOpacity onPress={() => navigation.navigate('MapScreen')}>
@@ -14,7 +14,9 @@ const Location = ({ navigation, data }) => {
                         <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
                             Vị trí hiện tại
                         </Text>
-                        <Text style={[styles.textGray77, styles.fs15]}>286 Nguyễn xiển</Text>
+                        <Text style={[styles.textGray77, styles.fs15]}>
+                            {currentPosition.address}
+                        </Text>
                     </View>
                 </View>
             </TouchableOpacity>

@@ -4,6 +4,9 @@ export const BookingFormContext = createContext();
 
 const BookingFormProvider = ({ children }) => {
     const [bookingForm, setBookingForm] = useState({
+        eniqueId: '',
+        startPoint: '',
+        endPoint: '',
         typeCar: '',
         departureTime: '',
         note: '',

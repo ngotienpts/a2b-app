@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useContext, useEffect, useId } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -7,10 +7,23 @@ import styles from '../../styles';
 import Header from '../header/Header';
 import Location from './Location';
 import BookSelectes from './BookSelectes';
+import { BookingFormContext } from '../../redux/bookingFormContext';
+import { currentPosition } from '../../constants';
 
 const Book = () => {
+    const context = useContext(BookingFormContext);
+    const eniqueId = useId();
     const { params: item } = useRoute();
     const navigation = useNavigation();
+
+    useEffect(() => {
+        context.setBookingForm({
+            ...context.bookingForm,
+            eniqueId,
+            startPoint: currentPosition,
+            endPoint: item,
+        });
+    }, [item, eniqueId]);
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
@@ -35,10 +48,14 @@ const Book = () => {
                     </Text>
 
                     {/* location */}
-                    <Location navigation={navigation} data={item} />
+                    <Location
+                        navigation={navigation}
+                        data={item}
+                        currentPosition={currentPosition}
+                    />
 
                     {/* select */}
-                    <BookSelectes />
+                    <BookSelectes context={context} />
                 </ScrollView>
 
                 {/* buttom  huy chuyen & tim tai xe*/}

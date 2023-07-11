@@ -6,54 +6,32 @@ import {
     Dimensions,
     Animated,
     Easing,
-    FlatList,
 } from 'react-native';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { MapPinIcon, StarIcon, StopCircleIcon } from 'react-native-heroicons/solid';
+import { StarIcon } from 'react-native-heroicons/solid';
 import {
     ArrowUturnRightIcon,
     BeakerIcon,
-    ChevronDownIcon,
-    ClockIcon,
     CurrencyDollarIcon,
-    PencilIcon,
     ShieldCheckIcon,
-    TruckIcon,
     WifiIcon,
 } from 'react-native-heroicons/outline';
-import Collapsible from 'react-native-collapsible';
 import { CircleFade } from 'react-native-animated-spinkit';
 
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { driver } from '../../assets/images';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import { listDrivers } from '../../constants';
 import { fallbackImage } from '../../api/DataFetching';
-
-const { width, height } = Dimensions.get('window');
+import SentFormBooking from '../SentFormBooking/SentFormBooking';
 
 const FindComponent = () => {
     const context = useContext(BookingFormContext);
     const navigation = useNavigation();
-    const [isDropdownVisible, setDropdownVisible] = useState(false);
-    const rotationValue = useState(new Animated.Value(0))[0];
 
-    useEffect(() => {
-        Animated.timing(rotationValue, {
-            toValue: isDropdownVisible ? 1 : 0,
-            duration: 300,
-            easing: Easing.linear,
-            useNativeDriver: true,
-        }).start();
-    }, [isDropdownVisible]);
-
-    const toogleDropdown = () => {
-        setDropdownVisible((isDropdownVisible) => !isDropdownVisible);
-    };
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
@@ -65,142 +43,7 @@ const FindComponent = () => {
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                 >
-                    <View style={[styles.flexBetween, styles.mb24, styles.px15]}>
-                        <Text style={[styles.fs27, styles.textWhite, styles.lh32, styles.fw300]}>
-                            Bạn đang đặt chuyến
-                        </Text>
-                        <Text style={[styles.fs13, styles.textGray77]}>#4554212</Text>
-                    </View>
-
-                    <View style={[styles.px15]}>
-                        {/* current position */}
-                        <View style={[styles.flexRow, styles.mb24]}>
-                            <StopCircleIcon size={20} color={'white'} style={{ marginTop: 2 }} />
-                            <View style={[styles.ml5, styles.flexFull]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.textWhite,
-                                        styles.mb5,
-                                    ]}
-                                >
-                                    Vị trí hiện tại
-                                </Text>
-                                <Text style={[styles.textGray77, styles.fs15]}>
-                                    286 Nguyễn xiển
-                                </Text>
-                            </View>
-                        </View>
-                        {/* destionation */}
-                        <View style={[styles.flexRow, styles.mb24]}>
-                            <MapPinIcon size={22} color={'white'} style={{ marginTop: 2 }} />
-                            <View style={[styles.ml5, styles.flexFull]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.textWhite,
-                                        styles.mb5,
-                                    ]}
-                                >
-                                    Vị trí hiện tại
-                                </Text>
-                                <Text style={[styles.textGray77, styles.fs15]}>
-                                    286 Nguyễn xiển
-                                </Text>
-                            </View>
-                        </View>
-                        <Collapsible collapsed={!isDropdownVisible} duration={500}>
-                            {/* type car */}
-                            <View style={[styles.flexRow, styles.mb24]}>
-                                <TruckIcon size={22} color={'white'} style={{ marginTop: 2 }} />
-                                <View style={[styles.ml5, styles.flexFull]}>
-                                    <Text
-                                        style={[
-                                            styles.fs16,
-                                            styles.fw700,
-                                            styles.textWhite,
-                                            styles.mb5,
-                                        ]}
-                                    >
-                                        Loại hình xe
-                                    </Text>
-                                    <Text style={[styles.textGray77, styles.fs15]}>
-                                        {context.bookingForm.typeCar}
-                                    </Text>
-                                </View>
-                            </View>
-
-                            {/* lich trinh */}
-                            <View style={[styles.flexRow, styles.mb24]}>
-                                <ClockIcon size={22} color={'white'} style={{ marginTop: 2 }} />
-                                <View style={[styles.ml5, styles.flexFull]}>
-                                    <Text
-                                        style={[
-                                            styles.fs16,
-                                            styles.fw700,
-                                            styles.textWhite,
-                                            styles.mb5,
-                                        ]}
-                                    >
-                                        Thời gian khởi hành
-                                    </Text>
-                                    <Text style={[styles.textGray77, styles.fs15]}>
-                                        {context.bookingForm.departureTime}
-                                    </Text>
-                                </View>
-                            </View>
-
-                            {/* note */}
-                            {context.bookingForm.note && (
-                                <View style={[styles.flexRow, styles.mb24]}>
-                                    <PencilIcon
-                                        size={22}
-                                        color={'white'}
-                                        style={{ marginTop: 2 }}
-                                    />
-                                    <View style={[styles.ml5, styles.flexFull]}>
-                                        <Text
-                                            style={[
-                                                styles.fs16,
-                                                styles.fw700,
-                                                styles.textWhite,
-                                                styles.mb5,
-                                            ]}
-                                        >
-                                            Ghi chú
-                                        </Text>
-                                        <Text style={[styles.textGray77, styles.fs15]}>
-                                            {context.bookingForm.note}
-                                        </Text>
-                                    </View>
-                                </View>
-                            )}
-                        </Collapsible>
-
-                        <TouchableOpacity
-                            style={[styles.flexCenter, styles.mb24]}
-                            onPress={toogleDropdown}
-                        >
-                            <Animated.View
-                                style={{
-                                    transform: [
-                                        {
-                                            rotate: rotationValue.interpolate({
-                                                inputRange: [0, 1],
-                                                outputRange: ['0deg', '180deg'],
-                                            }),
-                                        },
-                                    ],
-                                }}
-                            >
-                                <ChevronDownIcon size={20} color={'white'} />
-                            </Animated.View>
-                            <Text style={[styles.textWhite]}>Xem chi tiết</Text>
-                        </TouchableOpacity>
-                    </View>
-
+                    <SentFormBooking context={context} title="Bạn đang đặt chuyến" />
                     {/* khoang cach & thoi gian */}
                     <View
                         style={[
@@ -473,6 +316,7 @@ const FindComponent = () => {
                             styles.border4,
                             styles.mx15,
                         ]}
+                        onPress={() => navigation.goBack()}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>

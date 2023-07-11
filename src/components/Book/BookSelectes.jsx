@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useContext } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native';
 import {
     ClockIcon,
@@ -14,11 +14,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from '../../styles';
 import { transportations } from '../../constants';
 import { format } from 'date-fns';
-import { BookingFormContext } from '../../redux/bookingFormContext';
 
-const BookSelects = () => {
-    const context = useContext(BookingFormContext);
-
+const BookSelects = ({ context }) => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const [isTimeDropdownVisible, setTimeDropdownVisible] = useState(false);
     const [selectedOption, setSelectedOption] = useState('Xe sedan');
@@ -102,6 +99,7 @@ const BookSelects = () => {
 
     useEffect(() => {
         context.setBookingForm({
+            ...context.bookingForm,
             typeCar: selectedOption,
             departureTime: getActiveText(),
             note: note,

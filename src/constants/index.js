@@ -43,6 +43,15 @@ export const transportations = [
     },
 ];
 
+export const currentPosition = {
+    address: 'Xã Tân Triều, Huyện Thanh Trì, Hà Nội',
+    coordinates: {
+        lat: 20.98382,
+        lng: 105.80779,
+    },
+    name: 'Ngõ 286 Nguyễn Xiển',
+};
+
 export const listDrivers = [
     {
         id: 0,

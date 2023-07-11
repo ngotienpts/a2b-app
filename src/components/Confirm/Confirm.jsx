@@ -12,7 +12,7 @@ import { fallbackImage, fetchReviewListEndpoint } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../SentFormBooking/SentFormBooking';
 
-const FindDetail = () => {
+const Confirm = () => {
     const context = useContext(BookingFormContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
@@ -58,14 +58,14 @@ const FindDetail = () => {
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
-                <Header navigation={navigation} title="Tìm tài xế" />
+                <Header navigation={navigation} title="Thành công" />
 
                 {/* body */}
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                 >
-                    <SentFormBooking context={context} title="Bạn đang đặt chuyến" />
+                    <SentFormBooking context={context} title="Tài xế đang đến" />
 
                     {/* thông tin tài xế */}
 
@@ -192,66 +192,6 @@ const FindDetail = () => {
                                 )}
                             </View>
                         </View>
-
-                        {/* đánh giá */}
-                        <View style={[styles.px15, styles.pb60]}>
-                            {/* header */}
-                            <View style={[styles.flexBetween, styles.mb24]}>
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.lh24,
-                                    ]}
-                                >
-                                    Đánh giá (99)
-                                </Text>
-                                <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
-                                    Mới nhất
-                                </Text>
-                            </View>
-
-                            {/* many reviews */}
-                            {reviewDriver.map((item) => (
-                                <View key={item.rate_id} style={[styles.flexRow, styles.mb24]}>
-                                    <Image
-                                        source={{ uri: item?.image || fallbackImage }}
-                                        style={{ width: 52, height: 52, borderRadius: 999 }}
-                                        resizeMode="cover"
-                                    />
-                                    <View style={[styles.pl10, styles.flexFull]}>
-                                        <Text
-                                            style={[
-                                                styles.textWhite,
-                                                styles.fs16,
-                                                styles.lh24,
-                                                styles.fw400,
-                                            ]}
-                                        >
-                                            {item?.name}: {item?.comment}
-                                        </Text>
-                                        <View
-                                            style={[styles.flexRow, styles.itemsCenter, styles.mt5]}
-                                        >
-                                            <StarsDisplay value={item?.star} />
-                                            <Text
-                                                style={[
-                                                    styles.textGray77,
-                                                    styles.fs14,
-                                                    styles.lh24,
-                                                    styles.fw400,
-                                                    styles.ml15,
-                                                ]}
-                                            >
-                                                {calculateDaysDifference(item?.created_at)} ngày
-                                                trước
-                                            </Text>
-                                        </View>
-                                    </View>
-                                </View>
-                            ))}
-                        </View>
                     </View>
                 </ScrollView>
 
@@ -260,26 +200,19 @@ const FindDetail = () => {
                     <TouchableOpacity
                         style={[
                             styles.h48,
-                            styles.bgGray161,
+                            styles.bgBlack,
                             styles.flexFull,
                             styles.itemsCenter,
                             styles.justifyCenter,
+                            styles.border1,
+                            styles.borderColorWhite,
+                            styles.borderSolid,
+                            styles.border4,
+                            styles.mx15,
                         ]}
                         onPress={() => navigation.goBack()}
                     >
-                        <Text style={[styles.fs16, styles.textWhite]}>Chọn tài khác</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            styles.h48,
-                            styles.bgRed,
-                            styles.flexFull,
-                            styles.itemsCenter,
-                            styles.justifyCenter,
-                        ]}
-                        onPress={() => navigation.navigate('ConfirmScreen', item)}
-                    >
-                        <Text style={[styles.fs16, styles.textWhite]}>Đặt chuyến</Text>
+                        <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -287,4 +220,4 @@ const FindDetail = () => {
     );
 };
 
-export default FindDetail;
+export default Confirm;

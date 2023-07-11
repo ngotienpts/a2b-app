@@ -17,6 +17,7 @@ import TokenProvider from '../redux/tokenContext';
 import FindSreen from '../screens/FindSreen';
 import FindDetailScreen from '../screens/FindDetailScreen';
 import BookingFormProvider from '../redux/bookingFormContext';
+import ConfirmScreen from '../screens/ConfirmScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -81,6 +82,7 @@ const AppNavigation = () => {
                         <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
                         <Stack.Screen name="FindScreen" component={FindSreen} />
                         <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
+                        <Stack.Screen name="ConfirmScreen" component={ConfirmScreen} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </BookingFormProvider>
