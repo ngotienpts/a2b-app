@@ -3,7 +3,7 @@ import React from 'react';
 import { MapPinIcon } from 'react-native-heroicons/outline';
 import styles from '../../styles';
 
-const Result = ({ results, coordinates, navigation }) => {
+const Result = ({ results, navigation }) => {
   return (
     <View style={[styles.flexFull]}>
       <FlatList

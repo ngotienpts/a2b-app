@@ -25,11 +25,17 @@ const apiCall = async (endpoint, params) => {
 //api tim kiem
 export const fetchSearchEndpoint = (params,token) => {
   const searchEndpoint = `${baseUrl}/${token}/search/info`;
-  return params
-  // return apiCall(searchEndpoint,params);
+  // return params
+  return apiCall(searchEndpoint,params);
 };
 //api thong tin khach hang
 export const fetchProfileUser = (token) => { // nhan tham so la params la 1 object
   const profileEndpoint = `${baseUrl}/${token}/profile/get`;
   return apiCall(profileEndpoint);
+}
+//lay gps
+export const fetchStartGPS = (params,token) => {
+  const updateGPS = `${baseUrl}/${token}/search/address`;
+  // return params
+  return apiCall(updateGPS,params);
 }

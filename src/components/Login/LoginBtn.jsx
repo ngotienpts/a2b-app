@@ -29,9 +29,6 @@ const LoginBtn = () => {
     if (response?.type === 'success') {
       // Xử lý thành công
       getUserInfo(response.authentication.accessToken)
-    } else {
-      // Xử lý không thành công hoặc hủy bỏ
-      console.log('Đăng nhập Google không thành công hoặc đã hủy bỏ.');
     }
   }, [response]) //truyen [] de goi useEffect 1 lan sau khi compoment mounted
 

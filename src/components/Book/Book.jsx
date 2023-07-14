@@ -11,8 +11,6 @@ import BookSelectes from './BookSelectes';
 const Book = () => {
   const { params: item } = useRoute();
   const navigation = useNavigation();
-  const {params} = useRoute();
-  // console.log(params);
   return (
     <SafeAreaView style={[styles.flexFull, styles.relative]}>
       <View style={[styles.flexFull, styles.bgBlack]}>

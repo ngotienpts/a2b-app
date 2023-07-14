@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
@@ -12,61 +12,74 @@ import { searchData } from '../../constants';
 import { debounce } from 'lodash';
 import { fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = () => {
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [coordinates, setCoordinates] = useState({lat: 21.9933774, lng: 103.8082981});
   const [name, setName] = useState('');
   const [hasProfile, setHasProfile] = useState(false);
   const context = useContext(TokenContext);
+
   useEffect(() => {
     // console.log('token123',context.token)
     if(!hasProfile){
       showProfile();
       setHasProfile(true);
+      // removeItem();
     }
   },[]) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
 
-  useEffect(() => {
-    requestLocationService();
-    console.log(coordinates);
-  },[coordinates])
-
-
+  const removeItem = async() => {
+    await AsyncStorage.removeItem('lat');
+    await AsyncStorage.removeItem('lng');
+  }
 
   const requestLocationService = async () => {
     try {
-      if (Platform.OS == 'android') {
-        const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
-          title: 'Bật định vị',
-          message: 'Chúng tôi có thể bật định vị không?',
-          buttonNeutral: 'Hỏi lại sau',
-          buttonNegative: 'Hủy',
-          buttonPositive: 'Đồng ý',
-        })
-        if (result === 'granted') {
+      if (Platform.OS === 'android') {
+        const result = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Bật định vị',
+            message: 'Chúng tôi có thể bật định vị không?',
+            buttonNeutral: 'Hỏi lại sau',
+            buttonNegative: 'Hủy',
+            buttonPositive: 'Đồng ý',
+          }
+        );
+        if (result === PermissionsAndroid.RESULTS.GRANTED) {
           console.log('Đã bật GPS');
         } else {
           console.log('You cannot use Geolocation');
           return false;
         }
-      } else if (Platform.OS == 'macos' || Platform.OS == 'ios') {
+      } else if (Platform.OS === 'ios') {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
           console.log('Bạn chưa bật GPS');
-        }else{
-          console.log('Bạn đã bật GPS');
+          return false;
         }
       }
+
       let { coords } = await Location.getCurrentPositionAsync({});
-      setCoordinates({lat: coords.latitude,lng: coords.longitude})
+      await AsyncStorage.setItem('lat',coords.latitude.toString());
+      await AsyncStorage.setItem('lng',coords.longitude.toString());
+
     } catch (error) {
+      console.error('Lỗi khi lấy vị trí:', error);
       return false;
     }
-  }
+  };
 
+  useEffect(() => {
+    const interval = setInterval(requestLocationService, 10000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   const showProfile = () => {
     fetchProfileUser(context.token)
@@ -77,24 +90,28 @@ const Home = () => {
     })
   }
 
-  const handleSearch = (payload) => {
+  const handleSearch = async (payload) => {
 
     if (payload && payload.length > 0) {
-      console.log('kinh độ', coordinates.lat);
-      console.log('vĩ độ', coordinates.lng);
-      console.log(fetchSearchEndpoint({
+      let lat = 0;
+      let lng = 0;
+      const latString = await AsyncStorage.getItem('lat');
+      const lngString = await AsyncStorage.getItem('lng');
+      if(latString === null && lngString === null){
+        lat = 20.975120399813672; 
+        lng = 105.78747338684025;
+      }else{
+        lat = parseFloat(latString);
+        lng = parseFloat(lngString);
+      }
+      fetchSearchEndpoint({
         keyword: payload,
-        lat: coordinates.lat,
-        lng: coordinates.lng,
-      },1));
-      // fetchSearchEndpoint({
-      //   keyword: payload,
-      //   lat: latitude,
-      //   lng: longitude,
-      // },1).then((data) => {
-      //   // console.log(data);
-      //   if (data && data.result) setResults(data.result);
-      // });
+        lat: lat,
+        lng: lng,
+      },1).then((data) => {
+        // console.log(data);
+        if (data && data.result) setResults(data.result);
+      });
     } else {
       setResults([]);
     }
