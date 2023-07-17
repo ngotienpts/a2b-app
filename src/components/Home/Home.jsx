@@ -74,7 +74,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(requestLocationService, 10000);
+    const interval = setInterval(requestLocationService, 120000);
 
     return () => {
       clearInterval(interval);
