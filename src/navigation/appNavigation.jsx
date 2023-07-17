@@ -18,6 +18,9 @@ import FindSreen from '../screens/FindSreen';
 import FindDetailScreen from '../screens/FindDetailScreen';
 import BookingFormProvider from '../redux/bookingFormContext';
 import ConfirmScreen from '../screens/ConfirmScreen';
+import PickScreen from '../screens/PickScreen';
+import MovingScreen from '../screens/MovingScreen';
+import CompleteScreen from '../screens/CompleteScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -83,6 +86,9 @@ const AppNavigation = () => {
                         <Stack.Screen name="FindScreen" component={FindSreen} />
                         <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
                         <Stack.Screen name="ConfirmScreen" component={ConfirmScreen} />
+                        <Stack.Screen name="PickScreen" component={PickScreen} />
+                        <Stack.Screen name="MovingScreen" component={MovingScreen} />
+                        <Stack.Screen name="CompleteScreen" component={CompleteScreen} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </BookingFormProvider>

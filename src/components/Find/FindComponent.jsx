@@ -1,12 +1,4 @@
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    ScrollView,
-    Dimensions,
-    Animated,
-    Easing,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';

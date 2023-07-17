@@ -103,20 +103,52 @@ const styles = StyleSheet.create({
     bgBlue212: {
         backgroundColor: '#212E48',
     },
+    bgBlue237: {
+        backgroundColor: '#2374E1',
+    },
+    bgBlue009: {
+        backgroundColor: '#0091FF',
+    },
+    bgYellow: {
+        backgroundColor: '#FFB848',
+    },
+    bgCyan2F: {
+        backgroundColor: '#2F9881',
+    },
     /*-------------------------------------------------------------------------- */
     textWhite: {
         color: 'white',
     },
+    textWhite30: {
+        color: 'rgba(255,255,255,0.3)',
+    },
     textGray77: {
         color: 'rgba(119,125,146,0.8)',
     },
-    textWhite30: {
-        color: 'rgba(255,255,255,0.3)',
+    textYellow: {
+        color: '#FFB848',
+    },
+    textRedE8: {
+        color: '#E8424A',
     },
     textCenter: {
         textAlign: 'center',
     },
-
+    textUpper: {
+        textTransform: 'uppercase',
+    },
+    textArea: {
+        height: 120,
+        textAlignVertical: 'top', // Để đoạn văn bản bắt đầu từ đầu của hộp văn bản
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
+    textAreaRate: {
+        height: 80,
+        textAlignVertical: 'top', // Để đoạn văn bản bắt đầu từ đầu của hộp văn bản
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
     /*-------------------------------------------------------------------------- */
     itemsCenter: {
         alignItems: 'center',
@@ -179,6 +211,9 @@ const styles = StyleSheet.create({
     },
     fs13: {
         fontSize: 13,
+    },
+    fs14: {
+        fontSize: 14,
     },
     fs15: {
         fontSize: 15,
@@ -628,6 +663,21 @@ const styles = StyleSheet.create({
     borderColorWhite: {
         borderColor: '#fff',
     },
+    borderFull: {
+        borderRadius: 999,
+    },
+    borderLeftTop4: {
+        borderTopLeftRadius: 4,
+    },
+    borderLeftBot4: {
+        borderBottomLeftRadius: 4,
+    },
+    borderRightTop4: {
+        borderTopRightRadius: 4,
+    },
+    borderRightBot4: {
+        borderBottomRightRadius: 4,
+    },
 
     /*-------------------------------------------------------------------------- */
     logoPrimary: {
@@ -641,12 +691,6 @@ const styles = StyleSheet.create({
         width: 1,
         height: 15,
         marginHorizontal: 12,
-    },
-    textArea: {
-        height: 120,
-        textAlignVertical: 'top', // Để đoạn văn bản bắt đầu từ đầu của hộp văn bản
-        paddingHorizontal: 12,
-        paddingVertical: 8,
     },
 });
 export default styles;

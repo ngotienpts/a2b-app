@@ -1,14 +1,19 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { StarIcon } from 'react-native-heroicons/solid';
-import { CurrencyDollarIcon, ShieldCheckIcon } from 'react-native-heroicons/outline';
+import { CheckIcon, StarIcon } from 'react-native-heroicons/solid';
+import {
+    CurrencyDollarIcon,
+    ShieldCheckIcon,
+    PhoneIcon,
+    ChatBubbleOvalLeftIcon,
+} from 'react-native-heroicons/outline';
 
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchReviewListEndpoint } from '../../api/DataFetching';
+import { fallbackImage } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../SentFormBooking/SentFormBooking';
 
@@ -16,43 +21,6 @@ const Confirm = () => {
     const context = useContext(BookingFormContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
-    const [reviewDriver, setReviewDriver] = useState([]);
-
-    const getReviewList = async (id) => {
-        const data = await fetchReviewListEndpoint(id);
-        if (data && data.result.list) setReviewDriver(data.result.list);
-    };
-
-    const calculateDaysDifference = (dateTimeString) => {
-        const targetDate = new Date(dateTimeString);
-        const currentDate = new Date();
-
-        const timeDifference = currentDate.getTime() - targetDate.getTime();
-        const daysDifference = Math.floor(timeDifference / (1000 * 3600 * 24));
-
-        return daysDifference;
-    };
-
-    const StarsDisplay = ({ value }) => {
-        const starCount = 5;
-
-        return (
-            <View style={[styles.flexRow, styles.itemsCenter]}>
-                {[...Array(starCount)].map((_, index) => (
-                    <StarIcon
-                        key={index}
-                        size={12}
-                        color={index < value ? 'white' : undefined}
-                        stroke={index < value ? undefined : 'white'}
-                    />
-                ))}
-            </View>
-        );
-    };
-
-    useEffect(() => {
-        getReviewList(item.id);
-    }, [item]);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
@@ -65,6 +33,39 @@ const Confirm = () => {
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                 >
+                    {/* check */}
+                    <View
+                        style={[
+                            styles.my24,
+                            styles.pb50,
+                            styles.border1,
+                            styles.borderSolid,
+                            styles.borderBot,
+                        ]}
+                    >
+                        <View
+                            style={[
+                                styles.bgWhite,
+                                styles.borderFull,
+                                styles.flexCenter,
+                                { width: 120, height: 120 },
+                            ]}
+                        >
+                            <CheckIcon size={60} color={'black'} stroke={'black'} />
+                        </View>
+                        <Text
+                            style={[
+                                styles.textCenter,
+                                styles.textWhite,
+                                styles.mt24,
+                                styles.fs27,
+                                styles.fw300,
+                            ]}
+                        >
+                            Đặt chuyến thành công!
+                        </Text>
+                    </View>
+
                     <SentFormBooking context={context} title="Tài xế đang đến" />
 
                     {/* thông tin tài xế */}
@@ -124,6 +125,80 @@ const Confirm = () => {
                             )}
                         </View>
 
+                        {/* contact */}
+                        <View style={[styles.flexCenter, styles.mb24]}>
+                            {/* phone */}
+                            <View
+                                style={[
+                                    styles.flexCenter,
+                                    styles.px12,
+                                    styles.py5,
+                                    styles.bgCyan2F,
+                                    styles.borderLeftTop4,
+                                    styles.borderLeftBot4,
+                                ]}
+                            >
+                                <PhoneIcon size={16} color={'white'} />
+                                <Text
+                                    style={[
+                                        styles.textWhite,
+                                        styles.fs16,
+                                        styles.lh24,
+                                        styles.fw400,
+                                        styles.ml5,
+                                    ]}
+                                >
+                                    Gọi
+                                </Text>
+                            </View>
+                            {/* facebook */}
+                            <View
+                                style={[
+                                    styles.flexCenter,
+                                    styles.px12,
+                                    styles.py5,
+                                    styles.bgBlue237,
+                                ]}
+                            >
+                                <ChatBubbleOvalLeftIcon size={16} color={'white'} />
+                                <Text
+                                    style={[
+                                        styles.textWhite,
+                                        styles.fs16,
+                                        styles.lh24,
+                                        styles.fw400,
+                                        styles.ml5,
+                                    ]}
+                                >
+                                    Facebook
+                                </Text>
+                            </View>
+                            {/* zalo */}
+                            <View
+                                style={[
+                                    styles.flexCenter,
+                                    styles.px12,
+                                    styles.py5,
+                                    styles.bgBlue009,
+                                    styles.borderRightTop4,
+                                    styles.borderRightBot4,
+                                ]}
+                            >
+                                <PhoneIcon size={16} color={'white'} />
+                                <Text
+                                    style={[
+                                        styles.textWhite,
+                                        styles.fs16,
+                                        styles.lh24,
+                                        styles.fw400,
+                                        styles.ml5,
+                                    ]}
+                                >
+                                    Zalo
+                                </Text>
+                            </View>
+                        </View>
+
                         {/* thông tin xe */}
                         <View
                             style={[
@@ -132,7 +207,7 @@ const Confirm = () => {
                                 styles.bg161e,
                                 styles.flexRow,
                                 styles.flexFull,
-                                styles.mb20,
+                                styles.mb60,
                             ]}
                         >
                             <Image
@@ -166,7 +241,7 @@ const Confirm = () => {
                                             styles.fs16,
                                             styles.fw400,
                                             styles.lh24,
-                                            styles.bgWhite,
+                                            styles.bgYellow,
                                             styles.px10,
                                         ]}
                                     >
@@ -193,6 +268,16 @@ const Confirm = () => {
                             </View>
                         </View>
                     </View>
+
+                    {/*  */}
+                    <TouchableOpacity
+                        style={[styles.pb60]}
+                        onPress={() => navigation.navigate('PickScreen')}
+                    >
+                        <Text style={[styles.textWhite, styles.flexCenter, styles.fs27]}>
+                            Go Pick
+                        </Text>
+                    </TouchableOpacity>
                 </ScrollView>
 
                 {/* buttom  huy chuyen & tim tai xe*/}

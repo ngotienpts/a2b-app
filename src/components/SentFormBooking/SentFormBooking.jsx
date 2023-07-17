@@ -29,7 +29,7 @@ const SentFormBooking = ({ title, context }) => {
                 <Text style={[styles.fs27, styles.textWhite, styles.lh32, styles.fw300]}>
                     {title}
                 </Text>
-                <Text style={[styles.fs13, styles.textGray77]}>
+                <Text style={[styles.fs14, styles.textGray77]}>
                     {context.bookingForm?.eniqueId}
                 </Text>
             </View>

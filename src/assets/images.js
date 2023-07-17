@@ -4,5 +4,6 @@ import logoDriver from './images/logo_tx.png';
 import user from './images/user.png';
 import preMap from './images/gif/map.gif';
 import driver from './images/5.jpg';
+import qrCode from './images/qr.png';
 
-export { logo, logoDriver, logoSecondary, user, preMap, driver };
+export { logo, logoDriver, logoSecondary, user, preMap, driver, qrCode };
