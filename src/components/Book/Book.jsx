@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useContext, useEffect, useId, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StopCircleIcon, MapPinIcon } from 'react-native-heroicons/solid';
@@ -7,10 +7,82 @@ import styles from '../../styles';
 import Header from '../header/Header';
 import Location from './Location';
 import BookSelectes from './BookSelectes';
+import { BookingFormContext } from '../../redux/bookingFormContext';
+import { fetchCreateOneTrip, fetchStartGPS } from '../../api/DataFetching';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TokenContext } from '../../redux/tokenContext';
 
 const Book = () => {
+  const context = useContext(BookingFormContext);
+  const contextToken = useContext(TokenContext);
+  const eniqueId = useId();
   const { params: item } = useRoute();
   const navigation = useNavigation();
+  const [currentPosition,setCurrentPosition] = useState({});
+  
+  useEffect(() => {
+    takeAddressFromGPS();
+  }, [item, eniqueId]);
+
+
+  // useEffect(() => {
+  //   context.setBookingForm({
+  //     ...context.bookingForm,
+  //     eniqueId,
+  //     endPoint: item,
+  //   });
+  // }, [item, eniqueId]);
+
+  
+
+  const takeAddressFromGPS = async () => {
+    const latString = await AsyncStorage.getItem('lat');
+    const lngString = await AsyncStorage.getItem('lng');
+    lat = parseFloat(latString);
+    lng = parseFloat(lngString);
+    const coords = lat + ',' + lng;
+    fetchStartGPS({
+      start: coords
+    }, 1).then((data) => {
+      // console.log(data);
+      if (data.res == 'success') {
+        setCurrentPosition(data.result);
+        context.setBookingForm({
+          ...context.bookingForm,
+          eniqueId,
+          endPoint: item,
+          startPoint: data.result,
+
+        })
+      }
+    });
+  }
+
+  const createTrip = () => {
+    // console.log('createTrip',fetchCreateOneTrip({
+    //   start_name: currentPosition.start_name,
+    //   start: currentPosition.start,
+    //   end_name: item.name,
+    //   end: item.address,
+    //   comment: context.bookingForm.note,
+    //   isPunish: context.bookingForm.isPunish,
+    //   start_time: context.bookingForm.departureTime,
+    //   vehicle_category_id: context.bookingForm.typeCar
+    // },1))
+    fetchCreateOneTrip({
+      start_name: currentPosition.start_name,
+      start: currentPosition.start,
+      end_name: item.name,
+      end: item.address,
+      comment: context.bookingForm.note,
+      isPunish: context.bookingForm.isPunish,
+      start_time: context.bookingForm.departureTime,
+      vehicle_category_id: context.bookingForm.typeCar
+    },contextToken.token).then((data) => {
+      console.log(data);
+    })
+  }
+
   return (
     <SafeAreaView style={[styles.flexFull, styles.relative]}>
       <View style={[styles.flexFull, styles.bgBlack]}>
@@ -18,16 +90,31 @@ const Book = () => {
         <Header navigation={navigation} title="Đặt chuyến" />
 
         {/* body */}
-        <ScrollView style={[styles.flexFull, styles.pt15, styles.px15]}>
-          <Text style={[styles.fs27, styles.textWhite, styles.lh32, styles.mb24, styles.fw300]}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={[styles.flexFull, styles.pt15, styles.px15]}
+        >
+          <Text
+            style={[
+              styles.fs27,
+              styles.textWhite,
+              styles.lh32,
+              styles.mb24,
+              styles.fw300,
+            ]}
+          >
             Bạn đang đặt chuyến
           </Text>
 
           {/* location */}
-          <Location navigation={navigation} data={item} />
+          <Location
+            navigation={navigation}
+            data={item}
+            currentPosition={currentPosition}
+          />
 
           {/* select */}
-          <BookSelectes />
+          <BookSelectes context={context} />
         </ScrollView>
 
         {/* buttom  huy chuyen & tim tai xe*/}
@@ -40,6 +127,7 @@ const Book = () => {
               styles.itemsCenter,
               styles.justifyCenter,
             ]}
+            onPress={() => navigation.goBack()}
           >
             <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
           </TouchableOpacity>
@@ -51,6 +139,7 @@ const Book = () => {
               styles.itemsCenter,
               styles.justifyCenter,
             ]}
+            onPress={() => createTrip()}
           >
             <Text style={[styles.fs16, styles.textWhite]}>Tìm tài xế</Text>
           </TouchableOpacity>

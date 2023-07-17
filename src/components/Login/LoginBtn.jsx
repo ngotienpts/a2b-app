@@ -12,7 +12,6 @@ const ios = Platform.OS == 'ios';
 
 const LoginBtn = () => {
   const navigation = useNavigation();
-
   const androidClientId = '187142393375-7bp1qk9479dibdaepdpj3ibeotm4pr3p.apps.googleusercontent.com';
   const webClientId = '187142393375-c2ai5ek3ap50qat3i710ucc9mirv4j2b.apps.googleusercontent.com';
   const [request, response, promptAsync] = Google.useAuthRequest({

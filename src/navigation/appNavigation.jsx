@@ -14,6 +14,10 @@ import UserScreen from '../screens/UserScreen';
 import MapScreen from '../screens/MapScreen';
 import PreMapScreen from '../screens/PreMapScreen';
 import TokenProvider from '../redux/tokenContext';
+import FindSreen from '../screens/FindSreen';
+import FindDetailScreen from '../screens/FindDetailScreen';
+import BookingFormProvider from '../redux/bookingFormContext';
+import ConfirmScreen from '../screens/ConfirmScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -63,24 +67,28 @@ const HomeStackNavigation = () => {
       />
     </Tab.Navigator>
   );
-};
-
+}
 const AppNavigation = () => {
-  return (
-    <TokenProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Home" component={HomeStackNavigation} />
-          <Stack.Screen name="Book" component={BookScreen} />
-          <Stack.Screen name="DriverScreen" component={DriverScreen} />
-          <Stack.Screen name="UserScreen" component={UserScreen} />
-          <Stack.Screen name="MapScreen" component={MapScreen} />
-          <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </TokenProvider>
-  );
+    return (
+        <TokenProvider>
+            <BookingFormProvider>
+                <NavigationContainer>
+                    <Stack.Navigator screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="Login" component={LoginScreen} />
+                        <Stack.Screen name="Home" component={HomeStackNavigation} />
+                        <Stack.Screen name="Book" component={BookScreen} />
+                        <Stack.Screen name="DriverScreen" component={DriverScreen} />
+                        <Stack.Screen name="UserScreen" component={UserScreen} />
+                        <Stack.Screen name="MapScreen" component={MapScreen} />
+                        <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
+                        <Stack.Screen name="FindScreen" component={FindSreen} />
+                        <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
+                        <Stack.Screen name="ConfirmScreen" component={ConfirmScreen} />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </BookingFormProvider>
+        </TokenProvider>
+    );
 };
 
 export default AppNavigation;
