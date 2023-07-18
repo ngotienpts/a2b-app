@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -12,10 +12,9 @@ import {
 
 import styles from '../../styles';
 import Header from '../header/Header';
-import { Image } from 'react-native';
 import { fallbackImage } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
-import SentFormBooking from '../SentFormBooking/SentFormBooking';
+import SentFormBooking from '../sentFormBooking';
 
 const Confirm = () => {
     const context = useContext(BookingFormContext);

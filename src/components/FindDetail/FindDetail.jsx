@@ -10,7 +10,8 @@ import Header from '../header/Header';
 import { Image } from 'react-native';
 import { fallbackImage, fetchReviewListEndpoint } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
-import SentFormBooking from '../SentFormBooking/SentFormBooking';
+import SentFormBooking from '../sentFormBooking';
+import MomentComponent from '../moment';
 
 const FindDetail = () => {
     const context = useContext(BookingFormContext);
@@ -21,16 +22,6 @@ const FindDetail = () => {
     const getReviewList = async (id) => {
         const data = await fetchReviewListEndpoint(id);
         if (data && data.result.list) setReviewDriver(data.result.list);
-    };
-
-    const calculateDaysDifference = (dateTimeString) => {
-        const targetDate = new Date(dateTimeString);
-        const currentDate = new Date();
-
-        const timeDifference = currentDate.getTime() - targetDate.getTime();
-        const daysDifference = Math.floor(timeDifference / (1000 * 3600 * 24));
-
-        return daysDifference;
     };
 
     const StarsDisplay = ({ value }) => {
@@ -235,7 +226,7 @@ const FindDetail = () => {
                                             style={[styles.flexRow, styles.itemsCenter, styles.mt5]}
                                         >
                                             <StarsDisplay value={item?.star} />
-                                            <Text
+                                            <MomentComponent
                                                 style={[
                                                     styles.textGray77,
                                                     styles.fs14,
@@ -243,10 +234,8 @@ const FindDetail = () => {
                                                     styles.fw400,
                                                     styles.ml15,
                                                 ]}
-                                            >
-                                                {calculateDaysDifference(item?.created_at)} ngày
-                                                trước
-                                            </Text>
+                                                timeString={item?.created_at}
+                                            />
                                         </View>
                                     </View>
                                 </View>

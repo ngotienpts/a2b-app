@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -16,7 +16,6 @@ import Header from '../header/Header';
 import { Image } from 'react-native';
 import { fallbackImage } from '../../api/DataFetching';
 import { qrCode } from '../../assets/images';
-import { TextInput } from 'react-native';
 import { reviewTextComplete } from '../../constants';
 
 const Complete = () => {

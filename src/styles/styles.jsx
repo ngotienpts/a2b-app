@@ -15,6 +15,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    flexEnd: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+    },
+    flexBaseLine: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
+    },
     flexBetween: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -63,6 +71,12 @@ const styles = StyleSheet.create({
     w250: {
         width: 250,
     },
+    h32: {
+        height: 32,
+    },
+    h46: {
+        height: 46,
+    },
     h48: {
         height: 48,
     },
@@ -75,6 +89,13 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
 
+    /*-------------------------------------------------------------------------- */
+    gap15: {
+        gap: 15,
+    },
+    gap20: {
+        gap: 20,
+    },
     /*-------------------------------------------------------------------------- */
     bgBlack: {
         backgroundColor: '#000',
@@ -115,6 +136,9 @@ const styles = StyleSheet.create({
     bgCyan2F: {
         backgroundColor: '#2F9881',
     },
+    bgTransparent: {
+        backgroundColor: 'transparent',
+    },
     /*-------------------------------------------------------------------------- */
     textWhite: {
         color: 'white',
@@ -127,6 +151,9 @@ const styles = StyleSheet.create({
     },
     textYellow: {
         color: '#FFB848',
+    },
+    textCyan2F: {
+        color: '#2F9881',
     },
     textRedE8: {
         color: '#E8424A',
@@ -221,6 +248,9 @@ const styles = StyleSheet.create({
     fs16: {
         fontSize: 16,
     },
+    fs18: {
+        fontSize: 18,
+    },
     fs22: {
         fontSize: 22,
     },
@@ -232,6 +262,9 @@ const styles = StyleSheet.create({
     },
     fs28: {
         fontSize: 28,
+    },
+    fs32: {
+        fontSize: 32,
     },
     fs42: {
         fontSize: 42,

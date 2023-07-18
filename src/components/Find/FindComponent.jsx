@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -14,11 +14,10 @@ import { CircleFade } from 'react-native-animated-spinkit';
 
 import styles from '../../styles';
 import Header from '../header/Header';
-import { Image } from 'react-native';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import { listDrivers } from '../../constants';
 import { fallbackImage } from '../../api/DataFetching';
-import SentFormBooking from '../SentFormBooking/SentFormBooking';
+import SentFormBooking from '../sentFormBooking';
 
 const FindComponent = () => {
     const context = useContext(BookingFormContext);

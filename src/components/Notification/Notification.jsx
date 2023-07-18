@@ -30,7 +30,7 @@ const Notification = () => {
                     </View>
 
                     {/* list notification */}
-                    <View>
+                    <View style={{ paddingBottom: 100 }}>
                         {notifications.map((noti, index) => (
                             <TouchableOpacity
                                 key={noti.notify_id}
@@ -43,26 +43,16 @@ const Notification = () => {
                                 onPress={() => navigation.navigate(noti.screen)}
                             >
                                 <View style={[styles.flexBetween, styles.mb12]}>
-                                    {/* <Text
+                                    <MomentComponent
+                                        timeString={noti.created_at}
                                         style={[
                                             styles.textGray77,
                                             styles.fs16,
                                             styles.lh24,
                                             styles.fw300,
                                         ]}
-                                    >
-                                        <MomentComponent timeString={noti.created_at} />
-                                    </Text> */}
-                                    <Text
-                                        style={[
-                                            styles.textGray77,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        {noti.created_at}
-                                    </Text>
+                                    />
+
                                     {noti.status == 1 && (
                                         <Text
                                             style={[

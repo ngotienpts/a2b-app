@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
 import React, { useEffect, useState } from 'react';
-
 import { MapPinIcon, StopCircleIcon } from 'react-native-heroicons/solid';
 import { ChevronDownIcon, ClockIcon, PencilIcon, TruckIcon } from 'react-native-heroicons/outline';
 import Collapsible from 'react-native-collapsible';

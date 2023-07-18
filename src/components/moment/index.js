@@ -1,2 +1,3 @@
-import Moment from 'react-moment';
-export default Moment;
+import MomentComponent from './MomentComponent';
+
+export default MomentComponent;

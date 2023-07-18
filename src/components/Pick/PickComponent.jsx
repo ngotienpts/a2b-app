@@ -4,9 +4,10 @@ import MapView, { Marker } from 'react-native-maps';
 import { Text, View } from 'react-native';
 import { BottomSheetModal, BottomSheetModalProvider, TouchableOpacity } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 import styles from '../../styles';
-import { useNavigation } from '@react-navigation/native';
+
 const PickComponent = () => {
     const navigation = useNavigation();
     const bottomSheetModalRef = useRef(null);

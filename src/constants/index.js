@@ -105,7 +105,7 @@ export const notifications = [
         content: 'Trừ 8k (3%) phí nền tảng của chuyến đi #22',
         status: '1',
         created_at: '2023-05-26 14:10:43',
-        screen: 'TransactionScreen',
+        screen: 'Login',
         telegram: '5536223873',
         is_telegram: '1',
     },

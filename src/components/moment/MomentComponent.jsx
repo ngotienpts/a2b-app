@@ -1,8 +1,8 @@
+import { View, Text } from 'react-native';
 import React from 'react';
 import moment from 'moment';
-import { Text } from 'react-native';
 
-const MomentComponent = ({ timeString }) => {
+const MomentComponent = ({ timeString, style }) => {
     const currentTime = moment();
     const pastTime = moment(timeString);
     const duration = moment.duration(currentTime.diff(pastTime));
@@ -12,7 +12,6 @@ const MomentComponent = ({ timeString }) => {
     const daysAgo = duration.asDays();
 
     let output;
-
     switch (true) {
         case monthsAgo >= 1:
             output = `${Math.floor(monthsAgo)} tháng trước`;
@@ -26,8 +25,11 @@ const MomentComponent = ({ timeString }) => {
         default:
             output = 'vừa xong';
     }
-
-    return <Text>{output}</Text>;
+    return (
+        <View>
+            <Text style={style}>{output}</Text>
+        </View>
+    );
 };
 
 export default MomentComponent;

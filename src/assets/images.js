@@ -5,5 +5,6 @@ import user from './images/user.png';
 import preMap from './images/gif/map.gif';
 import driver from './images/5.jpg';
 import qrCode from './images/qr.png';
+import fallbackUser from './images/fallbackUser.png';
 
-export { logo, logoDriver, logoSecondary, user, preMap, driver, qrCode };
+export { logo, logoDriver, logoSecondary, user, preMap, driver, qrCode, fallbackUser };

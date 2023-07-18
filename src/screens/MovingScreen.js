@@ -1,5 +1,5 @@
 import React from 'react';
-import MovingComponent from '../components/Moving/MovingComponent';
+import MovingComponent from '../components/moving';
 
 const MovingScreen = () => {
     return <MovingComponent />;
