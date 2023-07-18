@@ -8,9 +8,8 @@ import styles from '../../styles';
 import Header from './Header';
 import Result from './Result';
 import ResultDefault from './ResultDefault';
-import { searchData } from '../../constants';
 import { debounce } from 'lodash';
-import { fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
+import { fetchHistorySearch, fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -19,17 +18,22 @@ const Home = () => {
   const [results, setResults] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [name, setName] = useState('');
-  const [hasProfile, setHasProfile] = useState(false);
+  const [history, setHistory] = useState({});
   const context = useContext(TokenContext);
 
   useEffect(() => {
-    // console.log('token123',context.token)
-    if(!hasProfile){
-      showProfile();
-      setHasProfile(true);
-      // removeItem();
-    }
+    showProfile();
+    historySearch();
   },[]) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
+
+  const historySearch = async () => {
+    fetchHistorySearch(context.token)
+    .then((data) => {
+      if(data.res === 'success'){
+        setHistory(data.result);
+      }
+    })
+  }
 
   const removeItem = async() => {
     await AsyncStorage.removeItem('lat');
@@ -175,7 +179,7 @@ const Home = () => {
           {inputValue.length > 0 ? (
             <Result results={results} navigation={navigation} />
           ) : (
-            <ResultDefault data={searchData} navigation={navigation} />
+            <ResultDefault data={history} navigation={navigation} />
           )}
         </View>
       </View>

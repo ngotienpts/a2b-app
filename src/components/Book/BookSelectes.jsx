@@ -12,7 +12,6 @@ import Collapsible from 'react-native-collapsible';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import styles from '../../styles';
-import { transportations } from '../../constants';
 import { format } from 'date-fns';
 import { fetchListCategoryVehicle } from '../../api/DataFetching';
 
@@ -22,15 +21,17 @@ const BookSelects = ({ context }) => {
     const [selectedOption, setSelectedOption] = useState('Xe Sedan');
     const [vehicleId, setVehicleId] = useState(1);
     const [activeIndex, setActiveIndex] = useState(0);
-    const [activeElement, setActiveElement] = useState('RANGE_ELEMENT');
+    const [activeElement, setActiveElement] = useState('NOW_ELEMENT');
     const [note, setNote] = useState('');
     const [timeRange, setTimeRange] = useState(30);
     const [timeString, setTimeString] = useState('');
+    const [timeUpdate, setTimeUpdate] = useState('');
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
     const [showPickerTime, setShowPickerTime] = useState(false);
     const [categoryVehicleList, setCategoryVehicleList] = useState([]);
+
 
     const getActiveText = useCallback(() => {
         // let obj = {};
@@ -47,7 +48,7 @@ const BookSelects = ({ context }) => {
                 return {
                     title: timeString,
                     isPunish: 0,
-                    time: format(date, 'yyyy-MM-dd HH:mm')
+                    time: timeUpdate,
                 }
             case 'TIME_ELEMENT':
                 // return `${format(date, 'dd-MM-yyyy')} ${format(time, 'HH:mm:ss')}`;
@@ -90,7 +91,6 @@ const BookSelects = ({ context }) => {
     };
 
     const listCateVehicle = async () => {
-        let obj = {};
         try {
           const data = await fetchListCategoryVehicle(1);
           if (data.res === 'success') {
@@ -99,27 +99,53 @@ const BookSelects = ({ context }) => {
         } catch (error) {
           console.error('Lỗi khi lấy danh sách danh mục:', error);
         }
-        return obj;
-      };
-      
-      useEffect(() => {
-        const fetchData = async () => {
-          const result = await listCateVehicle();
-          setCategoryVehicleList(result);
-        };
-      
-        fetchData();
-      }, []);
+    };
+    
+    useEffect(() => {
+    const fetchData = async () => {
+        const result = await listCateVehicle();
+        setCategoryVehicleList(result);
+    };
+    
+    fetchData();
+    }, []);
 
     useEffect(() => {
         const hours = Math.floor(timeRange / 60);
         const minutes = timeRange % 60;
 
-        const hoursString = hours > 0 ? `${hours} giờ` : '';
-        const minutesString = minutes > 0 ? `${minutes} phút` : '';
-        const newTimeString = `Sau ${hoursString} ${minutesString} nữa`;
+        const hoursString = hours > 0 ? ` ${hours} giờ` : '';
+        const minutesString = minutes > 0 ? ` ${minutes} phút` : '';
+        const newTimeString = `Sau${hoursString}${minutesString} nữa`;
         setTimeString(newTimeString);
-        // const time = format(date, 'dd-MM-yyyy HH:mm:ss');
+        //set thoi gian
+        const currentHour = date.getHours();
+        const currentMinute = date.getMinutes();
+    
+        // Tính tổng số phút tính từ 00:00 AM
+        const totalMinutes = currentHour * 60 + currentMinute;
+        // Kiểm tra nếu thời gian đầu vào là ban đêm và thời gian sau đó vượt quá ngày hôm sau
+        if (totalMinutes >= (24 * 60 - timeRange)) {
+            const futureMinutes = (totalMinutes + timeRange) % (24 * 60);
+        
+            // Chuyển đổi thành giờ và phút
+            const futureHour = Math.floor(futureMinutes / 60);
+            const futureMinute = futureMinutes % 60;
+        
+            // Tạo đối tượng Date cho thời gian sau thời lượng định trước
+            const futureDate = new Date();
+            futureDate.setDate(date.getDate() + 1); // Tăng ngày lên 1
+            futureDate.setHours(futureHour);
+            futureDate.setMinutes(futureMinute);
+    
+            const formattedDateTime = format(futureDate,'yyyy-MM-dd HH:mm');
+            setTimeUpdate(formattedDateTime)
+        }else{
+            const futureDate = new Date(date.getTime() + (timeRange * 60 * 1000));
+            const formattedDateTime = format(futureDate,'yyyy-MM-dd HH:mm');
+            setTimeUpdate(formattedDateTime)
+            // console.log(format(futureDate,'yyyy-MM-dd HH:mm'));
+        }
         
     }, [timeRange]);
 
@@ -295,7 +321,7 @@ const BookSelects = ({ context }) => {
                                 <Slider
                                     style={{ width: '100%', height: 40 }}
                                     minimumValue={10}
-                                    maximumValue={150}
+                                    maximumValue={120}
                                     step={10}
                                     onValueChange={(newValue) => {
                                         setTimeRange(newValue);

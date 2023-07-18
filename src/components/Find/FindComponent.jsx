@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StarIcon } from 'react-native-heroicons/solid';
 import {
     ArrowUturnRightIcon,
@@ -32,7 +32,8 @@ const FindComponent = () => {
     const context = useContext(BookingFormContext);
     // console.log(context);
     const navigation = useNavigation();
-
+    const {params} = useRoute();
+    console.log(params);
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>

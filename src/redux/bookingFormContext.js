@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import React, { createContext, useState } from 'react';
 
 export const BookingFormContext = createContext();
@@ -7,8 +8,9 @@ const BookingFormProvider = ({ children }) => {
         eniqueId: '',
         startPoint: '',
         endPoint: '',
-        typeCar: '',
-        departureTime: '',
+        typeCar: '' || 1,
+        nameCar: '' || 'Xe Sedan',
+        departureTime: '' || format(new Date(), 'yyyy-MM-dd HH:mm'),
         note: '',
         isPunish: 0
     });

@@ -20,6 +20,10 @@ const SentFormBooking = ({ title, context }) => {
         }).start();
     }, [isDropdownVisible]);
 
+    // const detailTrip = async() => {
+
+    // }
+
     const toogleDropdown = () => {
         setDropdownVisible((isDropdownVisible) => !isDropdownVisible);
     };
@@ -30,7 +34,7 @@ const SentFormBooking = ({ title, context }) => {
                     {title}
                 </Text>
                 <Text style={[styles.fs13, styles.textGray77]}>
-                    {context.bookingForm?.eniqueId}
+                    #{context.bookingForm?.eniqueId}
                 </Text>
             </View>
             <View style={[styles.px15]}>

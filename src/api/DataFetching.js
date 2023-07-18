@@ -29,27 +29,31 @@ const postApi = async (endpoint, data) => {
     const options = {
         method: 'POST',
         url: endpoint,
-        data: JSON.stringify(data),
+        data: data ? data : {},
         headers: {
-            'Content-Type': 'application/json',
-        },
+            'Content-Type': 'application/x-www-form-urlencoded' //dữ liệu sẽ được mã hóa dưới dạng chuỗi query string và được gửi qua body của yêu cầu HTTP
+        }
     };
     try {
         const response = await axios.request(options);
-        return response;
+        return response.data;
     } catch (error) {
         console.log('Error', error);
         return {};
     }
 };
 //api tim kiem
-export const fetchSearchEndpoint = (params,token) => {
+export const fetchSearchEndpoint = (params, token) => {
   const searchEndpoint = `${baseUrl}/${token}/search/info`;
   // return params
   return apiCall(searchEndpoint,params);
 }
-
-
+//lich su tim kiem
+export const fetchHistorySearch = (token) => {
+    const historySearch = `${baseUrl}/${token}/history/search`;
+    return apiCall(historySearch)
+}
+//danh gia
 export const fetchReviewListEndpoint = (id) => {
     return apiCall(reviewListEndpoint(id));
 };
@@ -59,14 +63,14 @@ export const fetchProfileUser = (token) => { // nhan tham so la params la 1 obje
     return apiCall(profileEndpoint);
 }
 //lay gps
-export const fetchStartGPS = (params,token) => {
+export const fetchStartGPS = (params, token) => {
     const updateGPS = `${baseUrl}/${token}/search/address`;
     // return params
     return apiCall(updateGPS,params);
 }
 //tao chuyen di
-export const fetchCreateOneTrip = (data,token) => {
-    // return params;
+export const fetchCreateOneTrip = (data, token) => {
+    // return data;
     const createTrip = `${baseUrl}/${token}/trip/create`;
     return postApi(createTrip,data);
 }

@@ -11,6 +11,7 @@ import { BookingFormContext } from '../../redux/bookingFormContext';
 import { fetchCreateOneTrip, fetchStartGPS } from '../../api/DataFetching';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TokenContext } from '../../redux/tokenContext';
+import { format } from 'date-fns';
 
 const Book = () => {
   const context = useContext(BookingFormContext);
@@ -19,6 +20,7 @@ const Book = () => {
   const { params: item } = useRoute();
   const navigation = useNavigation();
   const [currentPosition,setCurrentPosition] = useState({});
+  const [coordStart, setCoordStart] = useState('');
   
   useEffect(() => {
     takeAddressFromGPS();
@@ -41,6 +43,7 @@ const Book = () => {
     lat = parseFloat(latString);
     lng = parseFloat(lngString);
     const coords = lat + ',' + lng;
+    setCoordStart(coords);
     fetchStartGPS({
       start: coords
     }, 1).then((data) => {
@@ -59,27 +62,30 @@ const Book = () => {
   }
 
   const createTrip = () => {
-    // console.log('createTrip',fetchCreateOneTrip({
-    //   start_name: currentPosition.start_name,
-    //   start: currentPosition.start,
-    //   end_name: item.name,
-    //   end: item.address,
-    //   comment: context.bookingForm.note,
-    //   isPunish: context.bookingForm.isPunish,
-    //   start_time: context.bookingForm.departureTime,
-    //   vehicle_category_id: context.bookingForm.typeCar
-    // },1))
+    // console.log(context);
+    const latEnd = context.bookingForm.endPoint.coordinates.lat;
+    const lngEnd = context.bookingForm.endPoint.coordinates.lng;
+    const coordEnd = latEnd + ',' + lngEnd;
     fetchCreateOneTrip({
       start_name: currentPosition.start_name,
       start: currentPosition.start,
       end_name: item.name,
       end: item.address,
       comment: context.bookingForm.note,
-      isPunish: context.bookingForm.isPunish,
+      is_punish: context.bookingForm.isPunish,
       start_time: context.bookingForm.departureTime,
-      vehicle_category_id: context.bookingForm.typeCar
+      vehicle_category_id: context.bookingForm.typeCar,
+      coordinates_start: coordStart,
+      coordinates_end: coordEnd
     },contextToken.token).then((data) => {
-      console.log(data);
+      // console.log(data);
+      if(data.res === 'success'){
+        navigation.navigate('FindScreen',item);
+        context.setBookingForm({
+          ...context.bookingForm,
+          eniqueId: data.result,
+        })
+      }
     })
   }
 

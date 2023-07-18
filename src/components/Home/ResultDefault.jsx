@@ -4,6 +4,7 @@ import { MapPinIcon } from 'react-native-heroicons/outline';
 import styles from '../../styles';
 
 const ResultDefault = ({ data, navigation }) => {
+  
   return (
     <View style={[styles.flexFull]}>
       <FlatList
