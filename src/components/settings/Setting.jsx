@@ -6,9 +6,15 @@ import { useNavigation } from '@react-navigation/native';
 import styles from '../../styles';
 import Header from '../header/Header';
 import { fallbackImage } from '../../api/DataFetching';
+import EditTextComponent from '../editTextSetting';
+import EditDateOfBirth from '../editDateOfBirthSetting';
+import PhoneNumberInput from '../editPhoneNumberSetting';
+import PickerSelect from '../pickerSelect';
+import SampleApp from '../pickerSelect/SampleApp';
 
 const Setting = () => {
     const navigation = useNavigation();
+
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
@@ -16,10 +22,7 @@ const Setting = () => {
                 <Header navigation={navigation} title="Tài khoản" />
 
                 {/* body */}
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={[styles.flexFull, styles.pt15]}
-                >
+                <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
                     {/* top */}
                     <View style={[styles.bg161e, styles.px15, styles.py12]}>
                         <Text
@@ -80,7 +83,7 @@ const Setting = () => {
                     </View>
 
                     {/* avatar */}
-                    <View>
+                    <View style={[styles.flexCenter, styles.my24]}>
                         <Image
                             source={{
                                 uri:
@@ -90,6 +93,422 @@ const Setting = () => {
                             style={[{ width: 114, height: 114 }, styles.borderFull]}
                             resizeMode="cover"
                         />
+                    </View>
+
+                    {/* list */}
+                    <View>
+                        {/* thông tin cá nhân */}
+                        <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
+                            {/* title */}
+                            <Text
+                                style={[
+                                    styles.fs16,
+                                    styles.lh24,
+                                    styles.textGray77,
+                                    styles.uppercase,
+                                    styles.px15,
+                                    styles.mb10,
+                                ]}
+                            >
+                                Thông tin cá nhân
+                            </Text>
+                            {/*  */}
+                            <View>
+                                {/* tên */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Tên
+                                    </Text>
+                                    <EditTextComponent
+                                        label={'Tên'}
+                                        initialValue={'Nguyen Van A'}
+                                        maxLength={20}
+                                    />
+                                </View>
+
+                                {/* ngày sinh */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Ngày sinh
+                                    </Text>
+                                    <EditDateOfBirth
+                                        label={'Ngày sinh'}
+                                        initialValue={'2023-05-12'}
+                                    />
+                                </View>
+
+                                {/* giới tính */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Giới tính
+                                    </Text>
+                                    {/* <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        Nguyễn Văn A
+                                    </Text> */}
+                                    {/* <SampleApp /> */}
+                                </View>
+                                {/* item */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Xác minh danh tính
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        Nguyễn Văn A
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                        {/* thông tin liên hệ */}
+                        <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
+                            {/* title */}
+                            <Text
+                                style={[
+                                    styles.fs16,
+                                    styles.lh24,
+                                    styles.textGray77,
+                                    styles.uppercase,
+                                    styles.px15,
+                                    styles.mb10,
+                                ]}
+                            >
+                                Thông tin liên hệ
+                            </Text>
+                            {/*  */}
+                            <View>
+                                {/* item */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Số điện thoại
+                                    </Text>
+                                    <PhoneNumberInput label={'Sdt'} initialValue={'0912345678'} />
+                                </View>
+                                {/* item */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Ngày sinh
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        Nguyễn Văn A
+                                    </Text>
+                                </View>
+                                {/* item */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Giới tính
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        Nguyễn Văn A
+                                    </Text>
+                                </View>
+                                {/* item */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Xác minh danh tính
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        Nguyễn Văn A
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                        {/* tôi làm tài xế  */}
+                        <View style={[styles.mb24]}>
+                            {/* title */}
+                            <Text
+                                style={[
+                                    styles.fs16,
+                                    styles.lh24,
+                                    styles.textGray77,
+                                    styles.uppercase,
+                                    styles.px15,
+                                    styles.mb10,
+                                ]}
+                            >
+                                Tôi làm tài xế
+                            </Text>
+                            {/*  */}
+                            <View>
+                                {/* item */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Tên
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        Nguyễn Văn A
+                                    </Text>
+                                </View>
+                                {/* item */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Ngày sinh
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        Nguyễn Văn A
+                                    </Text>
+                                </View>
+                                {/* item */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Giới tính
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        Nguyễn Văn A
+                                    </Text>
+                                </View>
+                                {/* item */}
+                                <View
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py12,
+                                        styles.flexBetween,
+                                        styles.borderBot,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw300,
+                                        ]}
+                                    >
+                                        Xác minh danh tính
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        Nguyễn Văn A
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
                     </View>
                 </ScrollView>
             </View>
