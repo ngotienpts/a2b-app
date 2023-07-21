@@ -1,3 +1,3 @@
-import PickerSelect from './PickerSelect';
+import DropdownModal from './DropdownModal';
 
-export default PickerSelect;
+export default DropdownModal;

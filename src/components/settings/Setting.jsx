@@ -1,19 +1,59 @@
 import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 import styles from '../../styles';
 import Header from '../header/Header';
 import { fallbackImage } from '../../api/DataFetching';
-import EditTextComponent from '../editTextSetting';
-import EditDateOfBirth from '../editDateOfBirthSetting';
-import PhoneNumberInput from '../editPhoneNumberSetting';
-import PickerSelect from '../pickerSelect';
-import SampleApp from '../pickerSelect/SampleApp';
+import PersonalInfoItem from './PersonalInfoItem';
+import { ChevronRightIcon } from 'react-native-heroicons/outline';
 
 const Setting = () => {
     const navigation = useNavigation();
+    const dataGender = [
+        { id: 0, label: 'Nam' },
+        { id: 1, label: 'Nữ' },
+        { id: 2, label: 'Khác' },
+    ];
+    const apiName = 'Nguyen Van A';
+    const apiBirthday = '2023-05-12';
+    const apiLinkFb = 'mr.otthanh';
+    const apiPhoneNumber = '0912345678';
+    const apiMyCar = 'Volvo S90';
+    const apiBankAccount = '1111222233334444';
+
+    const [name, setName] = useState(apiName);
+    const [dateOfBirth, setDateOfBirth] = useState(new Date(apiBirthday));
+    const [linkFb, setLinkFb] = useState(apiLinkFb);
+    const [phoneNumber, setPhoneNumber] = useState(apiPhoneNumber);
+    const [myCar, setMyCar] = useState(apiMyCar);
+    const [bankAccount, setBankAccount] = useState(apiBankAccount);
+
+    console.log('name', name);
+    console.log('linkFb', linkFb);
+    console.log('bỉthday', dateOfBirth);
+    console.log('phone', phoneNumber);
+    console.log('apiBankAccount', apiBankAccount);
+
+    const handleNameChange = (newValue) => {
+        setName(newValue);
+    };
+    const handleDateChange = (newDate) => {
+        setDateOfBirth(newDate);
+    };
+    const handleLinkFbChange = (newValue) => {
+        setLinkFb(newValue);
+    };
+    const handlePhoneNumberChange = (newPhoneNumber) => {
+        setPhoneNumber(newPhoneNumber);
+    };
+    const handleMyCarChange = (newValue) => {
+        setMyCar(newValue);
+    };
+    const handleBankAccountChange = (newValue) => {
+        setBankAccount(newValue);
+    };
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
@@ -112,125 +152,24 @@ const Setting = () => {
                             >
                                 Thông tin cá nhân
                             </Text>
-                            {/*  */}
-                            <View>
-                                {/* tên */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Tên
-                                    </Text>
-                                    <EditTextComponent
-                                        label={'Tên'}
-                                        initialValue={'Nguyen Van A'}
-                                        maxLength={20}
-                                    />
-                                </View>
-
-                                {/* ngày sinh */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Ngày sinh
-                                    </Text>
-                                    <EditDateOfBirth
-                                        label={'Ngày sinh'}
-                                        initialValue={'2023-05-12'}
-                                    />
-                                </View>
-
-                                {/* giới tính */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Giới tính
-                                    </Text>
-                                    {/* <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                        ]}
-                                    >
-                                        Nguyễn Văn A
-                                    </Text> */}
-                                    {/* <SampleApp /> */}
-                                </View>
-                                {/* item */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Xác minh danh tính
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                        ]}
-                                    >
-                                        Nguyễn Văn A
-                                    </Text>
-                                </View>
-                            </View>
+                            {/* Tên */}
+                            <PersonalInfoItem
+                                label="Tên"
+                                type="text"
+                                value={name}
+                                onChangeText={handleNameChange}
+                            />
+                            {/* Ngày sinh */}
+                            <PersonalInfoItem
+                                label="Ngày sinh"
+                                type="date"
+                                value={dateOfBirth}
+                                onDateChange={handleDateChange}
+                            />
+                            {/* Giới tính */}
+                            <PersonalInfoItem label="Giới tính" type="dropdown" data={dataGender} />
+                            {/* Xác minh danh tính */}
+                            <PersonalInfoItem label="Xác minh danh tính" type="text" value="Chưa" />
                         </View>
                         {/* thông tin liên hệ */}
                         <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
@@ -248,126 +187,25 @@ const Setting = () => {
                                 Thông tin liên hệ
                             </Text>
                             {/*  */}
-                            <View>
-                                {/* item */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Số điện thoại
-                                    </Text>
-                                    <PhoneNumberInput label={'Sdt'} initialValue={'0912345678'} />
-                                </View>
-                                {/* item */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Ngày sinh
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                        ]}
-                                    >
-                                        Nguyễn Văn A
-                                    </Text>
-                                </View>
-                                {/* item */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Giới tính
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                        ]}
-                                    >
-                                        Nguyễn Văn A
-                                    </Text>
-                                </View>
-                                {/* item */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Xác minh danh tính
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                        ]}
-                                    >
-                                        Nguyễn Văn A
-                                    </Text>
-                                </View>
-                            </View>
+                            {/* sô điện thoại */}
+                            <PersonalInfoItem
+                                label="Số điện thoại"
+                                type="phoneNumber"
+                                value={phoneNumber}
+                                onValueChange={handlePhoneNumberChange}
+                            />
+                            {/* Liên kết fb */}
+                            <PersonalInfoItem
+                                label="Liên kết Facebook"
+                                type="Url_Fb"
+                                linkFb={linkFb}
+                                value={linkFb}
+                                onChangeText={handleLinkFbChange}
+                                maxLength={20}
+                            />
                         </View>
                         {/* tôi làm tài xế  */}
-                        <View style={[styles.mb24]}>
+                        <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
                             {/* title */}
                             <Text
                                 style={[
@@ -383,6 +221,34 @@ const Setting = () => {
                             </Text>
                             {/*  */}
                             <View>
+                                {/* Xe của tôi */}
+                                <PersonalInfoItem
+                                    type={'myCar'}
+                                    label={'Xe của tôi'}
+                                    value={myCar}
+                                    onChangeText={handleMyCarChange}
+                                />
+                                {/* Số tài khoản */}
+                                <PersonalInfoItem
+                                    type={'bankAccount'}
+                                    label={'Số tài khoản'}
+                                    value={bankAccount}
+                                    onChangeText={handleBankAccountChange}
+                                    maxLength={19}
+                                />
+                                {/* Tên ngân hàng */}
+                                <PersonalInfoItem
+                                    label="Tên ngân hàng"
+                                    type="dropdown"
+                                    data={dataGender}
+                                />
+                                {/* Tên tài khoản */}
+                                <PersonalInfoItem
+                                    label="Tên tài khoản"
+                                    type="text"
+                                    value={name}
+                                    onChangeText={handleNameChange}
+                                />
                                 {/* item */}
                                 <View
                                     style={[
@@ -401,7 +267,7 @@ const Setting = () => {
                                             styles.fw300,
                                         ]}
                                     >
-                                        Tên
+                                        Giới thiệu bạn bè
                                     </Text>
                                     <Text
                                         style={[
@@ -411,100 +277,7 @@ const Setting = () => {
                                             styles.fw400,
                                         ]}
                                     >
-                                        Nguyễn Văn A
-                                    </Text>
-                                </View>
-                                {/* item */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Ngày sinh
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                        ]}
-                                    >
-                                        Nguyễn Văn A
-                                    </Text>
-                                </View>
-                                {/* item */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Giới tính
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                        ]}
-                                    >
-                                        Nguyễn Văn A
-                                    </Text>
-                                </View>
-                                {/* item */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Xác minh danh tính
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                        ]}
-                                    >
-                                        Nguyễn Văn A
+                                        <ChevronRightIcon size={20} color={'white'} />
                                     </Text>
                                 </View>
                             </View>

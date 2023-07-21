@@ -1,12 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 
 import styles from '../../styles';
 
-const PhoneNumberInput = ({ label, initialValue }) => {
+const PhoneNumberInput = ({ label, value, onValueChange }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [text, setText] = useState(initialValue);
+    const [text, setText] = useState(value);
     const textInputRef = useRef(null);
+
+    useEffect(() => {
+        setText(value);
+    }, [value]);
 
     const isValidPhoneNumber = (phoneNumber) => {
         const phoneNumberRegex = /^[0]\d{9}$/;
@@ -30,6 +34,9 @@ const PhoneNumberInput = ({ label, initialValue }) => {
             }
         } else {
             setIsEditing(false);
+            if (onValueChange) {
+                onValueChange(text);
+            }
         }
     };
 

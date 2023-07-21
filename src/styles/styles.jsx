@@ -15,6 +15,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    flexEnd2: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+    },
     flexEnd: {
         flexDirection: 'row',
         alignItems: 'flex-end',
@@ -68,9 +74,41 @@ const styles = StyleSheet.create({
     },
 
     /*-------------------------------------------------------------------------- */
+    z10: {
+        zIndex: 10,
+    },
+    z20: {
+        zIndex: 20,
+    },
+    z30: {
+        zIndex: 30,
+    },
+    z40: {
+        zIndex: 40,
+    },
+    z50: {
+        zIndex: 50,
+    },
+    z100: {
+        zIndex: 100,
+    },
+
+    /*-------------------------------------------------------------------------- */
+    opacity0: {
+        opacity: 0,
+    },
+    opacity50: {
+        opacity: 0.5,
+    },
+    opacity1: {
+        opacity: 1,
+    },
+
+    /*-------------------------------------------------------------------------- */
     w250: {
         width: 250,
     },
+
     h32: {
         height: 32,
     },
@@ -90,6 +128,13 @@ const styles = StyleSheet.create({
     },
 
     /*-------------------------------------------------------------------------- */
+    hidden: {
+        overflow: 'hidden',
+    },
+    scroll: {
+        overflow: 'scroll',
+    },
+    /*-------------------------------------------------------------------------- */
     gap15: {
         gap: 15,
     },
@@ -99,6 +144,9 @@ const styles = StyleSheet.create({
     /*-------------------------------------------------------------------------- */
     bgBlack: {
         backgroundColor: '#000',
+    },
+    bgBlack50: {
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     bgWhite: {
         backgroundColor: '#fff',

@@ -3,16 +3,15 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 
 import styles from '../../styles';
 
-const EditTextComponent = ({ label, initialValue, maxLength }) => {
+const EditTextComponent = ({ label, maxLength, value, onChangeText }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [text, setText] = useState(initialValue);
     const textInputRef = useRef(null);
     const handleToggleEdit = () => {
         setIsEditing(!isEditing);
     };
 
     const handleSave = () => {
-        if (text.trim() === '') {
+        if (value.trim() === '') {
             Alert.alert(`${label} không được để trống`);
             if (textInputRef.current) {
                 textInputRef.current.focus();
@@ -26,9 +25,9 @@ const EditTextComponent = ({ label, initialValue, maxLength }) => {
             {isEditing ? (
                 <TextInput
                     ref={textInputRef}
-                    value={text}
+                    value={value}
                     maxLength={maxLength}
-                    onChangeText={(newText) => setText(newText)}
+                    onChangeText={onChangeText}
                     onBlur={handleSave}
                     autoFocus
                     style={[styles.textWhite, styles.fs16, styles.lh24]}
@@ -36,7 +35,7 @@ const EditTextComponent = ({ label, initialValue, maxLength }) => {
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
                     <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
-                        {text}
+                        {value}
                     </Text>
                 </TouchableOpacity>
             )}
