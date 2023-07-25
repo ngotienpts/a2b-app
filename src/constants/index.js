@@ -131,3 +131,30 @@ export const notifications = [
         is_telegram: '1',
     },
 ];
+
+export const dataGender = [
+    { id: 0, shortname: 'Nam' },
+    { id: 1, shortname: 'Nữ' },
+    { id: 2, shortname: 'Khác' },
+];
+
+export const typeCar = [
+    { id: 0, shortname: 'Sedan' },
+    { id: 1, shortname: 'SUV' },
+    { id: 2, shortname: '16 chỗ' },
+];
+
+export const licenseColor = [
+    { id: 0, shortname: 'Trắng' },
+    { id: 1, shortname: 'Vàng' },
+];
+
+export const bill = [
+    { id: 0, shortname: 'Có' },
+    { id: 1, shortname: 'Không' },
+];
+
+export const water = [
+    { id: 0, shortname: 'Có' },
+    { id: 1, shortname: 'Không' },
+];

@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 
 import styles from '../../styles';
-const DropdownModal = ({ style, data }) => {
+const DropdownModal = ({ style, data, selectedName }) => {
     if (!Array.isArray(data)) {
         data = [];
     }
-
-    const [selectedItem, setSelectedItem] = useState(() => (data.length > 0 ? data[0].label : ''));
+    const [selectedItem, setSelectedItem] = useState(
+        () => selectedName || (data.length > 0 ? data[0].shortname : '')
+    );
     const [modalVisible, setModalVisible] = useState(false);
 
     const handleSelectItem = (itemLabel) => {
@@ -48,13 +49,13 @@ const DropdownModal = ({ style, data }) => {
                         ]}
                     >
                         <ScrollView showsVerticalScrollIndicator={false}>
-                            {data.map((item) => (
+                            {data.map((item, index) => (
                                 <TouchableOpacity
-                                    key={item.id}
-                                    onPress={() => handleSelectItem(item.label)}
+                                    key={index}
+                                    onPress={() => handleSelectItem(item.shortname)}
                                     style={[
                                         styles.py10,
-                                        selectedItem === item?.label && styles.bg161e,
+                                        selectedItem === item?.shortname && styles.bg161e,
                                     ]}
                                 >
                                     <Text
@@ -62,12 +63,12 @@ const DropdownModal = ({ style, data }) => {
                                             styles.fs18,
                                             styles.px10,
 
-                                            selectedItem === item?.label
+                                            selectedItem === item?.shortname
                                                 ? styles.textWhite
                                                 : styles.textGray77,
                                         ]}
                                     >
-                                        {item.label}
+                                        {item.shortname}
                                     </Text>
                                 </TouchableOpacity>
                             ))}

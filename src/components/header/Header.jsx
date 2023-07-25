@@ -15,7 +15,7 @@ const Header = ({ navigation, title }) => {
             </TouchableOpacity>
             <View>
                 <Text style={[styles.textWhite, styles.fs16]}>{title}</Text>
-                <View style={[styles.underline, styles.mt10, { with: 100 }]} />
+                <View style={[styles.underline, styles.mt10]} />
             </View>
             <TouchableOpacity onPress={() => navigation.navigate('UserScreen')}>
                 <Image

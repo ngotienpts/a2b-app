@@ -1,41 +1,42 @@
 import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { ChevronRightIcon } from 'react-native-heroicons/outline';
 
 import styles from '../../styles';
 import Header from '../header/Header';
-import { fallbackImage } from '../../api/DataFetching';
+import { fallbackImage, fetchBankNameEndpoint, fetchSettingEndpoint } from '../../api/DataFetching';
 import PersonalInfoItem from './PersonalInfoItem';
-import { ChevronRightIcon } from 'react-native-heroicons/outline';
+import NextPageSetting from './NextPageSetting';
+import { dataGender } from '../../constants';
 
 const Setting = () => {
     const navigation = useNavigation();
-    const dataGender = [
-        { id: 0, label: 'Nam' },
-        { id: 1, label: 'Nữ' },
-        { id: 2, label: 'Khác' },
-    ];
     const apiName = 'Nguyen Van A';
     const apiBirthday = '2023-05-12';
     const apiLinkFb = 'mr.otthanh';
     const apiPhoneNumber = '0912345678';
     const apiMyCar = 'Volvo S90';
     const apiBankAccount = '1111222233334444';
+    const apiBankName = 'Techcombank';
+    const apiNameBankAccount = 'NGUYEN VAN A';
+    const img = 'https://media.a2b.vn/user/2023/05/12/khanhhoang-093520.jpg';
 
+    const [settingData, setSettingData] = useState([]);
+    const [avatar, setAvatar] = useState(img);
     const [name, setName] = useState(apiName);
     const [dateOfBirth, setDateOfBirth] = useState(new Date(apiBirthday));
     const [linkFb, setLinkFb] = useState(apiLinkFb);
     const [phoneNumber, setPhoneNumber] = useState(apiPhoneNumber);
-    const [myCar, setMyCar] = useState(apiMyCar);
     const [bankAccount, setBankAccount] = useState(apiBankAccount);
+    const [bankName, setBankName] = useState(apiBankName);
+    const [nameBankAccount, setNameBankAccount] = useState(apiNameBankAccount);
+    const [bankNameData, setBankNameData] = useState([]);
 
-    console.log('name', name);
-    console.log('linkFb', linkFb);
-    console.log('bỉthday', dateOfBirth);
-    console.log('phone', phoneNumber);
-    console.log('apiBankAccount', apiBankAccount);
-
+    const handleAvaterChange = (newValue) => {
+        setAvatar(newValue);
+    };
     const handleNameChange = (newValue) => {
         setName(newValue);
     };
@@ -48,12 +49,43 @@ const Setting = () => {
     const handlePhoneNumberChange = (newPhoneNumber) => {
         setPhoneNumber(newPhoneNumber);
     };
-    const handleMyCarChange = (newValue) => {
-        setMyCar(newValue);
-    };
     const handleBankAccountChange = (newValue) => {
         setBankAccount(newValue);
     };
+    const handleNameBankAccountChange = (newValue) => {
+        setNameBankAccount(newValue);
+    };
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await fetchSettingEndpoint();
+                if (response && response.result) {
+                    setSettingData(response.result);
+                }
+            } catch (error) {
+                // Xử lý lỗi
+                console.log(error);
+            }
+        }
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        // Gọi hàm để lấy dữ liệu từ endpoint
+        async function fetchData() {
+            try {
+                const response = await fetchBankNameEndpoint(); // Gọi endpoint tại đây
+                if (response && response.result) {
+                    setBankNameData(response.result);
+                }
+            } catch (error) {
+                // Xử lý lỗi
+                console.log(error);
+            }
+        }
+        fetchData();
+    }, []);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
@@ -125,11 +157,7 @@ const Setting = () => {
                     {/* avatar */}
                     <View style={[styles.flexCenter, styles.my24]}>
                         <Image
-                            source={{
-                                uri:
-                                    'https://i.pinimg.com/236x/3b/a6/8d/3ba68dd05183a0233ea98974dd05a4d4.jpg' ||
-                                    fallbackImage,
-                            }}
+                            source={{ uri: avatar || fallbackImage }}
                             style={[{ width: 114, height: 114 }, styles.borderFull]}
                             resizeMode="cover"
                         />
@@ -167,9 +195,18 @@ const Setting = () => {
                                 onDateChange={handleDateChange}
                             />
                             {/* Giới tính */}
-                            <PersonalInfoItem label="Giới tính" type="dropdown" data={dataGender} />
+                            <PersonalInfoItem
+                                label="Giới tính"
+                                type="dropdown"
+                                data={dataGender}
+                                selectedName={'Nam'}
+                            />
                             {/* Xác minh danh tính */}
-                            <PersonalInfoItem label="Xác minh danh tính" type="text" value="Chưa" />
+                            <NextPageSetting
+                                onPress={() => navigation.navigate('VerificationScreen')}
+                                title={'Xác minh danh tính'}
+                                value={'Chưa'}
+                            />
                         </View>
                         {/* thông tin liên hệ */}
                         <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
@@ -186,7 +223,6 @@ const Setting = () => {
                             >
                                 Thông tin liên hệ
                             </Text>
-                            {/*  */}
                             {/* sô điện thoại */}
                             <PersonalInfoItem
                                 label="Số điện thoại"
@@ -222,11 +258,10 @@ const Setting = () => {
                             {/*  */}
                             <View>
                                 {/* Xe của tôi */}
-                                <PersonalInfoItem
-                                    type={'myCar'}
-                                    label={'Xe của tôi'}
-                                    value={myCar}
-                                    onChangeText={handleMyCarChange}
+                                <NextPageSetting
+                                    onPress={() => navigation.navigate('MyCarScreen')}
+                                    title={'Xe của tôi'}
+                                    value={'Volvo S90'}
                                 />
                                 {/* Số tài khoản */}
                                 <PersonalInfoItem
@@ -240,49 +275,41 @@ const Setting = () => {
                                 <PersonalInfoItem
                                     label="Tên ngân hàng"
                                     type="dropdown"
-                                    data={dataGender}
+                                    data={bankNameData}
+                                    selectedName={bankName}
                                 />
                                 {/* Tên tài khoản */}
                                 <PersonalInfoItem
                                     label="Tên tài khoản"
                                     type="text"
-                                    value={name}
-                                    onChangeText={handleNameChange}
+                                    value={nameBankAccount}
+                                    onChangeText={handleNameBankAccountChange}
                                 />
-                                {/* item */}
-                                <View
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px15,
-                                        styles.py12,
-                                        styles.flexBetween,
-                                        styles.borderBot,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    >
-                                        Giới thiệu bạn bè
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                        ]}
-                                    >
-                                        <ChevronRightIcon size={20} color={'white'} />
-                                    </Text>
-                                </View>
+                                {/* Giới thiệu cho bạn bè */}
+                                <NextPageSetting
+                                    onPress={() => navigation.navigate('ShareScreen')}
+                                    title={'Giới thiệu bạn bè'}
+                                    value={<ChevronRightIcon size={20} color={'white'} />}
+                                />
                             </View>
                         </View>
                     </View>
+
+                    {/* log out */}
+                    <TouchableOpacity style={[styles.flexCenter, styles.mb24]}>
+                        <View>
+                            <Text style={[styles.fs16, styles.textCenter, styles.textRedE8]}>
+                                Đăng xuất
+                            </Text>
+                            <View
+                                style={[
+                                    styles.borderColorRedE8,
+                                    styles.mt5,
+                                    { borderBottomWidth: 1 },
+                                ]}
+                            />
+                        </View>
+                    </TouchableOpacity>
                 </ScrollView>
             </View>
         </SafeAreaView>

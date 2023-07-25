@@ -21,6 +21,9 @@ import ConfirmScreen from '../screens/ConfirmScreen';
 import PickScreen from '../screens/PickScreen';
 import MovingScreen from '../screens/MovingScreen';
 import CompleteScreen from '../screens/CompleteScreen';
+import MyCarScreen from '../screens/MyCarScreen';
+import VerificationScreen from '../screens/VerificationScreen';
+import ShareScreen from '../screens/ShareScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -89,6 +92,9 @@ const AppNavigation = () => {
                         <Stack.Screen name="PickScreen" component={PickScreen} />
                         <Stack.Screen name="MovingScreen" component={MovingScreen} />
                         <Stack.Screen name="CompleteScreen" component={CompleteScreen} />
+                        <Stack.Screen name="MyCarScreen" component={MyCarScreen} />
+                        <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
+                        <Stack.Screen name="ShareScreen" component={ShareScreen} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </BookingFormProvider>

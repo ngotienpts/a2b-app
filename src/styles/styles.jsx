@@ -735,6 +735,9 @@ const styles = StyleSheet.create({
         borderLeftColor: 'rgba(34,43,53,1)',
         borderLeftWidth: 1,
     },
+    borderColorRedE8: {
+        borderColor: '#E8424A',
+    },
     borderColor3e9: {
         borderColor: '#3E97FF',
     },

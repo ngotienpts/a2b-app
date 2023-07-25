@@ -7,7 +7,9 @@ import EditTextComponent from '../editTextSetting';
 import EditDateOfBirth from '../editDateOfBirthSetting';
 import DropdownModal from '../pickerSelect/DropdownModal';
 import PhoneNumberInput from '../editPhoneNumberSetting';
-import BankNumberSetting from '../editBankNumberSetting/BankNumberSetting';
+import BankNumberSetting from '../editBankNumberSetting';
+import NumberSetting from '../editNumberSetting';
+import LicensePlate from '../editLicensePlate';
 
 const PersonalInfoItem = ({
     label,
@@ -19,6 +21,9 @@ const PersonalInfoItem = ({
     onValueChange,
     linkFb,
     maxLength,
+    selectedName,
+    pay,
+    suffixes,
 }) => {
     const renderContent = () => {
         switch (type) {
@@ -29,6 +34,26 @@ const PersonalInfoItem = ({
                         value={value}
                         onChangeText={onChangeText}
                         maxLength={20}
+                    />
+                );
+            case 'number':
+                return (
+                    <NumberSetting
+                        label={label}
+                        value={value}
+                        onChangeText={onChangeText}
+                        maxLength={maxLength}
+                        pay={pay}
+                        suffixes={suffixes}
+                    />
+                );
+            case 'license':
+                return (
+                    <LicensePlate
+                        label={label}
+                        value={value}
+                        onChangeText={onChangeText}
+                        maxLength={maxLength}
                     />
                 );
             case 'date':
@@ -44,6 +69,7 @@ const PersonalInfoItem = ({
                     <DropdownModal
                         style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}
                         data={data}
+                        selectedName={selectedName}
                     />
                 );
             case 'phoneNumber':
