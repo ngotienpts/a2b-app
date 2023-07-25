@@ -10,6 +10,7 @@ import { fallbackImage, fetchBankNameEndpoint, fetchSettingEndpoint } from '../.
 import PersonalInfoItem from './PersonalInfoItem';
 import NextPageSetting from './NextPageSetting';
 import { dataGender } from '../../constants';
+import ChoseImage from './ChoseImage';
 
 const Setting = () => {
     const navigation = useNavigation();
@@ -156,10 +157,17 @@ const Setting = () => {
 
                     {/* avatar */}
                     <View style={[styles.flexCenter, styles.my24]}>
-                        <Image
+                        {/* <Image
                             source={{ uri: avatar || fallbackImage }}
                             style={[{ width: 114, height: 114 }, styles.borderFull]}
                             resizeMode="cover"
+                        /> */}
+                        <ChoseImage
+                            avatar={avatar}
+                            width={114}
+                            height={114}
+                            aspect={[1, 1]}
+                            borderFull={styles.borderFull}
                         />
                     </View>
 

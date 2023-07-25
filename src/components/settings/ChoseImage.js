@@ -1,35 +1,48 @@
-import { Image, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
-import ImagePicker from 'react-native-image-crop-picker';
+import { View, Image, TouchableOpacity, Button } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 
-import { fallbackImage } from '../../api/DataFetching';
-import styles from '../../styles';
+const ChoseImage = ({ aspect, avatar, width, height, borderFull }) => {
+    const [selectedImage, setSelectedImage] = useState(null);
 
-const ChoseImage = ({ avatar, width, height }) => {
-    const [imageUri, setImageUri] = useState(avatar);
+    const handleImagePicker = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Bạn cần cấp quyền truy cập thư viện ảnh');
+            return;
+        }
 
-    const handleSelectImage = () => {
-        ImagePicker.openPicker({
-            width: width,
-            height: height,
-            cropping: true,
-        }).then((image) => {
-            // Xử lý sau khi chọn ảnh từ thư viện
-            console.log(image);
-            setImageUri(image.path);
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: aspect,
+            quality: 1,
         });
+
+        if (!result.canceled) {
+            setSelectedImage(result.assets[0].uri);
+        }
     };
 
     return (
-        <TouchableOpacity onPress={handleSelectImage}>
-            {imageUri && (
+        <View>
+            {selectedImage ? (
                 <Image
-                    source={{ uri: imageUri || fallbackImage }}
-                    style={[{ width: width, height: height }, styles.borderFull]}
-                    resizeMode="cover"
+                    source={{ uri: selectedImage }}
+                    style={[{ width: width, height: height }, borderFull]}
+                />
+            ) : (
+                <Image
+                    source={{
+                        uri: avatar,
+                    }}
+                    style={[{ width: width, height: height }, borderFull]}
                 />
             )}
-        </TouchableOpacity>
+            <TouchableOpacity onPress={handleImagePicker}>
+                <Button title="Chọn ảnh" onPress={handleImagePicker} />
+            </TouchableOpacity>
+        </View>
     );
 };
 
