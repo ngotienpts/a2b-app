@@ -157,11 +157,6 @@ const Setting = () => {
 
                     {/* avatar */}
                     <View style={[styles.flexCenter, styles.my24]}>
-                        {/* <Image
-                            source={{ uri: avatar || fallbackImage }}
-                            style={[{ width: 114, height: 114 }, styles.borderFull]}
-                            resizeMode="cover"
-                        /> */}
                         <ChoseImage
                             avatar={avatar}
                             width={114}

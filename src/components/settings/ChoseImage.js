@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Image, TouchableOpacity, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
+import styles from '../../styles';
+
 const ChoseImage = ({ aspect, avatar, width, height, borderFull }) => {
     const [selectedImage, setSelectedImage] = useState(null);
 
@@ -25,7 +27,7 @@ const ChoseImage = ({ aspect, avatar, width, height, borderFull }) => {
     };
 
     return (
-        <View>
+        <View style={[styles.relative]}>
             {selectedImage ? (
                 <Image
                     source={{ uri: selectedImage }}
@@ -39,9 +41,10 @@ const ChoseImage = ({ aspect, avatar, width, height, borderFull }) => {
                     style={[{ width: width, height: height }, borderFull]}
                 />
             )}
-            <TouchableOpacity onPress={handleImagePicker}>
-                <Button title="Chọn ảnh" onPress={handleImagePicker} />
-            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={handleImagePicker}
+                style={[styles.absolute, styles.inset0]}
+            ></TouchableOpacity>
         </View>
     );
 };

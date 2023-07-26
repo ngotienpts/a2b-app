@@ -24,6 +24,8 @@ import CompleteScreen from '../screens/CompleteScreen';
 import MyCarScreen from '../screens/MyCarScreen';
 import VerificationScreen from '../screens/VerificationScreen';
 import ShareScreen from '../screens/ShareScreen';
+import DriverFindScreen from '../screens/DriverFindScreen';
+import DriverFindDetailComponent from '../components/driverFindDetail/DriverFindDetailComponent';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -95,6 +97,11 @@ const AppNavigation = () => {
                         <Stack.Screen name="MyCarScreen" component={MyCarScreen} />
                         <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
                         <Stack.Screen name="ShareScreen" component={ShareScreen} />
+                        <Stack.Screen name="DriverFindScreen" component={DriverFindScreen} />
+                        <Stack.Screen
+                            name="DriverFindDetailScreen"
+                            component={DriverFindDetailComponent}
+                        />
                     </Stack.Navigator>
                 </NavigationContainer>
             </BookingFormProvider>

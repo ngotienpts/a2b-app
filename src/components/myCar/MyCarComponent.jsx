@@ -9,6 +9,7 @@ import { typeCar, licenseColor, bill, water } from '../../constants';
 import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { bgCar } from '../../assets/images';
 import { fallbackImage } from '../../api/DataFetching';
+import ChoseImage from '../settings/ChoseImage';
 
 const MyCarComponent = () => {
     var { width } = Dimensions.get('window');
@@ -47,10 +48,16 @@ const MyCarComponent = () => {
                 <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
                     {/* image */}
                     <View style={[styles.flexCenter]}>
-                        <Image
+                        {/* <Image
                             source={{ uri: fallbackImage }}
                             style={[{ width: width, height: width / 2 }]}
                             resizeMode="cover"
+                        /> */}
+                        <ChoseImage
+                            avatar={fallbackImage}
+                            width={width}
+                            height={width / 2}
+                            aspect={[2, 1]}
                         />
                     </View>
 
@@ -144,6 +151,7 @@ const MyCarComponent = () => {
                         styles.border4,
                         styles.mx15,
                     ]}
+                    onPress={() => navigation.navigate('DriverScreen')}
                 >
                     <Text style={[styles.fs16, styles.textWhite]}>Tìm khách</Text>
                 </TouchableOpacity>

@@ -108,9 +108,15 @@ const styles = StyleSheet.create({
     w250: {
         width: 250,
     },
-
+    w42: {
+        width: 42,
+    },
+    /*-------------------------------------------------------------------------- */
     h32: {
         height: 32,
+    },
+    h42: {
+        height: 42,
     },
     h46: {
         height: 46,
@@ -275,6 +281,12 @@ const styles = StyleSheet.create({
     },
     fw700: {
         fontWeight: 700,
+    },
+    fwNormal: {
+        fontWeight: 'normal',
+    },
+    fwBold: {
+        fontWeight: 'bold',
     },
 
     /*-------------------------------------------------------------------------- */
@@ -727,6 +739,10 @@ const styles = StyleSheet.create({
         borderBottomColor: 'rgba(34,43,53,1)',
         borderBottomWidth: 1,
     },
+    borderBot5: {
+        borderBottomColor: 'rgba(34, 43, 53, 0.05)',
+        borderBottomWidth: 1,
+    },
     borderRight: {
         borderRightColor: 'rgba(34,43,53,1)',
         borderRightWidth: 1,
@@ -737,6 +753,9 @@ const styles = StyleSheet.create({
     },
     borderColorRedE8: {
         borderColor: '#E8424A',
+    },
+    borderColorCyan2F: {
+        borderColor: '#2F9881',
     },
     borderColor3e9: {
         borderColor: '#3E97FF',
