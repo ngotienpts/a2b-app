@@ -82,3 +82,79 @@ export const listDrivers = [
         license_plate: '29C-54321',
     },
 ];
+
+export const reviewTextComplete = [
+    {
+        id: 1,
+        name: 'Dịch vụ tốt',
+    },
+    {
+        id: 2,
+        name: 'Tài xế nhiệt tình',
+    },
+    {
+        id: 3,
+        name: 'Tốt',
+    },
+];
+
+export const notifications = [
+    {
+        notify_id: '43',
+        user_id: '3',
+        content: 'Trừ 8k (3%) phí nền tảng của chuyến đi #22',
+        status: '1',
+        created_at: '2023-05-26 14:10:43',
+        screen: 'Login',
+        telegram: '5536223873',
+        is_telegram: '1',
+    },
+    {
+        notify_id: '37',
+        user_id: '3',
+        content: 'Khách đã xác nhận đặt chuyến của bạn',
+        status: '0',
+        created_at: '2023-05-24 11:00:37',
+        screen: 'ConfirmScreen',
+        telegram: '5536223873',
+        is_telegram: '1',
+    },
+    {
+        notify_id: '21',
+        user_id: '3',
+        content:
+            'Bạn đã được đánh giá 3 sao bởi tài xế Nguyễn Ngọc Lâm trong chuyến đi #6. Nội dung đánh giá: chán',
+        status: '1',
+        created_at: '2023-05-15 15:09:35',
+        screen: 'CompleteScreen',
+        telegram: '5536223873',
+        is_telegram: '1',
+    },
+];
+
+export const dataGender = [
+    { id: 0, shortname: 'Nam' },
+    { id: 1, shortname: 'Nữ' },
+    { id: 2, shortname: 'Khác' },
+];
+
+export const typeCar = [
+    { id: 0, shortname: 'Sedan' },
+    { id: 1, shortname: 'SUV' },
+    { id: 2, shortname: '16 chỗ' },
+];
+
+export const licenseColor = [
+    { id: 0, shortname: 'Trắng' },
+    { id: 1, shortname: 'Vàng' },
+];
+
+export const bill = [
+    { id: 0, shortname: 'Có' },
+    { id: 1, shortname: 'Không' },
+];
+
+export const water = [
+    { id: 0, shortname: 'Có' },
+    { id: 1, shortname: 'Không' },
+];

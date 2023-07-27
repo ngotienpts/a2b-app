@@ -1,12 +1,8 @@
-import { View, Text } from 'react-native';
 import React from 'react';
+import Notification from '../components/notification';
 
 const NotificationScreen = () => {
-  return (
-    <View>
-      <Text>NotificationScreen</Text>
-    </View>
-  );
+    return <Notification />;
 };
 
 export default NotificationScreen;

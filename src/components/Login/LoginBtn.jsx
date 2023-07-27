@@ -8,7 +8,6 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import jwtDecode from 'jwt-decode';
 import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const ios = Platform.OS == 'ios';
 
 const LoginBtn = () => {

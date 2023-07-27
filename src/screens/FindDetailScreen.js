@@ -1,5 +1,5 @@
 import React from 'react';
-import FindDetail from '../components/FindDetail';
+import FindDetail from '../components/findDetail';
 
 const FindDetailScreen = () => {
     return <FindDetail />;

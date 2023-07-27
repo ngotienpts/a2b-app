@@ -1,10 +1,8 @@
 import React from 'react';
-import FindComponent from '../components/Find';
+import FindComponent from '../components/find';
 
 const FindSreen = () => {
-  return (
-    <FindComponent/>
-  );
+    return <FindComponent />;
 };
 
 export default FindSreen;

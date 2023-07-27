@@ -1,12 +1,8 @@
-import { View, Text } from 'react-native';
 import React from 'react';
+import DriverComponent from '../components/driver/DriverComponent';
 
 const DriverScreen = () => {
-  return (
-    <View>
-      <Text>DriverScreen</Text>
-    </View>
-  );
+    return <DriverComponent />;
 };
 
 export default DriverScreen;

@@ -2,6 +2,9 @@ import axios from 'axios';
 
 // endpoint
 const baseUrl = 'https://api.beta-a2b.work';
+const searchEndpoint = `${baseUrl}/${api_key}/search/info?`;
+const settingEndpoint = `${baseUrl}/e1358385819f12b01db7990c1/profile/get`;
+const bankNameEndpoint = `${baseUrl}/${api_key}/bank/list`;
 
 const reviewListEndpoint = (id) => `${baseUrl}/rate/filterCustomer?customer_id=${id}`;
 
@@ -54,6 +57,13 @@ export const fetchHistorySearch = (token) => {
     return apiCall(historySearch)
 }
 //danh gia
+export const fetchSettingEndpoint = (params) => {
+    return apiCall(settingEndpoint, params);
+};
+export const fetchBankNameEndpoint = (params) => {
+    return apiCall(bankNameEndpoint, params);
+};
+
 export const fetchReviewListEndpoint = (id) => {
     return apiCall(reviewListEndpoint(id));
 };
