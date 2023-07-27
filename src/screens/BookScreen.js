@@ -1,8 +1,8 @@
 import React from 'react';
 import Book from '../components/Book/Book';
 
-const BookScreen = () => {
+function BookScreen() {
   return <Book />;
-};
+}
 
 export default BookScreen;

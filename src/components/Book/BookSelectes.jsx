@@ -176,6 +176,7 @@ const BookSelects = ({ context }) => {
         context.setBookingForm({
             ...context.bookingForm,
             typeCar: vehicleId,
+            nameCar: selectedOption,
             departureTime: getActiveText().time,
             note: note,
             isPunish: getActiveText().isPunish

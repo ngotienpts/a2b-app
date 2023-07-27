@@ -30,12 +30,13 @@ const Home = () => {
     fetchHistorySearch(context.token)
     .then((data) => {
       if(data.res === 'success'){
+        console.log(data);
         setHistory(data.result);
       }
     })
   }
 
-  const removeItem = async() => {
+  const removeItem = async () => {
     await AsyncStorage.removeItem('lat');
     await AsyncStorage.removeItem('lng');
   }

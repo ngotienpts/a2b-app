@@ -50,7 +50,7 @@ export const fetchSearchEndpoint = (params, token) => {
 }
 //lich su tim kiem
 export const fetchHistorySearch = (token) => {
-    const historySearch = `${baseUrl}/${token}/history/search`;
+    const historySearch = `${baseUrl}/${token}/history/search?1`;
     return apiCall(historySearch)
 }
 //danh gia

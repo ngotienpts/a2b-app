@@ -3,15 +3,11 @@ import React, { createContext, useState } from 'react';
 
 export const detailTripContext = createContext();
 
-const detailTripContext = ({ children }) => {
+const detailTripProvider = ({ children }) => {
     const [detailTrip, setDetailTrip] = useState({
         eniqueId: '',
-        startPoint: '',
-        endPoint: '',
-        typeCar: '' || 1,
-        departureTime: '' || format(new Date(), 'yyyy-MM-dd HH:mm'),
-        note: '',
-        isPunish: 0
+        distance: '' || 0,
+        duration: '' || 0,
     });
     const value = {
         detailTrip,
@@ -20,4 +16,4 @@ const detailTripContext = ({ children }) => {
     return <detailTripContext.Provider value={value}>{children}</detailTripContext.Provider>;
 };
 
-export default detailTripContext;
+export default detailTripProvider;

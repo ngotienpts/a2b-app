@@ -7,7 +7,7 @@ import {
     Animated,
     Easing,
 } from 'react-native';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StarIcon } from 'react-native-heroicons/solid';
@@ -27,13 +27,22 @@ import { BookingFormContext } from '../../redux/bookingFormContext';
 import { listDrivers } from '../../constants';
 import { fallbackImage } from '../../api/DataFetching';
 import SentFormBooking from '../SentFormBooking/SentFormBooking';
+import { detailTripContext } from '../../redux/detailTripContext';
 
 const FindComponent = () => {
     const context = useContext(BookingFormContext);
+    const contextTrip = useContext(detailTripContext);
+    useEffect(() => {
+        // contextTrip.setDetailTrip({
+        //     eniqueId,
+        //     distance,
+        //     duration,
+        // });
+        console.log(contextTrip.detailTrip);
+    })
     // console.log(context);
     const navigation = useNavigation();
-    const {params} = useRoute();
-    console.log(params);
+    // console.log(context);
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
@@ -45,7 +54,7 @@ const FindComponent = () => {
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                 >
-                    <SentFormBooking context={context} title="Bạn đang đặt chuyến" />
+                    <SentFormBooking context={context}  title="Bạn đang đặt chuyến" />
                     {/* khoang cach & thoi gian */}
                     <View
                         style={[

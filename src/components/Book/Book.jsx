@@ -24,6 +24,7 @@ const Book = () => {
   
   useEffect(() => {
     takeAddressFromGPS();
+    // console.log(item);
   }, [item, eniqueId]);
 
 
@@ -66,27 +67,27 @@ const Book = () => {
     const latEnd = context.bookingForm.endPoint.coordinates.lat;
     const lngEnd = context.bookingForm.endPoint.coordinates.lng;
     const coordEnd = latEnd + ',' + lngEnd;
-    fetchCreateOneTrip({
-      start_name: currentPosition.start_name,
-      start: currentPosition.start,
-      end_name: item.name,
-      end: item.address,
-      comment: context.bookingForm.note,
-      is_punish: context.bookingForm.isPunish,
-      start_time: context.bookingForm.departureTime,
-      vehicle_category_id: context.bookingForm.typeCar,
-      coordinates_start: coordStart,
-      coordinates_end: coordEnd
-    },contextToken.token).then((data) => {
-      // console.log(data);
-      if(data.res === 'success'){
-        navigation.navigate('FindScreen',item);
-        context.setBookingForm({
-          ...context.bookingForm,
-          eniqueId: data.result,
-        })
-      }
-    })
+    navigation.navigate('FindScreen',item);
+    // fetchCreateOneTrip({
+    //   start_name: currentPosition.start_name,
+    //   start: currentPosition.start,
+    //   end_name: item.name,
+    //   end: item.address,
+    //   comment: context.bookingForm.note,
+    //   is_punish: context.bookingForm.isPunish,
+    //   start_time: context.bookingForm.departureTime,
+    //   vehicle_category_id: context.bookingForm.typeCar,
+    //   coordinates_start: coordStart,
+    //   coordinates_end: coordEnd
+    // },contextToken.token).then((data) => {
+    //   // console.log(data);
+    //   if(data.res === 'success'){
+    //     context.setBookingForm({
+    //       ...context.bookingForm,
+    //       eniqueId: data.result,
+    //     })
+    //   }
+    // })
   }
 
   return (

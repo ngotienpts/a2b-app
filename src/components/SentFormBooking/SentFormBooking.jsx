@@ -71,7 +71,7 @@ const SentFormBooking = ({ title, context }) => {
                                 Loại hình xe
                             </Text>
                             <Text style={[styles.textGray77, styles.fs15]}>
-                                {context.bookingForm.typeCar}
+                                {context.bookingForm.nameCar}
                             </Text>
                         </View>
                     </View>
