@@ -1,53 +1,54 @@
-import 'react-native-gesture-handler';
 import React, { useRef } from 'react';
+import { View, Text } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { Text, View } from 'react-native';
-import { BottomSheetModal, BottomSheetModalProvider, TouchableOpacity } from '@gorhom/bottom-sheet';
+import BottomSheet from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
-
-import styles from '../../styles';
 
 const PickComponent = () => {
-    const navigation = useNavigation();
-    const bottomSheetModalRef = useRef(null);
-    const snapPoints = ['25%', '90%'];
+    const bottomSheetRef = useRef(null);
+
     return (
-        <GestureHandlerRootView style={[styles.flexFull]}>
-            <BottomSheetModalProvider>
-                <View style={[styles.flexFull, styles.bgGray2727]}>
-                    <View style={{ flex: 1 }}>
-                        <MapView
-                            style={{ flex: 1 }}
-                            initialRegion={{
-                                latitude: 37.78825,
-                                longitude: -122.4324,
-                                latitudeDelta: 0.0922,
-                                longitudeDelta: 0.0421,
-                            }}
-                        >
-                            <Marker
-                                coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
-                                title="Marker Title"
-                                description="This is the marker description"
-                            />
-                        </MapView>
-                        <BottomSheetModal
-                            ref={bottomSheetModalRef}
-                            index={0}
-                            snapPoints={snapPoints}
-                        >
-                            <View>
-                                <Text>Helloffgfdgfgf</Text>
-                            </View>
-                        </BottomSheetModal>
+        <View style={{ flex: 1 }}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <MapView
+                    style={{ flex: 1 }}
+                    initialRegion={{
+                        latitude: 37.78825,
+                        longitude: -122.4324,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                >
+                    <Marker
+                        coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
+                        title="Marker Title"
+                        description="This is the marker description"
+                    />
+                </MapView>
+
+                {/* Bottom Sheet Drawer */}
+                <BottomSheet ref={bottomSheetRef} snapPoints={['20%', '50%', '90%']}>
+                    <View style={{ backgroundColor: 'white', padding: 16 }}>
+                        <Text style={{ fontSize: 24 }}>Bottom Sheet Drawer</Text>
+                        <Text style={{ fontSize: 16, marginTop: 10 }}>
+                            This is the content of the Bottom Sheet Drawer.
+                        </Text>
+                        <Text style={{ fontSize: 16, marginTop: 10 }}>
+                            This is the content of the Bottom Sheet Drawer.
+                        </Text>
+                        <Text style={{ fontSize: 16, marginTop: 10 }}>
+                            This is the content of the Bottom Sheet Drawer.
+                        </Text>
+                        <Text style={{ fontSize: 16, marginTop: 10 }}>
+                            This is the content of the Bottom Sheet Drawer.
+                        </Text>
+                        <Text style={{ fontSize: 16, marginTop: 10 }}>
+                            This is the content of the Bottom Sheet Drawer.
+                        </Text>
                     </View>
-                    <TouchableOpacity onPress={() => navigation.navigate('MovingScreen')}>
-                        <Text style={[styles.textCenter, styles.fs27]}>Go Moving</Text>
-                    </TouchableOpacity>
-                </View>
-            </BottomSheetModalProvider>
-        </GestureHandlerRootView>
+                </BottomSheet>
+            </GestureHandlerRootView>
+        </View>
     );
 };
 
