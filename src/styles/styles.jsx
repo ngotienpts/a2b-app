@@ -15,6 +15,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    flexEnd2: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+    },
+    flexEnd: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+    },
+    flexBaseLine: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
+    },
     flexBetween: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -60,8 +74,52 @@ const styles = StyleSheet.create({
     },
 
     /*-------------------------------------------------------------------------- */
+    z10: {
+        zIndex: 10,
+    },
+    z20: {
+        zIndex: 20,
+    },
+    z30: {
+        zIndex: 30,
+    },
+    z40: {
+        zIndex: 40,
+    },
+    z50: {
+        zIndex: 50,
+    },
+    z100: {
+        zIndex: 100,
+    },
+
+    /*-------------------------------------------------------------------------- */
+    opacity0: {
+        opacity: 0,
+    },
+    opacity50: {
+        opacity: 0.5,
+    },
+    opacity1: {
+        opacity: 1,
+    },
+
+    /*-------------------------------------------------------------------------- */
     w250: {
         width: 250,
+    },
+    w42: {
+        width: 42,
+    },
+    /*-------------------------------------------------------------------------- */
+    h32: {
+        height: 32,
+    },
+    h42: {
+        height: 42,
+    },
+    h46: {
+        height: 46,
     },
     h48: {
         height: 48,
@@ -76,8 +134,25 @@ const styles = StyleSheet.create({
     },
 
     /*-------------------------------------------------------------------------- */
+    hidden: {
+        overflow: 'hidden',
+    },
+    scroll: {
+        overflow: 'scroll',
+    },
+    /*-------------------------------------------------------------------------- */
+    gap15: {
+        gap: 15,
+    },
+    gap20: {
+        gap: 20,
+    },
+    /*-------------------------------------------------------------------------- */
     bgBlack: {
         backgroundColor: '#000',
+    },
+    bgBlack50: {
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     bgWhite: {
         backgroundColor: '#fff',
@@ -103,20 +178,58 @@ const styles = StyleSheet.create({
     bgBlue212: {
         backgroundColor: '#212E48',
     },
+    bgBlue237: {
+        backgroundColor: '#2374E1',
+    },
+    bgBlue009: {
+        backgroundColor: '#0091FF',
+    },
+    bgYellow: {
+        backgroundColor: '#FFB848',
+    },
+    bgCyan2F: {
+        backgroundColor: '#2F9881',
+    },
+    bgTransparent: {
+        backgroundColor: 'transparent',
+    },
     /*-------------------------------------------------------------------------- */
     textWhite: {
         color: 'white',
     },
+    textWhite30: {
+        color: 'rgba(255,255,255,0.3)',
+    },
     textGray77: {
         color: 'rgba(119,125,146,0.8)',
     },
-    textWhite30: {
-        color: 'rgba(255,255,255,0.3)',
+    textYellow: {
+        color: '#FFB848',
+    },
+    textCyan2F: {
+        color: '#2F9881',
+    },
+    textRedE8: {
+        color: '#E8424A',
     },
     textCenter: {
         textAlign: 'center',
     },
-
+    textUpper: {
+        textTransform: 'uppercase',
+    },
+    textArea: {
+        height: 120,
+        textAlignVertical: 'top', // Để đoạn văn bản bắt đầu từ đầu của hộp văn bản
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
+    textAreaRate: {
+        height: 80,
+        textAlignVertical: 'top', // Để đoạn văn bản bắt đầu từ đầu của hộp văn bản
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
     /*-------------------------------------------------------------------------- */
     itemsCenter: {
         alignItems: 'center',
@@ -169,6 +282,12 @@ const styles = StyleSheet.create({
     fw700: {
         fontWeight: 700,
     },
+    fwNormal: {
+        fontWeight: 'normal',
+    },
+    fwBold: {
+        fontWeight: 'bold',
+    },
 
     /*-------------------------------------------------------------------------- */
     fs11: {
@@ -180,11 +299,17 @@ const styles = StyleSheet.create({
     fs13: {
         fontSize: 13,
     },
+    fs14: {
+        fontSize: 14,
+    },
     fs15: {
         fontSize: 15,
     },
     fs16: {
         fontSize: 16,
+    },
+    fs18: {
+        fontSize: 18,
     },
     fs22: {
         fontSize: 22,
@@ -197,6 +322,9 @@ const styles = StyleSheet.create({
     },
     fs28: {
         fontSize: 28,
+    },
+    fs32: {
+        fontSize: 32,
     },
     fs42: {
         fontSize: 42,
@@ -611,6 +739,10 @@ const styles = StyleSheet.create({
         borderBottomColor: 'rgba(34,43,53,1)',
         borderBottomWidth: 1,
     },
+    borderBot5: {
+        borderBottomColor: 'rgba(34, 43, 53, 0.05)',
+        borderBottomWidth: 1,
+    },
     borderRight: {
         borderRightColor: 'rgba(34,43,53,1)',
         borderRightWidth: 1,
@@ -618,6 +750,12 @@ const styles = StyleSheet.create({
     borderLeft: {
         borderLeftColor: 'rgba(34,43,53,1)',
         borderLeftWidth: 1,
+    },
+    borderColorRedE8: {
+        borderColor: '#E8424A',
+    },
+    borderColorCyan2F: {
+        borderColor: '#2F9881',
     },
     borderColor3e9: {
         borderColor: '#3E97FF',
@@ -627,6 +765,21 @@ const styles = StyleSheet.create({
     },
     borderColorWhite: {
         borderColor: '#fff',
+    },
+    borderFull: {
+        borderRadius: 999,
+    },
+    borderLeftTop4: {
+        borderTopLeftRadius: 4,
+    },
+    borderLeftBot4: {
+        borderBottomLeftRadius: 4,
+    },
+    borderRightTop4: {
+        borderTopRightRadius: 4,
+    },
+    borderRightBot4: {
+        borderBottomRightRadius: 4,
     },
 
     /*-------------------------------------------------------------------------- */
@@ -641,12 +794,6 @@ const styles = StyleSheet.create({
         width: 1,
         height: 15,
         marginHorizontal: 12,
-    },
-    textArea: {
-        height: 120,
-        textAlignVertical: 'top', // Để đoạn văn bản bắt đầu từ đầu của hộp văn bản
-        paddingHorizontal: 12,
-        paddingVertical: 8,
     },
 });
 export default styles;

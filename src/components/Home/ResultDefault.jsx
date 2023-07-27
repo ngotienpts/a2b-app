@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import React from 'react';
 import { MapPinIcon } from 'react-native-heroicons/outline';
+
 import styles from '../../styles';
 
 const ResultDefault = ({ data, navigation }) => {
-  
   return (
     <View style={[styles.flexFull]}>
       <FlatList

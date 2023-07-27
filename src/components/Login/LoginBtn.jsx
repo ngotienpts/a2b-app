@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import jwtDecode from 'jwt-decode';
 import { TokenContext } from '../../redux/tokenContext';
-
 const ios = Platform.OS == 'ios';
 
 const LoginBtn = () => {

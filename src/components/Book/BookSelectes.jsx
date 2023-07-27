@@ -10,6 +10,7 @@ import {
 import Slider from '@react-native-community/slider';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 
 import styles from '../../styles';
 import { format } from 'date-fns';

@@ -1,12 +1,8 @@
-import { View, Text } from 'react-native';
 import React from 'react';
+import DiaryComponent from '../components/diary';
 
 const DiaryScreen = () => {
-  return (
-    <View>
-      <Text>DiaryScreen</Text>
-    </View>
-  );
+    return <DiaryComponent />;
 };
 
 export default DiaryScreen;

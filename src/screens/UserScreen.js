@@ -1,12 +1,8 @@
-import { View, Text } from 'react-native';
 import React from 'react';
+import Setting from '../components/settings/Setting';
 
 const UserScreen = () => {
-  return (
-    <View>
-      <Text>UserScreen</Text>
-    </View>
-  );
+    return <Setting />;
 };
 
 export default UserScreen;
