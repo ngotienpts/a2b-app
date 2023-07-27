@@ -1,15 +1,40 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 import styles from '../../styles';
 import Header from '../header';
-import { notifications } from '../../constants';
 import MomentComponent from '../moment';
+import { fetchListNoti } from '../../api/DataFetching';
+import { TokenContext } from '../../redux/tokenContext';
+import { notis } from '../../constants';
 
 const Notification = () => {
     const navigation = useNavigation();
+    const context = useContext(TokenContext);
+    const [notifications, setNotifications] = useState({});
+    // useEffect này chỉ chạy một lần khi component mount
+    useEffect(() => {
+        listNotification();
+    }, []);
+    
+    // useEffect này chạy khi notifications thay đổi
+    useEffect(() => {
+        console.log('Notifications have changed:', notifications);
+        // Thực hiện các công việc khác ở đây...
+    }, [notifications]);
+    
+    const listNotification = () => {
+        fetchListNoti(context.token)
+        .then((data) => {
+            if (data.res === 'success') {
+            console.log('Fetched notifications:', data.result);
+            setNotifications(data.result);
+            }
+        });
+    };
+
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
@@ -30,6 +55,7 @@ const Notification = () => {
                     </View>
 
                     {/* list notification */}
+                    {notifications.length !== undefined ? 
                     <View style={{ paddingBottom: 100 }}>
                         {notifications.map((noti, index) => (
                             <TouchableOpacity
@@ -69,6 +95,8 @@ const Notification = () => {
                             </TouchableOpacity>
                         ))}
                     </View>
+                    : ''}
+                    
                 </ScrollView>
             </View>
         </SafeAreaView>

@@ -98,7 +98,7 @@ export const reviewTextComplete = [
     },
 ];
 
-export const notifications = [
+export const notis = [
     {
         notify_id: '43',
         user_id: '3',
