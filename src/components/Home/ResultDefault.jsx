@@ -10,7 +10,7 @@ const ResultDefault = ({ data, navigation }) => {
       <FlatList
         data={data}
         showsVerticalScrollIndicator={false}
-        keyExtractor={(item) => item.name.toString()}
+        keyExtractor={(item) => item?.name.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {

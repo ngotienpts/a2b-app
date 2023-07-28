@@ -24,7 +24,7 @@ const Book = () => {
   
   useEffect(() => {
     takeAddressFromGPS();
-    // console.log(item);
+    console.log(item);
   }, [item, eniqueId]);
 
 

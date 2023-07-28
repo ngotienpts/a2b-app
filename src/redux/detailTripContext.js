@@ -1,19 +1,17 @@
-import { format } from 'date-fns';
-import React, { createContext, useState } from 'react';
+import { createContext, useState } from "react";
 
-export const detailTripContext = createContext();
+export const DetailTripContext = createContext();
 
-const detailTripProvider = ({ children }) => {
+const DetailTripProvider = ({ children }) => {
     const [detailTrip, setDetailTrip] = useState({
-        eniqueId: '',
-        distance: '' || 0,
-        duration: '' || 0,
+        duration: '',
+        distance: ''
     });
     const value = {
         detailTrip,
         setDetailTrip,
     };
-    return <detailTripContext.Provider value={value}>{children}</detailTripContext.Provider>;
+    return <DetailTripContext.Provider value={value}>{children}</DetailTripContext.Provider>;
 };
 
-export default detailTripProvider;
+export default DetailTripProvider;

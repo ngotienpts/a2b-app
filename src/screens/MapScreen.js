@@ -1,25 +1,28 @@
 import { View } from 'react-native';
 import React from 'react';
-// import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
+import { useRoute } from '@react-navigation/native';
+import { Button } from 'react-native-web';
 
 const MapScreen = () => {
+  const {params: items} = useRoute();
   return (
     <View style={{ flex: 1 }}>
-      {/* <MapView
+      <MapView
         style={{ flex: 1 }}
         initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude: items?.coordinates.lat,
+          longitude: items?.coordinates.lng,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
       >
         <Marker
-          coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
+          coordinate={{ latitude: items?.coordinates.lat, longitude: items?.coordinates.lng }}
           title="Marker Title"
           description="This is the marker description"
         />
-      </MapView> */}
+      </MapView>
     </View>
   );
 };

@@ -26,6 +26,7 @@ import VerificationScreen from '../screens/VerificationScreen';
 import ShareScreen from '../screens/ShareScreen';
 import DriverFindScreen from '../screens/DriverFindScreen';
 import DriverFindDetailComponent from '../components/driverFindDetail/DriverFindDetailComponent';
+import DetailTripProvider from '../redux/detailTripContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -69,7 +70,7 @@ const HomeStackNavigation = () => {
         options={{
           tabBarLabel: 'Thông báo',
           tabBarIcon: ({ color, size }) => <BellIcon color={color} size={size} />,
-          tabBarBadge: hasUnreadNotification ? 1 : null,
+          tabBarBadge: hasUnreadNotification ? 2 : null,
           tabBarBadgeStyle: { fontSize: 10 },
         }}
       />
@@ -79,6 +80,7 @@ const HomeStackNavigation = () => {
 const AppNavigation = () => {
     return (
         <TokenProvider>
+          <DetailTripProvider>
             <BookingFormProvider>
                 <NavigationContainer>
                     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -106,6 +108,7 @@ const AppNavigation = () => {
                     </Stack.Navigator>
                 </NavigationContainer>
             </BookingFormProvider>
+          </DetailTripProvider>
         </TokenProvider>
     );
 };

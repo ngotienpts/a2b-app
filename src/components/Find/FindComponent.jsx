@@ -8,11 +8,11 @@ import {
     Easing,
     Image
 } from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 // import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 // import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { StarIcon } from 'react-native-heroicons/solid';
 import {
     ArrowUturnRightIcon,
@@ -27,25 +27,55 @@ import styles from '../../styles';
 import Header from '../header/Header';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import { listDrivers } from '../../constants';
-import { fallbackImage } from '../../api/DataFetching';
+import { fallbackImage, fetchDetailTrip, fetchListReport } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking/SentFormBooking';
-import { detailTripContext } from '../../redux/detailTripContext';
+import { DetailTripContext } from '../../redux/detailTripContext';
+import { TokenContext } from '../../redux/tokenContext';
 
 
 const FindComponent = () => {
     const context = useContext(BookingFormContext);
-    const contextTrip = useContext(detailTripContext);
-    useEffect(() => {
-        // contextTrip.setDetailTrip({
-        //     eniqueId,
-        //     distance,
-        //     duration,
-        // });
-        console.log(contextTrip.detailTrip);
-    })
-    // console.log(context);
+    const contextToken = useContext(TokenContext);
+    const [detailTrip, setDetailTrip] = useState({});
+    const [reports, setReports] = useState({});
+    const [isUnmounted, setIsUnmounted] = useState(false);
     const navigation = useNavigation();
-    // console.log(context);
+    const isFocused = useIsFocused();;
+    const paramsTrip = {
+        trip_id: 44
+    }
+    
+    useEffect(() => {
+        // Truyền giá trị từ context vào biến local
+
+        fetchDetailTrip(paramsTrip,contextToken.token)
+        .then((data) => {
+            // console.log(data);
+            if(data.res === 'success'){
+                // console.log(data.result);
+                setDetailTrip(data.result);
+            }
+        })
+
+        listReport(paramsTrip)
+    }, []);
+
+    useEffect(() => {
+        // listReport(paramsTrip)
+        console.log('render',reports);
+    },[reports])
+
+    const listReport = (paramsTrip) => {
+        fetchListReport(paramsTrip,contextToken.token)
+        .then((data) => {
+            // console.log(data);
+            if(data.res === 'success'){
+                // console.log(data.result);
+                setReports(data.result);
+            }
+        })
+    }
+
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
@@ -97,7 +127,7 @@ const FindComponent = () => {
                                 ]}
                             >
                                 <Text style={[styles.fs42, styles.textWhite, { lineHeight: 42 }]}>
-                                    30
+                                    {detailTrip.distance_all}
                                 </Text>
                                 <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>km</Text>
                             </View>
@@ -136,7 +166,7 @@ const FindComponent = () => {
                                         { lineHeight: 42, includeFontPadding: false },
                                     ]}
                                 >
-                                    15
+                                    {detailTrip.duration_all}
                                 </Text>
                                 <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
                             </View>
@@ -181,119 +211,121 @@ const FindComponent = () => {
                         </Text>
 
                         {/* list */}
-                        <View>
-                            {listDrivers.map((item) => (
-                                <TouchableOpacity
-                                    key={item.id.toString()}
-                                    style={[
-                                        styles.px15,
-                                        styles.py10,
-                                        styles.bg161e,
-                                        styles.flexRow,
-                                        styles.flexFull,
-                                        styles.mb20,
-                                    ]}
-                                    onPress={() => navigation.navigate('FindDetailScreen', item)}
-                                >
-                                    <Image
-                                        source={{ uri: item?.image_car || fallbackImage }}
-                                        style={{ width: 133, height: 72 }}
-                                        resizeMode="cover"
-                                    />
-                                    <View style={[styles.pl15]}>
-                                        {/* name */}
-                                        <View style={[styles.flexRow, styles.itemsCenter]}>
-                                            <Text
-                                                style={[
-                                                    styles.textWhite,
-                                                    styles.fs16,
-                                                    styles.fw700,
-                                                    styles.lh24,
-                                                ]}
-                                            >
-                                                {item?.name_driver}
-                                            </Text>
-                                            {item?.protected && (
-                                                <View style={[styles.pl10]}>
-                                                    <ShieldCheckIcon size={16} color={'white'} />
-                                                </View>
-                                            )}
-                                        </View>
-
-                                        {/* tên xe */}
-                                        <View style={[styles.flexRow, styles.itemsCenter]}>
-                                            <Text
-                                                style={[
-                                                    styles.textWhite,
-                                                    styles.fs16,
-                                                    styles.fw400,
-                                                    styles.lh24,
-                                                ]}
-                                            >
-                                                {item?.name_car} - {item?.model}
-                                            </Text>
-                                            {item.wifi && (
-                                                <WifiIcon
-                                                    size={16}
-                                                    color={'white'}
-                                                    style={[styles.ml10]}
-                                                />
-                                            )}
-                                            {item.water && (
-                                                <BeakerIcon
-                                                    size={16}
-                                                    color={'white'}
-                                                    style={[styles.ml5]}
-                                                />
-                                            )}
-                                        </View>
-
-                                        {/* đánh sao & giá tiền */}
-                                        <View style={[styles.flexRow, styles.itemsCenter]}>
-                                            {item?.star && (
-                                                <View style={[styles.flexRow, styles.itemsCenter]}>
-                                                    <StarIcon size={'16'} color={'white'} />
-                                                    <Text
-                                                        style={[
-                                                            styles.textWhite,
-                                                            styles.fs16,
-                                                            styles.lh24,
-                                                            styles.ml5,
-                                                        ]}
-                                                    >
-                                                        {item?.star}
-                                                    </Text>
-                                                </View>
-                                            )}
-                                            {item?.bill && (
-                                                <View
+                        {reports.length !== undefined && 
+                            <View>
+                                {reports.map((item) => (
+                                    <TouchableOpacity
+                                        key={item.reported_id.toString()}
+                                        style={[
+                                            styles.px15,
+                                            styles.py10,
+                                            styles.bg161e,
+                                            styles.flexRow,
+                                            styles.flexFull,
+                                            styles.mb20,
+                                        ]}
+                                        onPress={() => navigation.navigate('FindDetailScreen', item)}
+                                    >
+                                        <Image
+                                            source={{ uri: item?.image || fallbackImage }}
+                                            style={{ width: 133, height: 72 }}
+                                            resizeMode="cover"
+                                        />
+                                        <View style={[styles.pl15]}>
+                                            {/* name */}
+                                            <View style={[styles.flexRow, styles.itemsCenter]}>
+                                                <Text
                                                     style={[
-                                                        styles.flexRow,
-                                                        styles.itemsCenter,
-                                                        styles.ml24,
+                                                        styles.textWhite,
+                                                        styles.fs16,
+                                                        styles.fw700,
+                                                        styles.lh24,
                                                     ]}
                                                 >
-                                                    <CurrencyDollarIcon
-                                                        size={'16'}
+                                                    {item?.fullname}
+                                                </Text>
+                                                {item?.is_confirmed == 1 && (
+                                                    <View style={[styles.pl10]}>
+                                                        <ShieldCheckIcon size={16} color={'white'} />
+                                                    </View>
+                                                )}
+                                            </View>
+
+                                            {/* tên xe */}
+                                            <View style={[styles.flexRow, styles.itemsCenter]}>
+                                                <Text
+                                                    style={[
+                                                        styles.textWhite,
+                                                        styles.fs16,
+                                                        styles.fw400,
+                                                        styles.lh24,
+                                                    ]}
+                                                >
+                                                    {item?.vehicle_name} - {item?.vehicle_life}
+                                                </Text>
+                                                {item.is_wifi == 1 && (
+                                                    <WifiIcon
+                                                        size={16}
                                                         color={'white'}
+                                                        style={[styles.ml10]}
                                                     />
-                                                    <Text
+                                                )}
+                                                {item.is_bottle == 1 && (
+                                                    <BeakerIcon
+                                                        size={16}
+                                                        color={'white'}
+                                                        style={[styles.ml5]}
+                                                    />
+                                                )}
+                                            </View>
+
+                                            {/* đánh sao & giá tiền */}
+                                            <View style={[styles.flexRow, styles.itemsCenter]}>
+                                                {item?.avg_star.toString() && (
+                                                    <View style={[styles.flexRow, styles.itemsCenter]}>
+                                                        <StarIcon size={'16'} color={'white'} />
+                                                        <Text
+                                                            style={[
+                                                                styles.textWhite,
+                                                                styles.fs16,
+                                                                styles.lh24,
+                                                                styles.ml5,
+                                                            ]}
+                                                        >
+                                                            {item?.avg_star.toString()}
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                                {item?.price_distance.toString() && (
+                                                    <View
                                                         style={[
-                                                            styles.textWhite,
-                                                            styles.fs16,
-                                                            styles.lh24,
-                                                            styles.ml5,
+                                                            styles.flexRow,
+                                                            styles.itemsCenter,
+                                                            styles.ml24,
                                                         ]}
                                                     >
-                                                        {item?.bill}
-                                                    </Text>
-                                                </View>
-                                            )}
+                                                        <CurrencyDollarIcon
+                                                            size={'16'}
+                                                            color={'white'}
+                                                        />
+                                                        <Text
+                                                            style={[
+                                                                styles.textWhite,
+                                                                styles.fs16,
+                                                                styles.lh24,
+                                                                styles.ml5,
+                                                            ]}
+                                                        >
+                                                            {item?.price_distance.toString()}
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                            </View>
                                         </View>
-                                    </View>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        }
                     </View>
 
                     {/* tắt thông báo */}

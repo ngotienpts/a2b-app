@@ -1,39 +1,81 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
 import styles from '../../styles';
 import Header from '../header';
 import MomentComponent from '../moment';
-import { fetchListNoti } from '../../api/DataFetching';
+import { fetchListNoti, fetchReadAllNoti } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
-import { notis } from '../../constants';
 
 const Notification = () => {
     const navigation = useNavigation();
     const context = useContext(TokenContext);
     const [notifications, setNotifications] = useState({});
+    // const prevNoti = useRef(null);
+    const [isUnmounted, setIsUnmounted] = useState(false);
+    const [dot, setDot] = useState(true);
+    const isFocused = useIsFocused();
+
     // useEffect này chỉ chạy một lần khi component mount
+    // useEffect(() => {
+    //     listNotification();
+    // }, []);
+
     useEffect(() => {
-        listNotification();
-    }, []);
+        if (!isFocused) {
+          // Màn hình bị blur, thực hiện unmount
+          setIsUnmounted(true);
+        } else {
+          // Màn hình được focus lại, không cần unmount
+          setIsUnmounted(false);
+        }
+      }, [isFocused]);
+    
+    useEffect(() => {
+    // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
+    // console.log(isUnmounted);
+    // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
+        if (!isUnmounted) {
+            // Gọi API hoặc tác vụ khác...
+            listNotification();
+
+        }
+    }, [isUnmounted]);
     
     // useEffect này chạy khi notifications thay đổi
-    useEffect(() => {
-        console.log('Notifications have changed:', notifications);
-        // Thực hiện các công việc khác ở đây...
-    }, [notifications]);
+    // useEffect(() => {
+    //     // console.log('Previous Notifications:', prevNoti.current);
+    //     // // listNotification();
+    //     // console.log(compareObj(prevNoti.current,notifications));
+    //     if(prevNoti.current !== null && !compareObj(prevNoti.current,notifications)){
+    //         listNotification();
+    //     }else{
+    //         console.log('Nothing changed');
+    //     }
+    //     prevNoti.current = notifications;
+    //     // Thực hiện các công việc khác ở đây...
+    // }, [notifications]);
     
     const listNotification = () => {
         fetchListNoti(context.token)
         .then((data) => {
             if (data.res === 'success') {
-            console.log('Fetched notifications:', data.result);
-            setNotifications(data.result);
+                // console.log('Fetched notifications:', data.result);
+                setNotifications(data.result);
             }
         });
     };
+
+    const handleClickAllNoti = () => {
+        fetchReadAllNoti(context.token)
+        .then((data) => {
+            if(data.res === 'success') {
+                setDot(false);
+            }
+        })
+    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
@@ -51,7 +93,7 @@ const Notification = () => {
                         <Text style={[styles.fs27, styles.textWhite, styles.lh32, styles.fw300]}>
                             Thông báo
                         </Text>
-                        <Text style={[styles.fs14, styles.textGray77]}>Đã đọc tất cả</Text>
+                        <Text onPress={() => handleClickAllNoti()} style={[styles.fs14, styles.textGray77]}>Đã đọc tất cả</Text>
                     </View>
 
                     {/* list notification */}
@@ -66,7 +108,7 @@ const Notification = () => {
                                     styles.py10,
                                     { marginBottom: index < notifications.length ? 12 : 0 },
                                 ]}
-                                onPress={() => navigation.navigate(noti.screen)}
+                                onPress={() => navigation.navigate('UserScreen')}
                             >
                                 <View style={[styles.flexBetween, styles.mb12]}>
                                     <MomentComponent
@@ -79,7 +121,7 @@ const Notification = () => {
                                         ]}
                                     />
 
-                                    {noti.status == 1 && (
+                                    {noti.status == 0 && dot && (
                                         <Text
                                             style={[
                                                 styles.bgRed,

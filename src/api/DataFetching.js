@@ -56,14 +56,17 @@ export const fetchHistorySearch = (token) => {
     const historySearch = `${baseUrl}/${token}/history/search?1`;
     return apiCall(historySearch)
 }
-//danh gia
+//cai dat
 export const fetchSettingEndpoint = (params) => {
     return apiCall(settingEndpoint, params);
 };
-export const fetchBankNameEndpoint = (params) => {
+//danh sach ngan hang
+export const fetchBankNameEndpoint = (params,token) => {
+    const bankNameEndpoint = `${baseUrl}/${token}/bank/list`;
     return apiCall(bankNameEndpoint, params);
 };
 
+//danh gia
 export const fetchReviewListEndpoint = (id) => {
     return apiCall(reviewListEndpoint(id));
 };
@@ -74,7 +77,7 @@ export const fetchProfileUser = (token) => { // nhan tham so la params la 1 obje
 }
 //lay gps
 export const fetchStartGPS = (params, token) => {
-    const updateGPS = `${baseUrl}/${token}/search/address`;
+    const updateGPS = `${baseUrl}/${token}/search/address?1`;
     // return params
     return apiCall(updateGPS,params);
 }
@@ -91,6 +94,21 @@ export const fetchListCategoryVehicle = (token) => {
 }
 //danh sach thong bao
 export const fetchListNoti = (token) => {
-    const listNoti = `${baseUrl}/${token}/notification/list`;
+    const listNoti = `${baseUrl}/${token}/notification/list?1234`;
     return apiCall(listNoti);
+}
+//doc tat ca thong bao
+export const fetchReadAllNoti = (token) => {
+    const readAllNoti = `${baseUrl}/${token}/notification/read`;
+    return postApi(readAllNoti);
+}
+//thong tin chi tiet chuyen di 
+export const fetchDetailTrip = (params,token) => {
+    const detailTrip = `${baseUrl}/${token}/trip/detail`;
+    return apiCall(detailTrip,params);
+}
+//danh sach bao gia
+export const fetchListReport = (params,token) => {
+    const listReport = `${baseUrl}/${token}/report/list`;
+    return apiCall(listReport,params);
 }
