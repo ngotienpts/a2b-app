@@ -17,18 +17,13 @@ import { fallbackImage, fetchReviewListEndpoint } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
 import MomentComponent from '../moment';
-import PayNumber from '../editPayNumber';
 
-const DriverFindDetailComponent = () => {
+const DriverMovingComponent = () => {
     const context = useContext(BookingFormContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
     const [reviewDriver, setReviewDriver] = useState([]);
-    const [price, setPrice] = useState(21000);
 
-    const handlePriceChange = (newPrice) => {
-        setPrice(newPrice);
-    };
     const getReviewList = async (id) => {
         const data = await fetchReviewListEndpoint(id);
         if (data && data.result.list) setReviewDriver(data.result.list);
@@ -59,7 +54,7 @@ const DriverFindDetailComponent = () => {
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
-                <Header navigation={navigation} title="Tìm tài xế" />
+                <Header navigation={navigation} title="Chi tiết chuyến đi" />
 
                 {/* body */}
                 <ScrollView
@@ -199,39 +194,8 @@ const DriverFindDetailComponent = () => {
                                 <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
                                     Báo giá (VNĐ)
                                 </Text>
-                                <View
-                                    style={[
-                                        styles.border1,
-                                        styles.borderSolid,
-                                        styles.borderColorCyan2F,
-                                        styles.px10,
-                                    ]}
-                                >
-                                    <PayNumber
-                                        value={price}
-                                        label={'Báo giá'}
-                                        onChange={handlePriceChange}
-                                        style={[styles.fs16, styles.lh24, styles.fwBold]}
-                                        maxLength={9}
-                                    />
-                                </View>
+                                <Text style={[styles.fs16, styles.lh24, styles.fw700]}>21.000</Text>
                             </View>
-                            <TouchableOpacity
-                                style={[styles.bgCyan2F, styles.h46, styles.flexCenter]}
-                            >
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.fw400,
-                                        styles.lh24,
-                                        styles.flexFull,
-                                        styles.textCenter,
-                                    ]}
-                                >
-                                    Gửi khách
-                                </Text>
-                            </TouchableOpacity>
                         </View>
                         {/* so du diem */}
                         <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
@@ -468,7 +432,6 @@ const DriverFindDetailComponent = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.goBack()}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>
@@ -480,9 +443,9 @@ const DriverFindDetailComponent = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.navigate('DriverPickScreen', item)}
+                        onPress={() => navigation.navigate('DriverCompleteScreen', item)}
                     >
-                        <Text style={[styles.fs16, styles.textWhite]}>Đón khách</Text>
+                        <Text style={[styles.fs16, styles.textWhite]}>Go Complete</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -490,4 +453,4 @@ const DriverFindDetailComponent = () => {
     );
 };
 
-export default DriverFindDetailComponent;
+export default DriverMovingComponent;

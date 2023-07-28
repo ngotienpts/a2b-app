@@ -271,7 +271,7 @@ const Confirm = () => {
                     {/*  */}
                     <TouchableOpacity
                         style={[styles.pb60]}
-                        onPress={() => navigation.navigate('PickScreen')}
+                        onPress={() => navigation.navigate('PickScreen', item)}
                     >
                         <Text style={[styles.textWhite, styles.flexCenter, styles.fs27]}>
                             Go Pick

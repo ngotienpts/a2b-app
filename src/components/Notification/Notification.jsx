@@ -7,9 +7,16 @@ import styles from '../../styles';
 import Header from '../header';
 import { notifications } from '../../constants';
 import MomentComponent from '../moment';
+import { useNotification } from '../../redux/notificationContext';
 
 const Notification = () => {
+    const { handleHiddenNoti } = useNotification();
     const navigation = useNavigation();
+
+    // Xử lý khi thông báo được ẩn
+    const handleHideNotification = () => {
+        handleHiddenNoti();
+    };
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
@@ -26,7 +33,9 @@ const Notification = () => {
                         <Text style={[styles.fs27, styles.textWhite, styles.lh32, styles.fw300]}>
                             Thông báo
                         </Text>
-                        <Text style={[styles.fs14, styles.textGray77]}>Đã đọc tất cả</Text>
+                        <TouchableOpacity onPress={handleHideNotification}>
+                            <Text style={[styles.fs14, styles.textGray77]}>Đã đọc tất cả</Text>
+                        </TouchableOpacity>
                     </View>
 
                     {/* list notification */}

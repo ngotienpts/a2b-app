@@ -181,6 +181,9 @@ const styles = StyleSheet.create({
     bgBlue237: {
         backgroundColor: '#2374E1',
     },
+    bgBlue1A7: {
+        backgroundColor: '#1A73E8',
+    },
     bgBlue009: {
         backgroundColor: '#0091FF',
     },
