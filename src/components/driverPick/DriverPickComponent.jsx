@@ -18,8 +18,15 @@ import { fallbackImage, fetchReviewListEndpoint } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import MomentComponent from '../moment';
+import ToggleSwipeable from '../toggleSwiperable';
+import useInterval from '../../hooks/useInterval';
 
 const DriverPickComponent = () => {
+    const [toggleStateBtn, setToggleStateBtn] = useState(false);
+    const handleToggleBtn = (value, item) => {
+        return setToggleStateBtn(value);
+    };
+
     const navigation = useNavigation();
     const context = useContext(BookingFormContext);
     const bottomSheetRef = useRef(null);
@@ -31,6 +38,10 @@ const DriverPickComponent = () => {
         const data = await fetchReviewListEndpoint(id);
         if (data && data.result.list) setReviewDriver(data.result.list);
     };
+    const navigateToDriverMovingScreen = () => {
+        navigation.navigate('DriverMovingScreen', item);
+    };
+    useInterval(navigateToDriverMovingScreen, 1000, toggleStateBtn);
 
     const StarsDisplay = ({ value }) => {
         const starCount = 5;
@@ -435,31 +446,9 @@ const DriverPickComponent = () => {
                     </BottomSheet>
                 </GestureHandlerRootView>
             </View>
-            {/* buttom  huy chuyen & tim tai xe*/}
+            {/* buttom bắt đầu chuyến đi*/}
             <View style={[styles.flexRow, styles.bgBlack]}>
-                <TouchableOpacity
-                    style={[
-                        styles.h48,
-                        styles.bgGray161,
-                        styles.flexFull,
-                        styles.itemsCenter,
-                        styles.justifyCenter,
-                    ]}
-                >
-                    <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[
-                        styles.h48,
-                        styles.bgRed,
-                        styles.flexFull,
-                        styles.itemsCenter,
-                        styles.justifyCenter,
-                    ]}
-                    onPress={() => navigation.navigate('DriverMovingScreen', item)}
-                >
-                    <Text style={[styles.fs16, styles.textWhite]}>Go Moving</Text>
-                </TouchableOpacity>
+                <ToggleSwipeable onToggle={handleToggleBtn} />
             </View>
         </View>
     );

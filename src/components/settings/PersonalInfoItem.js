@@ -19,6 +19,7 @@ const PersonalInfoItem = ({
     onDateChange,
     data,
     onValueChange,
+    onChangeDropdown,
     linkFb,
     maxLength,
     selectedName,
@@ -70,6 +71,7 @@ const PersonalInfoItem = ({
                         style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}
                         data={data}
                         selectedName={selectedName}
+                        onChangeDropdown={onChangeDropdown}
                     />
                 );
             case 'phoneNumber':

@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 
 import styles from '../../styles';
-const DropdownModal = ({ style, data, selectedName }) => {
+const DropdownModal = ({ style, data, selectedName, onChangeDropdown }) => {
     if (!Array.isArray(data)) {
         data = [];
     }
+
     const [selectedItem, setSelectedItem] = useState(
         () => selectedName || (data.length > 0 ? data[0].shortname : '')
     );
@@ -14,6 +15,7 @@ const DropdownModal = ({ style, data, selectedName }) => {
     const handleSelectItem = (itemLabel) => {
         setSelectedItem(itemLabel);
         setModalVisible(false);
+        onChangeDropdown(itemLabel);
     };
 
     const handleCloseModal = () => {

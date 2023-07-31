@@ -15,6 +15,7 @@ import ChoseImage from './ChoseImage';
 const Setting = () => {
     const navigation = useNavigation();
     const apiName = 'Nguyen Van A';
+    const apiGender = 'Nam';
     const apiBirthday = '2023-05-12';
     const apiLinkFb = 'mr.otthanh';
     const apiPhoneNumber = '0912345678';
@@ -28,6 +29,7 @@ const Setting = () => {
     const [avatar, setAvatar] = useState(img);
     const [name, setName] = useState(apiName);
     const [dateOfBirth, setDateOfBirth] = useState(new Date(apiBirthday));
+    const [gender, setGender] = useState(apiGender);
     const [linkFb, setLinkFb] = useState(apiLinkFb);
     const [phoneNumber, setPhoneNumber] = useState(apiPhoneNumber);
     const [bankAccount, setBankAccount] = useState(apiBankAccount);
@@ -43,6 +45,9 @@ const Setting = () => {
     };
     const handleDateChange = (newDate) => {
         setDateOfBirth(newDate);
+    };
+    const handleGenderChange = (newDate) => {
+        setGender(newDate);
     };
     const handleLinkFbChange = (newValue) => {
         setLinkFb(newValue);
@@ -202,7 +207,8 @@ const Setting = () => {
                                 label="Giới tính"
                                 type="dropdown"
                                 data={dataGender}
-                                selectedName={'Nam'}
+                                selectedName={gender}
+                                onChangeDropdown={handleGenderChange}
                             />
                             {/* Xác minh danh tính */}
                             <NextPageSetting
