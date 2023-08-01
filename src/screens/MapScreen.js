@@ -2,7 +2,7 @@ import { View } from 'react-native';
 import React from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { useRoute } from '@react-navigation/native';
-import { Button } from 'react-native-web';
+// import { Button } from 'react-native-web';
 
 const MapScreen = () => {
   const {params: items} = useRoute();

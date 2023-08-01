@@ -17,46 +17,33 @@ const Notification = () => {
     const [isUnmounted, setIsUnmounted] = useState(false);
     const [dot, setDot] = useState(true);
     const isFocused = useIsFocused();
+    const [loading, setLoading] = useState(false);
 
     // useEffect này chỉ chạy một lần khi component mount
-    // useEffect(() => {
-    //     listNotification();
-    // }, []);
-
     useEffect(() => {
-        if (!isFocused) {
-          // Màn hình bị blur, thực hiện unmount
-          setIsUnmounted(true);
-        } else {
-          // Màn hình được focus lại, không cần unmount
-          setIsUnmounted(false);
-        }
-      }, [isFocused]);
-    
-    useEffect(() => {
-    // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
-    // console.log(isUnmounted);
-    // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
-        if (!isUnmounted) {
-            // Gọi API hoặc tác vụ khác...
-            listNotification();
+        listNotification();
+    }, []);
 
-        }
-    }, [isUnmounted]);
-    
-    // useEffect này chạy khi notifications thay đổi
     // useEffect(() => {
-    //     // console.log('Previous Notifications:', prevNoti.current);
-    //     // // listNotification();
-    //     // console.log(compareObj(prevNoti.current,notifications));
-    //     if(prevNoti.current !== null && !compareObj(prevNoti.current,notifications)){
-    //         listNotification();
-    //     }else{
-    //         console.log('Nothing changed');
+    //     if (!isFocused) {
+    //       // Màn hình bị blur, thực hiện unmount
+    //       setIsUnmounted(true);
+    //     } else {
+    //       // Màn hình được focus lại, không cần unmount
+    //       setIsUnmounted(false);
     //     }
-    //     prevNoti.current = notifications;
-    //     // Thực hiện các công việc khác ở đây...
-    // }, [notifications]);
+    //   }, [isFocused]);
+    
+    // useEffect(() => {
+    // // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
+    // // console.log(isUnmounted);
+    // // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
+    //     if (!isUnmounted) {
+    //         // Gọi API hoặc tác vụ khác...
+    //         listNotification();
+
+    //     }
+    // }, [isUnmounted]);   
     
     const listNotification = () => {
         fetchListNoti(context.token)
@@ -65,6 +52,13 @@ const Notification = () => {
                 // console.log('Fetched notifications:', data.result);
                 setNotifications(data.result);
             }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setLoading(true);
+            // console.log('render');
         });
     };
 
@@ -97,7 +91,7 @@ const Notification = () => {
                     </View>
 
                     {/* list notification */}
-                    {notifications.length !== undefined ? 
+                    {loading &&
                     <View style={{ paddingBottom: 100 }}>
                         {notifications.map((noti, index) => (
                             <TouchableOpacity
@@ -137,7 +131,7 @@ const Notification = () => {
                             </TouchableOpacity>
                         ))}
                     </View>
-                    : ''}
+                    }
                     
                 </ScrollView>
             </View>

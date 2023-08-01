@@ -132,6 +132,45 @@ export const notis = [
     },
 ];
 
+export const transaction = [
+    {
+        "payment_id": "11",
+        "trip_id": "22",
+        "user_id": "3",
+        "coin_add": "-8",
+        "coin": "290",
+        "content": "Phí nền tảng. Số dư: 290k",
+        "created_at": "2023-05-26 14:10:43"
+    },
+    {
+        "payment_id": "8",
+        "trip_id": "9",
+        "user_id": "3",
+        "coin_add": "-1",
+        "coin": "298",
+        "content": "Phí nền tảng. Số dư: 298k",
+        "created_at": "2023-05-16 09:51:50"
+    },
+    {
+        "payment_id": "7",
+        "trip_id": "9",
+        "user_id": "3",
+        "coin_add": "-1",
+        "coin": "299",
+        "content": "Phí nền tảng. Số dư: 299k",
+        "created_at": "2023-05-16 09:48:40"
+    },
+    {
+        "payment_id": "3",
+        "trip_id": "0",
+        "user_id": "3",
+        "coin_add": "300",
+        "coin": "300",
+        "content": "Bạn đã được tặng 300k khi đăng ký thông tin xe lần đầu. Số dư: 300k",
+        "created_at": "2023-05-12 11:40:24"
+    }
+];
+
 export const dataGender = [
     { id: 0, shortname: 'Nam' },
     { id: 1, shortname: 'Nữ' },

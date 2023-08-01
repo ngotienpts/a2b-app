@@ -11,7 +11,7 @@ const MomentComponent = ({ timeString, style }) => {
     const hoursAgo = duration.asHours();
     const daysAgo = duration.asDays();
     const minutesAgo = duration.asMinutes();
-    // console.log(minutesAgo);
+    // console.log(daysAgo);
     let output;
     switch (true) {
         case monthsAgo >= 1:

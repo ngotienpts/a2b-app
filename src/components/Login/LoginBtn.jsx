@@ -14,11 +14,13 @@ const LoginBtn = () => {
   const navigation = useNavigation();
   const androidClientId = '187142393375-7bp1qk9479dibdaepdpj3ibeotm4pr3p.apps.googleusercontent.com';
   const webClientId = '187142393375-c2ai5ek3ap50qat3i710ucc9mirv4j2b.apps.googleusercontent.com';
+  const iosClientId = '187142393375-7u10eperhdm3fih7dgss8c05gtha5shs.apps.googleusercontent.com'
   const context = useContext(TokenContext);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: androidClientId,
     webClientId: webClientId,
-    expoClientId: webClientId
+    expoClientId: webClientId,
+    iosClientId: iosClientId
   });
 
   // Hành động được thực hiện sau khi component được render hoặc state thay đổi

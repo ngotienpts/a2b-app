@@ -112,3 +112,13 @@ export const fetchListReport = (params,token) => {
     const listReport = `${baseUrl}/${token}/report/list`;
     return apiCall(listReport,params);
 }
+//lich su chuyen di khach hang 
+export const fetchListHistoryPassenger = (token) => {
+    const listHistoryPassenger = `${baseUrl}/${token}/history/customer`;
+    return apiCall(listHistoryPassenger);
+}
+//lich su giao dich
+export const fetchListHistoryTransfer = (token) => {
+    const listHistoryTransfer = `${baseUrl}/${token}/history/payment`;
+    return apiCall(listHistoryTransfer);
+}

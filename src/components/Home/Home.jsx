@@ -122,6 +122,10 @@ const Home = () => {
     }
   };
 
+  const handleClearInput = () => {
+    setInputValue('');
+  }
+
   const handleSearchDebounce = useCallback(debounce(handleSearch, 300), []);
   //debounce la sẽ tạo ra 1 phiên bản mới của hàm và ham co kha nang tri hoan việc thực thi và sẽ thực thi sau độ trễ đã xác định.
   //Trong TH nếu có thêm 1 hàm được gọi thì cái trước sẽ bị hủy và hàm mới sẽ chạy 
@@ -164,7 +168,7 @@ const Home = () => {
                 handleSearchDebounce(text);
               }}
               value={inputValue}
-              style={[styles.fs16, styles.textWhite, styles.pl24, styles.pr50]}
+              style={[styles.fs16, styles.textWhite,styles.flexFull, styles.pl24, styles.pr50]}
               placeholder="Tìm kiếm"
               placeholderTextColor={'white'}
             />
