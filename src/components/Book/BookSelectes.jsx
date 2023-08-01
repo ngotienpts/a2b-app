@@ -13,7 +13,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 
 import styles from '../../styles';
-import { format } from 'date-fns';
 import { fetchListCategoryVehicle } from '../../api/DataFetching';
 
 const BookSelects = ({ context }) => {

@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
@@ -10,7 +10,6 @@ import styles from '../../styles';
 import Header from './Header';
 import Result from './Result';
 import ResultDefault from './ResultDefault';
-import { debounce } from 'lodash';
 import { fetchHistorySearch, fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -132,18 +131,10 @@ const Home = () => {
           {/* header */}
           <Header navigation={navigation} />
 
-          {/* body */}
-          <View style={[styles.px15, styles.flexFull]}>
-            <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.mb12]}>
-              Xin chào, {name}
-            </Text>
-            <Text style={[styles.textWhite, styles.fs27, styles.lh40, styles.fw300, styles.mb10]}>
-              Bạn cần đi đâu?
-            </Text>
             {/* body */}
             <View style={[styles.px15, styles.flexFull]}>
               <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.mb12]}>
-                Xin chào, Nguyễn Văn An!
+              Xin chào, {name}
               </Text>
               <Text
                 style={[
@@ -189,22 +180,16 @@ const Home = () => {
                 </View>
               </View>
 
-              {/* result */}
-              {inputValue.length > 0 ? (
-                <Result results={results} navigation={navigation} />
-              ) : (
-                <ResultDefault data={searchData} navigation={navigation} />
-              )}
-            </View>
-          </View>
-        </View>
-
         {/* result */}
         {inputValue.length > 0 ? (
           <Result results={results} navigation={navigation} />
         ) : (
           <ResultDefault data={history} navigation={navigation} />
         )}
+            </View>
+          </View>
+
+
     </SafeAreaView >
   );
 

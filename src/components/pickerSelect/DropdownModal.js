@@ -3,6 +3,7 @@ import { View, Text, Modal, TouchableOpacity, ScrollView, Dimensions } from 'rea
 
 import styles from '../../styles';
 const DropdownModal = ({ style, data, selectedName }) => {
+    // console.log(selectedName)
     if (!Array.isArray(data)) {
         data = [];
     }

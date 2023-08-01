@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
@@ -8,10 +8,14 @@ import Header from '../header/Header';
 import { typeCar, licenseColor, bill, water } from '../../constants';
 import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { bgCar } from '../../assets/images';
-import { fallbackImage } from '../../api/DataFetching';
+import { fallbackImage,fetchListMyCar } from '../../api/DataFetching';
 import ChoseImage from '../settings/ChoseImage';
 
 const MyCarComponent = () => {
+    useEffect(() => {
+        //Runs on every render
+        showMyCar();
+    },[]);
     var { width } = Dimensions.get('window');
     const navigation = useNavigation();
     const apiCarName = 'BMW X5';
@@ -20,10 +24,11 @@ const MyCarComponent = () => {
     const apiFreight = '7000';
 
     const [backgroundCar, setBackgroundCar] = useState(bgCar);
-    const [carName, setCarName] = useState(apiCarName);
-    const [carModel, setCarModel] = useState(apiCarModel);
-    const [licensePlate, setLicensePlate] = useState(apiLicensePlate);
-    const [freight, setFreight] = useState(apiFreight);
+    const [carName, setCarName] = useState([]);
+    const [carModel, setCarModel] = useState([]);
+    const [licensePlate, setLicensePlate] = useState([]);
+    const [freight, setFreight] = useState([]);
+    const [loading, setloading] = useState(false);
 
     const handleCarNameChange = (newValue) => {
         setCarName(newValue);
@@ -37,14 +42,38 @@ const MyCarComponent = () => {
     const handleFreightChange = (newValue) => {
         setFreight(newValue);
     };
+    const UpdateData = {
+        vehicleName : carName,
+    };
+    const showMyCar = () => {
+        fetchListMyCar('79ee7846612b106c445826c19')
+        .then((data) => {
+            if (data.res == 'success') {
+                setCarName(data.result.vehicle_name)
+                setCarModel(data.result.vehicle_life)
+                setLicensePlate(data.result.license_plates)
+                setFreight(data.result.price_per_km)
+                // console.log(data.result);
+            }
+        })
+        .finally(()=>setloading(true))
+    }
+    console.log(UpdateData.vehicleName);
+    
+    const updateMyCar = () => {
+        fetchUpdateMycar(data,'79ee7846612b106c445826c19')
+        .then((data) => {
+
+        })
+    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Xe của tôi" />
-
-                {/* body */}
+                {loading && 
+                /* body */
                 <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
                     {/* image */}
                     <View style={[styles.flexCenter]}>
@@ -135,6 +164,7 @@ const MyCarComponent = () => {
                         </View>
                     </View>
                 </ScrollView>
+}
             </View>
             {/* buttom  huy chuyen */}
             <View style={[styles.flexRow]}>

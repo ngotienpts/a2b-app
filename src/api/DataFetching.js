@@ -2,9 +2,9 @@ import axios from 'axios';
 
 // endpoint
 const baseUrl = 'https://api.beta-a2b.work';
-const searchEndpoint = `${baseUrl}/${api_key}/search/info?`;
+// const searchEndpoint = `${baseUrl}/${api_key}/search/info?`;
 const settingEndpoint = `${baseUrl}/e1358385819f12b01db7990c1/profile/get`;
-const bankNameEndpoint = `${baseUrl}/${api_key}/bank/list`;
+// const bankNameEndpoint = `${baseUrl}/${api_key}/bank/list`;
 
 const reviewListEndpoint = (id) => `${baseUrl}/rate/filterCustomer?customer_id=${id}`;
 
@@ -88,4 +88,14 @@ export const fetchCreateOneTrip = (data, token) => {
 export const fetchListCategoryVehicle = (token) => {
     const listCategoryVehicle = `${baseUrl}/${token}/category/list`;
     return apiCall(listCategoryVehicle);
+}
+//lấy thông tin mycar
+export const fetchListMyCar = (token) => {
+    const ListMyCar = `${baseUrl}/${token}/vehicle/get`;
+    return apiCall(ListMyCar);
+}
+//cập nhật thông tin mycar
+export const fetchUpdateMycar = (data, token) => {
+    const createTrip = `${baseUrl}/${token}/vehicle/update`;
+    return postApi(createTrip,data);
 }
