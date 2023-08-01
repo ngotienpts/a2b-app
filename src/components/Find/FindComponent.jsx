@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
 import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -24,7 +24,8 @@ const FindComponent = () => {
     const navigation = useNavigation();
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Tìm tài xế" />
@@ -307,7 +308,7 @@ const FindComponent = () => {
                             styles.border4,
                             styles.mx15,
                         ]}
-                        onPress={() => navigation.goBack()}
+                        onPress={() => navigation.navigate('CancelBookClientScreen')}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>

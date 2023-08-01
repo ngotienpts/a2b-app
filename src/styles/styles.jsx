@@ -233,6 +233,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 8,
     },
+    textItalic: {
+        fontStyle: 'italic',
+    },
     /*-------------------------------------------------------------------------- */
     itemsCenter: {
         alignItems: 'center',

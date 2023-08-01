@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -94,7 +94,8 @@ const Setting = () => {
     }, []);
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Tài khoản" />
@@ -114,6 +115,7 @@ const Setting = () => {
                         </View>
                         <View style={[styles.flexBetween, styles.gap15]}>
                             <TouchableOpacity
+                                onPress={() => navigation.navigate('DiaryScreen')}
                                 style={[
                                     styles.flexFull,
                                     styles.border1,
@@ -136,6 +138,7 @@ const Setting = () => {
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
+                                onPress={() => navigation.navigate('LoadPointsScreen')}
                                 style={[
                                     styles.flexFull,
                                     styles.border1,

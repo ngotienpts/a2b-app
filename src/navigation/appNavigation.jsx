@@ -30,6 +30,9 @@ import DriverFindDetailComponent from '../components/driverFindDetail';
 import DriverPickScreen from '../screens/DriverPickScreen';
 import DriverMovingScreen from '../screens/DriverMovingScreen';
 import DriverCompleteScreen from '../screens/DriverCompleteScreen';
+import LoadPointsScreen from '../screens/LoadPointsScreen';
+import CancelBookClientScreen from '../screens/CancelBookClientScreen';
+import CancelBookDriverScreen from '../screens/CancelBookDriverScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -101,6 +104,7 @@ const AppNavigation = () => {
                             <Stack.Screen name="PickScreen" component={PickScreen} />
                             <Stack.Screen name="MovingScreen" component={MovingScreen} />
                             <Stack.Screen name="CompleteScreen" component={CompleteScreen} />
+                            <Stack.Screen name="LoadPointsScreen" component={LoadPointsScreen} />
                             <Stack.Screen name="MyCarScreen" component={MyCarScreen} />
                             <Stack.Screen
                                 name="VerificationScreen"
@@ -120,6 +124,14 @@ const AppNavigation = () => {
                             <Stack.Screen
                                 name="DriverCompleteScreen"
                                 component={DriverCompleteScreen}
+                            />
+                            <Stack.Screen
+                                name="CancelBookClientScreen"
+                                component={CancelBookClientScreen}
+                            />
+                            <Stack.Screen
+                                name="CancelBookDriverScreen"
+                                component={CancelBookDriverScreen}
                             />
                         </Stack.Navigator>
                     </NavigationContainer>

@@ -158,3 +158,16 @@ export const water = [
     { id: 0, shortname: 'Có' },
     { id: 1, shortname: 'Không' },
 ];
+export const cancelBookDriver = [
+    { id: 0, title: 'Tôi có việc bận đột xuất', des: 'Không thể thực hiện chuyến đi này' },
+    {
+        id: 1,
+        title: 'Do xe của tôi gặp sự cố bất khả kháng',
+        des: 'Xe tôi hỏng, bị sự cố, va trạm trên đường...',
+    },
+    { id: 2, title: 'Lý do khác', des: 'Các lý do khác' },
+];
+export const cancelBookClient = [
+    { id: 0, title: 'Do tôi thay đổi hành trình, thời gian', des: 'Tôi muốn hủy chuyến đi này' },
+    { id: 1, title: 'Lý do khác', des: 'Các lý do khác' },
+];

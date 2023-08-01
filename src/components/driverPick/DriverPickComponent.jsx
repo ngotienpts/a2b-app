@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -38,25 +38,29 @@ const DriverPickComponent = () => {
         const data = await fetchReviewListEndpoint(id);
         if (data && data.result.list) setReviewDriver(data.result.list);
     };
-    const navigateToDriverMovingScreen = () => {
-        navigation.navigate('DriverMovingScreen', item);
-    };
-    useInterval(navigateToDriverMovingScreen, 1000, toggleStateBtn);
+    // const navigateToDriverMovingScreen = () => {
+    //     navigation.navigate('DriverMovingScreen', item);
+    // };
+    // useInterval(navigateToDriverMovingScreen, 1000, toggleStateBtn);
 
     const StarsDisplay = ({ value }) => {
         const starCount = 5;
 
         return (
-            <View style={[styles.flexRow, styles.itemsCenter]}>
-                {[...Array(starCount)].map((_, index) => (
-                    <StarIcon
-                        key={index}
-                        size={12}
-                        color={index < value ? 'white' : undefined}
-                        stroke={index < value ? undefined : 'white'}
-                    />
-                ))}
-            </View>
+            <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+                <StatusBar barStyle="light-content" animated={true} />
+
+                <View style={[styles.flexRow, styles.itemsCenter]}>
+                    {[...Array(starCount)].map((_, index) => (
+                        <StarIcon
+                            key={index}
+                            size={12}
+                            color={index < value ? 'white' : undefined}
+                            stroke={index < value ? undefined : 'white'}
+                        />
+                    ))}
+                </View>
+            </SafeAreaView>
         );
     };
     const backgroundStyle = {
