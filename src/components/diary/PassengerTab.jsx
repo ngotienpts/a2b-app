@@ -6,8 +6,6 @@ import { StopCircleIcon } from 'react-native-heroicons/solid';
 import styles from '../../styles';
 import { fetchListHistoryPassenger } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
-import NameDateFormat from '../nameDateFormat';
-import { PassengerContext } from '../../redux/passengerContext';
 import moment from 'moment';
 
 const PassengerTab = () => {
@@ -17,7 +15,6 @@ const PassengerTab = () => {
     const startOfLastWeek = moment().subtract(1, 'weeks').startOf('isoWeek');
     const startOfMonth = moment().startOf('month');
     const startOfLastMonth = moment().subtract(1, 'months').startOf('month');
-    const context = useContext(PassengerContext)
     const [passengers, setPassengers] = useState({});
     const [loading, setLoading] = useState(false);
     const contextToken = useContext(TokenContext);
@@ -82,6 +79,8 @@ const PassengerTab = () => {
 
         setPassengers(convertArr);
     }
+
+
 
     useEffect(() => {
         listPassenger();

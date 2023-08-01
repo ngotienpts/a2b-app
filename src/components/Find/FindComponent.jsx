@@ -31,6 +31,7 @@ import { fallbackImage, fetchDetailTrip, fetchListReport } from '../../api/DataF
 import SentFormBooking from '../sentFormBooking/SentFormBooking';
 import { DetailTripContext } from '../../redux/detailTripContext';
 import { TokenContext } from '../../redux/tokenContext';
+import { StatusBar } from 'react-native';
 
 
 const FindComponent = () => {
@@ -77,7 +78,8 @@ const FindComponent = () => {
     }
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Tìm tài xế" />

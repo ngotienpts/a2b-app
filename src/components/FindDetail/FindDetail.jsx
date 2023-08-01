@@ -12,6 +12,7 @@ import { fallbackImage, fetchReviewListEndpoint } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
 import MomentComponent from '../moment';
+import { StatusBar } from 'react-native';
 
 const FindDetail = () => {
     const context = useContext(BookingFormContext);
@@ -46,7 +47,8 @@ const FindDetail = () => {
     }, [item]);
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Tìm tài xế" />

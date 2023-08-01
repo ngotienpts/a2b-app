@@ -10,6 +10,7 @@ import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { bgCar } from '../../assets/images';
 import { fallbackImage } from '../../api/DataFetching';
 import ChoseImage from '../settings/ChoseImage';
+import { StatusBar } from 'react-native';
 
 const MyCarComponent = () => {
     var { width } = Dimensions.get('window');
@@ -40,6 +41,7 @@ const MyCarComponent = () => {
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Xe của tôi" />

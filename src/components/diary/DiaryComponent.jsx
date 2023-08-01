@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, useWindowDimensions, TouchableOpacity, Text, Animated } from 'react-native';
+import { View, useWindowDimensions, TouchableOpacity, Text, Animated,StatusBar } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-
 import styles from '../../styles';
 import Header from '../header';
 import TransactionTab from './TransactionTab';
@@ -80,7 +79,8 @@ const DiaryComponent = () => {
     });
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Nhật ký" />

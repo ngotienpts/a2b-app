@@ -12,6 +12,7 @@ import { fetchCreateOneTrip, fetchStartGPS } from '../../api/DataFetching';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TokenContext } from '../../redux/tokenContext';
 import { format } from 'date-fns';
+import { StatusBar } from 'react-native';
 
 const Book = () => {
   const context = useContext(BookingFormContext);
@@ -91,7 +92,8 @@ const Book = () => {
   }
 
   return (
-    <SafeAreaView style={[styles.flexFull, styles.relative]}>
+    <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+      <StatusBar barStyle="light-content" animated={true} />
       <View style={[styles.flexFull, styles.bgBlack]}>
         {/* header */}
         <Header navigation={navigation} title="Đặt chuyến" />

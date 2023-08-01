@@ -17,6 +17,7 @@ import { Image } from 'react-native';
 import { fallbackImage } from '../../api/DataFetching';
 import { qrCode } from '../../assets/images';
 import { reviewTextComplete } from '../../constants';
+import { StatusBar } from 'react-native';
 
 const Complete = () => {
     const navigation = useNavigation();
@@ -33,7 +34,8 @@ const Complete = () => {
     };
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Chi tiết chuyến đi" />

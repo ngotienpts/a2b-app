@@ -17,12 +17,14 @@ import { BookingFormContext } from '../../redux/bookingFormContext';
 import { fallbackImage } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking';
 import { qrCode } from '../../assets/images';
+import { StatusBar } from 'react-native';
 
 const MovingComponent = () => {
     const context = useContext(BookingFormContext);
     const navigation = useNavigation();
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Chi tiết chuyến đi" />

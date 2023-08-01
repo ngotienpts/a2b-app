@@ -17,13 +17,15 @@ import { Image } from 'react-native';
 import { fallbackImage } from '../../api/DataFetching';
 import { CircleFade } from 'react-native-animated-spinkit';
 import { BookingFormContext } from '../../redux/bookingFormContext';
+import { StatusBar } from 'react-native';
 
 const DriverFind = () => {
     const navigation = useNavigation();
     const context = useContext(BookingFormContext);
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Xe tìm khách" />

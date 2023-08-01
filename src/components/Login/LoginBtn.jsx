@@ -33,6 +33,7 @@ const LoginBtn = () => {
       getUserInfo(response.authentication.accessToken)
     }
     getLocalStorage();
+    // removeItem();
   }, [response]) //truyen [] de goi useEffect 1 lan sau khi compoment mounted
 
   const getLocalStorage = async () => {
@@ -40,6 +41,10 @@ const LoginBtn = () => {
     if(checkToken !== null){
       navigation.navigate('Home',context.setToken(checkToken));
     }
+  }
+
+  const removeItem = async () => {
+    await AsyncStorage.removeItem('token');
   }
 
   const handleGoogleLogin = async () => {

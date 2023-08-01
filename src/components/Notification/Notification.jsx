@@ -8,6 +8,7 @@ import Header from '../header';
 import MomentComponent from '../moment';
 import { fetchListNoti, fetchReadAllNoti } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
+import { StatusBar } from 'react-native';
 
 const Notification = () => {
     const navigation = useNavigation();
@@ -72,7 +73,8 @@ const Notification = () => {
     }
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Thông báo" />

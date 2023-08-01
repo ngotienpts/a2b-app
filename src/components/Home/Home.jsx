@@ -12,6 +12,7 @@ import { debounce } from 'lodash';
 import { fetchHistorySearch, fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from 'react-native';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -130,7 +131,8 @@ const Home = () => {
   //debounce la sẽ tạo ra 1 phiên bản mới của hàm và ham co kha nang tri hoan việc thực thi và sẽ thực thi sau độ trễ đã xác định.
   //Trong TH nếu có thêm 1 hàm được gọi thì cái trước sẽ bị hủy và hàm mới sẽ chạy 
   return (
-    <SafeAreaView style={[styles.flexFull, styles.relative]}>
+    <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+      <StatusBar barStyle="light-content" animated={true} />
       <View style={[styles.flexFull, styles.bgBlack]}>
         {/* header */}
         <Header navigation={navigation} />
