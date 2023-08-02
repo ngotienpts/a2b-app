@@ -56,6 +56,13 @@ const Setting = () => {
     const handleNameBankAccountChange = (newValue) => {
         setNameBankAccount(newValue);
     };
+    //dang xuat
+    const handleLogoutApp = async () => {
+        const removeItem = await AsyncStorage.removeItem('token');
+        if(removeItem){
+            navigation.navigate('LoginScreen');
+        }
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -298,7 +305,7 @@ const Setting = () => {
                         </View>
 
                         {/* log out */}
-                        <TouchableOpacity style={[styles.flexCenter, styles.mb24]}>
+                        <TouchableOpacity onPress={handleLogoutApp} style={[styles.flexCenter, styles.mb24]}>
                             <View>
                                 <Text style={[styles.fs16, styles.textCenter, styles.textRedE8]}>
                                     Đăng xuất
