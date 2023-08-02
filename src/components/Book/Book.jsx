@@ -81,7 +81,7 @@ const Book = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.navigate('FindScreen')}
+                        onPress={() => navigation.navigate('FindScreen', item)}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Tìm tài xế</Text>
                     </TouchableOpacity>

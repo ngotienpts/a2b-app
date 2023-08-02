@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, Image, SafeAreaView, StatusBar } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -19,7 +19,6 @@ import SentFormBooking from '../sentFormBooking';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import MomentComponent from '../moment';
 import ToggleSwipeable from '../toggleSwiperable';
-import useInterval from '../../hooks/useInterval';
 
 const DriverPickComponent = () => {
     const [toggleStateBtn, setToggleStateBtn] = useState(false);
@@ -38,10 +37,12 @@ const DriverPickComponent = () => {
         const data = await fetchReviewListEndpoint(id);
         if (data && data.result.list) setReviewDriver(data.result.list);
     };
-    // const navigateToDriverMovingScreen = () => {
-    //     navigation.navigate('DriverMovingScreen', item);
-    // };
-    // useInterval(navigateToDriverMovingScreen, 1000, toggleStateBtn);
+
+    useEffect(() => {
+        if (toggleStateBtn) {
+            navigation.navigate('DriverMovingScreen', item);
+        }
+    }, [toggleStateBtn, navigation]);
 
     const StarsDisplay = ({ value }) => {
         const starCount = 5;
@@ -452,7 +453,13 @@ const DriverPickComponent = () => {
             </View>
             {/* buttom bắt đầu chuyến đi*/}
             <View style={[styles.flexRow, styles.bgBlack]}>
-                <ToggleSwipeable onToggle={handleToggleBtn} />
+                <ToggleSwipeable
+                    onToggle={handleToggleBtn}
+                    title={'Bắt đầu chuyến đi'}
+                    primaryColor={'#06d6a0'}
+                    secondaryColor={'#1b9aaa'}
+                    tertiaryColor={'#fff'}
+                />
             </View>
         </View>
     );

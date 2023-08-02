@@ -203,6 +203,9 @@ const styles = StyleSheet.create({
     textWhite30: {
         color: 'rgba(255,255,255,0.3)',
     },
+    textWhite80: {
+        color: 'rgba(255,255,255,0.8)',
+    },
     textGray77: {
         color: 'rgba(119,125,146,0.8)',
     },

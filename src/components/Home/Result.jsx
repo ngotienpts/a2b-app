@@ -1,14 +1,19 @@
-import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Keyboard } from 'react-native';
 import React from 'react';
 import { MapPinIcon } from 'react-native-heroicons/outline';
 
 import styles from '../../styles';
 
-const Result = ({ results, navigation }) => {
+const Result = ({ results, navigation, style, paddingBottom }) => {
+    const handleScroll = () => {
+        Keyboard.dismiss();
+    };
     return (
-        <View style={[styles.flexFull]}>
+        <View style={style}>
             <FlatList
-                contentContainerStyle={{ paddingBottom: 80 }}
+                onScroll={handleScroll}
+                keyboardShouldPersistTaps="always"
+                contentContainerStyle={{ paddingBottom: paddingBottom }}
                 data={results}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(item) => item.name.toString()}

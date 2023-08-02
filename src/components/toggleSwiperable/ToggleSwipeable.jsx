@@ -16,6 +16,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useState } from 'react';
 import { Dimensions } from 'react-native';
+import { ChevronDoubleRightIcon } from 'react-native-heroicons/solid';
 const { width } = Dimensions.get('window');
 const BUTTON_WIDTH = width;
 const BUTTON_HEIGHT = 48;
@@ -25,8 +26,13 @@ const SWIPEABLE_DIMENSIONS = BUTTON_HEIGHT - 2 * BUTTON_PADDING;
 const H_WAVE_RANGE = SWIPEABLE_DIMENSIONS + 2 * BUTTON_PADDING;
 const H_SWIPE_RANGE = BUTTON_WIDTH - 2 * BUTTON_PADDING - SWIPEABLE_DIMENSIONS;
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+class AnimatedChevronDoubleRightIcon extends React.Component {
+    render() {
+        return <ChevronDoubleRightIcon {...this.props} />;
+    }
+}
 
-const ToggleSwipeable = ({ onToggle }) => {
+const ToggleSwipeable = ({ onToggle, primaryColor, secondaryColor, tertiaryColor, title }) => {
     // Animated value for X translation
     const X = useSharedValue(0);
     // Toggled State
@@ -72,6 +78,14 @@ const ToggleSwipeable = ({ onToggle }) => {
         swipeCont: useAnimatedStyle(() => {
             return {};
         }),
+        chevronIcon: useAnimatedStyle(() => {
+            return {
+                position: 'absolute',
+                left: 40,
+                transform: [{ translateX: X.value }],
+                opacity: interpolate(X.value, InterpolateXInput, [0.7, 0], Extrapolate.CLAMP),
+            };
+        }),
         colorWave: useAnimatedStyle(() => {
             return {
                 width: H_WAVE_RANGE + X.value,
@@ -84,14 +98,14 @@ const ToggleSwipeable = ({ onToggle }) => {
                 backgroundColor: interpolateColor(
                     X.value,
                     [0, BUTTON_WIDTH - SWIPEABLE_DIMENSIONS - BUTTON_PADDING],
-                    ['#06d6a0', '#fff']
+                    [primaryColor, tertiaryColor]
                 ),
                 transform: [{ translateX: X.value }],
             };
         }),
         swipeText: useAnimatedStyle(() => {
             return {
-                opacity: interpolate(X.value, InterpolateXInput, [0.7, 0], Extrapolate.CLAMP),
+                opacity: interpolate(X.value, InterpolateXInput, [1, 0], Extrapolate.CLAMP),
                 transform: [
                     {
                         translateX: interpolate(
@@ -111,15 +125,18 @@ const ToggleSwipeable = ({ onToggle }) => {
             <Animated.View style={[styles.swipeCont, AnimatedStyles.swipeCont]}>
                 <AnimatedLinearGradient
                     style={[AnimatedStyles.colorWave, styles.colorWave]}
-                    colors={['#06d6a0', '#1b9aaa']}
+                    colors={[primaryColor, secondaryColor]}
                     start={{ x: 0.0, y: 0.5 }}
                     end={{ x: 1, y: 0.5 }}
                 />
                 <PanGestureHandler onGestureEvent={animatedGestureHandler}>
                     <Animated.View style={[styles.swipeable, AnimatedStyles.swipeable]} />
                 </PanGestureHandler>
+                <Animated.View style={[styles.chevronIcon, AnimatedStyles.chevronIcon]}>
+                    <AnimatedChevronDoubleRightIcon size={20} color={'gray'} />
+                </Animated.View>
                 <Animated.Text style={[styles.swipeText, AnimatedStyles.swipeText]}>
-                    Bắt đầu chuyến đi
+                    {title}
                 </Animated.Text>
             </Animated.View>
         </GestureHandlerRootView>
@@ -157,6 +174,9 @@ const styles = StyleSheet.create({
         fontWeight: 'normal',
         zIndex: 2,
         color: '#fff',
+    },
+    mr50: {
+        marginRight: 50,
     },
 });
 export default ToggleSwipeable;

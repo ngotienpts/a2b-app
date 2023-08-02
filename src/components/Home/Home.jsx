@@ -77,7 +77,13 @@ const Home = () => {
                                 handleSearchDebounce(text);
                             }}
                             value={inputValue}
-                            style={[styles.fs16, styles.textWhite, styles.pl24, styles.pr50]}
+                            style={[
+                                styles.flexFull,
+                                styles.fs16,
+                                styles.textWhite,
+                                styles.pl24,
+                                styles.pr50,
+                            ]}
                             placeholder="Tìm kiếm"
                             placeholderTextColor={'white'}
                         />
@@ -94,7 +100,12 @@ const Home = () => {
 
                     {/* result */}
                     {inputValue.length > 0 ? (
-                        <Result results={results} navigation={navigation} />
+                        <Result
+                            results={results}
+                            navigation={navigation}
+                            style={[styles.flexFull]}
+                            paddingBottom={80}
+                        />
                     ) : (
                         <ResultDefault data={searchData} navigation={navigation} />
                     )}

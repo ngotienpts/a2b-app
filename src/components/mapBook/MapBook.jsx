@@ -1,35 +1,67 @@
-import { View, TouchableOpacity, Text, TextInput, StatusBar, SafeAreaView } from 'react-native';
-import React, { useCallback, useState } from 'react';
+import {
+    View,
+    TouchableOpacity,
+    Text,
+    TextInput,
+    StatusBar,
+    SafeAreaView,
+    Dimensions,
+    Keyboard,
+} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
 import { debounce } from 'lodash';
 
 import styles from '../../styles';
 import { fetchSearchEndpoint } from '../../api/DataFetching';
+import Result from '../home/Result';
 
 const MapBook = () => {
     const navigation = useNavigation();
-    // const [results, setResults] = useState([]);
+    const { params: item } = useRoute();
+
+    const [results, setResults] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
-    // const handleSearch = (payload) => {
-    //     if (payload && payload.length > 0) {
-    //         fetchSearchEndpoint({
-    //             keyword: payload,
-    //             lat: '20.9837639',
-    //             lng: '105.8091508',
-    //         }).then((data) => {
-    //             if (data && data.result) setResults(data.result);
-    //         });
-    //     } else {
-    //         setResults([]);
-    //     }
-    // };
-    // const handleSearchDebounce = useCallback(debounce(handleSearch, 400), []);
+    const handleSearch = (payload) => {
+        if (payload && payload.length > 0) {
+            fetchSearchEndpoint({
+                keyword: payload,
+                lat: '20.9837639',
+                lng: '105.8091508',
+            }).then((data) => {
+                if (data && data.result) setResults(data.result);
+            });
+        } else {
+            setResults([]);
+        }
+    };
+    const handleSearchDebounce = useCallback(debounce(handleSearch, 400), []);
     const handleClearInput = () => {
         setInputValue('');
     };
+
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
+            const screenHeight = Dimensions.get('window').height;
+            const keyboardHeight = e.endCoordinates.height;
+            const availableHeight = screenHeight - keyboardHeight;
+            setKeyboardHeight(availableHeight);
+        });
+
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            setKeyboardHeight(Dimensions.get('window').height);
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
@@ -45,6 +77,7 @@ const MapBook = () => {
                         styles.z100,
                     ]}
                 >
+                    {/* search */}
                     <View
                         style={[
                             styles.relative,
@@ -57,10 +90,16 @@ const MapBook = () => {
                         <TextInput
                             onChangeText={(text) => {
                                 setInputValue(text);
-                                // handleSearchDebounce(text);
+                                handleSearchDebounce(text);
                             }}
                             value={inputValue}
-                            style={[styles.fs16, styles.textWhite, styles.pl24, styles.pr50]}
+                            style={[
+                                styles.flexFull,
+                                styles.fs16,
+                                styles.textWhite,
+                                styles.pl24,
+                                styles.pr50,
+                            ]}
                             placeholder="Tìm kiếm"
                             placeholderTextColor={'white'}
                         />
@@ -74,20 +113,39 @@ const MapBook = () => {
                             )}
                         </View>
                     </View>
+
+                    {/* result */}
+                    {inputValue.length > 0 ? (
+                        <Result
+                            results={results}
+                            navigation={navigation}
+                            style={[
+                                styles.flexFull,
+                                styles.p15,
+                                styles.bg161e,
+                                { maxHeight: keyboardHeight * 0.7 },
+                            ]}
+                            paddingBottom={0}
+                        />
+                    ) : null}
                 </View>
+
                 <MapView
                     style={{ flex: 1 }}
                     initialRegion={{
-                        latitude: 37.78825,
-                        longitude: -122.4324,
+                        latitude: item?.coordinates.lat,
+                        longitude: item?.coordinates.lng,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}
                 >
                     <Marker
-                        coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
-                        title="Marker Title"
-                        description="This is the marker description"
+                        coordinate={{
+                            latitude: item?.coordinates.lat,
+                            longitude: item?.coordinates.lng,
+                        }}
+                        title={item?.address}
+                        description={item?.name}
                     />
                 </MapView>
                 {/* buttom  huy chuyen */}

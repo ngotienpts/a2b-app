@@ -17,12 +17,17 @@ import { fallbackImage, fetchReviewListEndpoint } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
 import MomentComponent from '../moment';
+import ToggleSwipeable from '../toggleSwiperable';
 
 const DriverMovingComponent = () => {
     const context = useContext(BookingFormContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
     const [reviewDriver, setReviewDriver] = useState([]);
+    const [toggleStateBtn, setToggleStateBtn] = useState(false);
+    const handleToggleBtn = (value, item) => {
+        return setToggleStateBtn(value);
+    };
 
     const getReviewList = async (id) => {
         const data = await fetchReviewListEndpoint(id);
@@ -45,6 +50,12 @@ const DriverMovingComponent = () => {
             </View>
         );
     };
+
+    useEffect(() => {
+        if (toggleStateBtn) {
+            navigation.navigate('DriverCompleteScreen', item);
+        }
+    }, [toggleStateBtn, navigation]);
 
     useEffect(() => {
         getReviewList(item.id);
@@ -423,31 +434,15 @@ const DriverMovingComponent = () => {
                     </View>
                 </ScrollView>
 
-                {/* buttom  huy chuyen & tim tai xe*/}
-                <View style={[styles.flexRow]}>
-                    <TouchableOpacity
-                        style={[
-                            styles.h48,
-                            styles.bgGray161,
-                            styles.flexFull,
-                            styles.itemsCenter,
-                            styles.justifyCenter,
-                        ]}
-                    >
-                        <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            styles.h48,
-                            styles.bgRed,
-                            styles.flexFull,
-                            styles.itemsCenter,
-                            styles.justifyCenter,
-                        ]}
-                        onPress={() => navigation.navigate('DriverCompleteScreen', item)}
-                    >
-                        <Text style={[styles.fs16, styles.textWhite]}>Go Complete</Text>
-                    </TouchableOpacity>
+                {/* buttom  ket thuc chuyen di*/}
+                <View style={[styles.flexRow, styles.bgBlack]}>
+                    <ToggleSwipeable
+                        onToggle={handleToggleBtn}
+                        title={'Kết thúc chuyến đi'}
+                        primaryColor={'#E8424A'}
+                        secondaryColor={'#cb356b'}
+                        tertiaryColor={'#fff'}
+                    />
                 </View>
             </View>
         </SafeAreaView>
