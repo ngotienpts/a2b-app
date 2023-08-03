@@ -5,7 +5,8 @@ export const DetailTripContext = createContext();
 const DetailTripProvider = ({ children }) => {
     const [detailTrip, setDetailTrip] = useState({
         duration: '',
-        distance: ''
+        distance: '',
+        price_distance: 0,
     });
     const value = {
         detailTrip,

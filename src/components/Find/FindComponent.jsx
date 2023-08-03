@@ -37,43 +37,76 @@ import { StatusBar } from 'react-native';
 const FindComponent = () => {
     const context = useContext(BookingFormContext);
     const contextToken = useContext(TokenContext);
-    const [detailTrip, setDetailTrip] = useState({});
+    const contextDetailTrip = useContext(DetailTripContext);
+    const [detail, setDetail] = useState({});
     const [reports, setReports] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [loadingDetailTrip, setLoadingDetailTrip] = useState(false);
     const [isUnmounted, setIsUnmounted] = useState(false);
+    const isFocused = useIsFocused();
     const navigation = useNavigation();
-    const isFocused = useIsFocused();;
     const paramsTrip = {
         trip_id: 44
     }
+
+    useEffect(() => {
+        if (!isFocused) {
+          // Màn hình bị blur, thực hiện unmount
+          setIsUnmounted(true);
+        } else {
+          // Màn hình được focus lại, không cần unmount
+          setIsUnmounted(false);
+        }
+      }, [isFocused]);
+    
+    useEffect(() => {
+    // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
+    // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
+        if (!isUnmounted) {
+            // Gọi API hoặc tác vụ khác...
+            detailTrip(paramsTrip)
+            listReport(paramsTrip)
+        }
+    }, [isUnmounted]); 
     
     useEffect(() => {
         // Truyền giá trị từ context vào biến local
-
-        fetchDetailTrip(paramsTrip,contextToken.token)
-        .then((data) => {
-            // console.log(data);
-            if(data.res === 'success'){
-                // console.log(data.result);
-                setDetailTrip(data.result);
-            }
-        })
-
+        detailTrip(paramsTrip)
         listReport(paramsTrip)
     }, []);
 
-    useEffect(() => {
-        // listReport(paramsTrip)
-        console.log('render',reports);
-    },[reports])
+    const detailTrip = (paramsTrip) => {
+        fetchDetailTrip(paramsTrip,contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                setDetail(data.result);
+                contextDetailTrip.setDetailTrip({
+                    ...contextDetailTrip.detailTrip,
+                    duration: data.result.duration_all,
+                    distance: data.result.distance_all
+                })
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setLoadingDetailTrip(true);
+        })
+    }
 
     const listReport = (paramsTrip) => {
         fetchListReport(paramsTrip,contextToken.token)
         .then((data) => {
-            // console.log(data);
             if(data.res === 'success'){
-                // console.log(data.result);
                 setReports(data.result);
             }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setLoading(true);
         })
     }
 
@@ -129,7 +162,7 @@ const FindComponent = () => {
                                 ]}
                             >
                                 <Text style={[styles.fs42, styles.textWhite, { lineHeight: 42 }]}>
-                                    {detailTrip.distance_all}
+                                    {detail.distance_all}
                                 </Text>
                                 <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>km</Text>
                             </View>
@@ -168,7 +201,7 @@ const FindComponent = () => {
                                         { lineHeight: 42, includeFontPadding: false },
                                     ]}
                                 >
-                                    {detailTrip.duration_all}
+                                    {detail.duration_all}
                                 </Text>
                                 <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
                             </View>
@@ -213,7 +246,7 @@ const FindComponent = () => {
                         </Text>
 
                         {/* list */}
-                        {reports.length !== undefined && 
+                        {loading && 
                             <View>
                                 {reports.map((item) => (
                                     <TouchableOpacity

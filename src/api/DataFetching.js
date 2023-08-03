@@ -127,3 +127,13 @@ export const fetchListHistoryTransfer = (token) => {
     const listHistoryTransfer = `${baseUrl}/${token}/history/payment`;
     return apiCall(listHistoryTransfer);
 }
+//danh sach danh gia cua tai xe
+export const fetchListReviewDriver = (params) => {
+    const listReviewDriver = `${baseUrl}/rate/filterDriver`;
+    return apiCall(listReviewDriver, params);
+}
+//thong tin chi tiet ve tai xe
+export const fetchDetailDriver = (params) => {
+    const detailDriver = `${baseUrl}/1/vehicle/detail`;
+    return apiCall(detailDriver, params);
+}
