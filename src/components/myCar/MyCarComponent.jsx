@@ -1,4 +1,12 @@
-import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    ScrollView,
+    Image,
+    Dimensions,
+    StatusBar,
+} from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -10,7 +18,6 @@ import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { bgCar } from '../../assets/images';
 import { fallbackImage } from '../../api/DataFetching';
 import ChoseImage from '../settings/ChoseImage';
-import { StatusBar } from 'react-native';
 
 const MyCarComponent = () => {
     var { width } = Dimensions.get('window');
@@ -38,6 +45,8 @@ const MyCarComponent = () => {
     const handleFreightChange = (newValue) => {
         setFreight(newValue);
     };
+
+    console.log(carName);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>

@@ -56,6 +56,7 @@ const Setting = () => {
     const handleNameBankAccountChange = (newValue) => {
         setNameBankAccount(newValue);
     };
+
     //dang xuat
     const handleLogoutApp = async () => {
         const removeItem = await AsyncStorage.removeItem('token');

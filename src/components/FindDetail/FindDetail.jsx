@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import React, { useState, useEffect, useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
@@ -12,7 +12,6 @@ import { fallbackImage, fetchDetailDriver, fetchListReviewDriver, fetchReviewLis
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
 import MomentComponent from '../moment';
-import { StatusBar } from 'react-native';
 import { TokenContext } from '../../redux/tokenContext';
 import { DetailDriverContext } from '../../redux/detailDriverContext';
 import { DetailTripContext } from '../../redux/detailTripContext';

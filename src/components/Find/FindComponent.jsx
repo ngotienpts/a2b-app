@@ -1,16 +1,17 @@
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    ScrollView,
-    Dimensions,
-    Animated,
-    Easing,
-    Image
-} from 'react-native';
+// import {
+//     View,
+//     Text,
+//     TouchableOpacity,
+//     ScrollView,
+//     Dimensions,
+//     Animated,
+//     Easing,
+//     Image
+// } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 // import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 // import React, { useContext } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { StarIcon } from 'react-native-heroicons/solid';
@@ -26,12 +27,10 @@ import { CircleFade } from 'react-native-animated-spinkit';
 import styles from '../../styles';
 import Header from '../header/Header';
 import { BookingFormContext } from '../../redux/bookingFormContext';
-import { listDrivers } from '../../constants';
 import { fallbackImage, fetchDetailTrip, fetchListReport } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking/SentFormBooking';
 import { DetailTripContext } from '../../redux/detailTripContext';
 import { TokenContext } from '../../redux/tokenContext';
-import { StatusBar } from 'react-native';
 
 
 const FindComponent = () => {
@@ -397,7 +396,7 @@ const FindComponent = () => {
                             styles.border4,
                             styles.mx15,
                         ]}
-                        onPress={() => navigation.goBack()}
+                        onPress={() => navigation.navigate('CancelBookClientScreen')}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>

@@ -8,6 +8,7 @@ const Location = ({ navigation, data, currentPosition }) => {
     return (
         <View style={[styles.borderBot]}>
             <TouchableOpacity onPress={() => navigation.navigate('MapScreen',currentPosition)}>
+            {/* <TouchableOpacity onPress={() => navigation.navigate('MapScreen', (item = data))}> */}
                 <View style={[styles.flexRow, styles.mb24]}>
                     <StopCircleIcon size={20} color={'white'} style={{ marginTop: 2 }} />
                     <View style={[styles.ml5, styles.flexFull]}>
@@ -20,7 +21,8 @@ const Location = ({ navigation, data, currentPosition }) => {
                     </View>
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('MapScreen',data)}>
+            {/* <TouchableOpacity onPress={() => navigation.navigate('MapScreen',data)}> */}
+            <TouchableOpacity onPress={() => navigation.navigate('MapScreen', (item = data))}>
                 <View style={[styles.flexRow, styles.mb24]}>
                     <MapPinIcon size={22} color={'white'} style={{ marginTop: 2 }} />
                     <View style={[styles.ml5, styles.flexFull]}>

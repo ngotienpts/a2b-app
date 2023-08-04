@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { StopCircleIcon, MapPinIcon } from 'react-native-heroicons/solid';
 
 import styles from '../../styles';
@@ -17,7 +17,6 @@ import { Image } from 'react-native';
 import { fallbackImage } from '../../api/DataFetching';
 import { CircleFade } from 'react-native-animated-spinkit';
 import { BookingFormContext } from '../../redux/bookingFormContext';
-import { StatusBar } from 'react-native';
 
 const DriverFind = () => {
     const navigation = useNavigation();
@@ -413,7 +412,7 @@ const DriverFind = () => {
                 <TouchableOpacity
                     style={[
                         styles.h48,
-                        styles.bgGray161,
+                        styles.bgRed,
                         styles.flexFull,
                         styles.itemsCenter,
                         styles.justifyCenter,

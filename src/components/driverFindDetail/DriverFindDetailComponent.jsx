@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import React, { useState, useEffect, useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -18,7 +18,6 @@ import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
 import MomentComponent from '../moment';
 import PayNumber from '../editPayNumber';
-import { StatusBar } from 'react-native';
 
 const DriverFindDetailComponent = () => {
     const context = useContext(BookingFormContext);
@@ -271,7 +270,6 @@ const DriverFindDetailComponent = () => {
                     </View>
 
                     {/* thông tin tài xế */}
-
                     <View
                         style={[styles.border1, styles.borderTop, styles.borderSolid, styles.pt24]}
                     >
@@ -471,7 +469,7 @@ const DriverFindDetailComponent = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.goBack()}
+                        onPress={() => navigation.navigate('CancelBookDriverScreen')}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>
@@ -483,7 +481,7 @@ const DriverFindDetailComponent = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.navigate('ConfirmScreen', item)}
+                        onPress={() => navigation.navigate('DriverPickScreen', item)}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Đón khách</Text>
                     </TouchableOpacity>

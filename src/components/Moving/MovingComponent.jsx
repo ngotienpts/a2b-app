@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
 import React, { useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -17,7 +17,6 @@ import { BookingFormContext } from '../../redux/bookingFormContext';
 import { fallbackImage } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking';
 import { qrCode } from '../../assets/images';
-import { StatusBar } from 'react-native';
 
 const MovingComponent = () => {
     const context = useContext(BookingFormContext);
@@ -340,7 +339,7 @@ const MovingComponent = () => {
                                 <Text style={[styles.fw700, styles.lh24, styles.fs16]}>
                                     Techcombank
                                 </Text>
-                                <TouchableOpacity styles={[styles.p5]}>
+                                <TouchableOpacity style={[styles.p5]}>
                                     <Square2StackIcon size={20} color={'#000'} />
                                 </TouchableOpacity>
                             </View>

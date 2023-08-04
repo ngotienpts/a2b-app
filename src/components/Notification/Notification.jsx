@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 
@@ -8,9 +8,10 @@ import Header from '../header';
 import MomentComponent from '../moment';
 import { fetchListNoti, fetchReadAllNoti } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
-import { StatusBar } from 'react-native';
+import { useNotification } from '../../redux/notificationContext';
 
 const Notification = () => {
+    const { handleHiddenNoti } = useNotification();
     const navigation = useNavigation();
     const context = useContext(TokenContext);
     const [notifications, setNotifications] = useState({});
@@ -71,6 +72,10 @@ const Notification = () => {
             }
         })
     }
+    // Xử lý khi thông báo được ẩn
+    const handleHideNotification = () => {
+        handleHiddenNoti();
+    };
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -89,7 +94,10 @@ const Notification = () => {
                         <Text style={[styles.fs27, styles.textWhite, styles.lh32, styles.fw300]}>
                             Thông báo
                         </Text>
-                        <Text onPress={() => handleClickAllNoti()} style={[styles.fs14, styles.textGray77]}>Đã đọc tất cả</Text>
+                        {/* <Text onPress={() => handleClickAllNoti()} style={[styles.fs14, styles.textGray77]}>Đã đọc tất cả</Text> */}
+                        <TouchableOpacity onPress={handleHideNotification}>
+                            <Text style={[styles.fs14, styles.textGray77]}>Đã đọc tất cả</Text>
+                        </TouchableOpacity>
                     </View>
 
                     {/* list notification */}

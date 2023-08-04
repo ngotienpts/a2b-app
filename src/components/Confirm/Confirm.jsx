@@ -1,3 +1,4 @@
+
 import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar, Linking } from 'react-native';
 import React, { useContext, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -33,7 +34,7 @@ const Confirm = () => {
 
     const handleMakeCallZalo = () => {
         if(item?.phone !== ''){
-            Linking.openURL(`zalo://`);
+            Linking.openURL(`https://zalo.me/${item?.phone}`);
         }else{
             alert('Tài xế này chưa có số điện thoại!');
         }
@@ -311,7 +312,7 @@ const Confirm = () => {
                     {/*  */}
                     <TouchableOpacity
                         style={[styles.pb60]}
-                        onPress={() => navigation.navigate('PickScreen')}
+                        onPress={() => navigation.navigate('PickScreen', item)}
                     >
                         <Text style={[styles.textWhite, styles.flexCenter, styles.fs27]}>
                             Go Pick
@@ -334,7 +335,7 @@ const Confirm = () => {
                             styles.border4,
                             styles.mx15,
                         ]}
-                        onPress={() => navigation.goBack()}
+                        onPress={() => navigation.navigate('CancelBookClientScreen')}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>

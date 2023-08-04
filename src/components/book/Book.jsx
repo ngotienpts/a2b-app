@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useContext, useEffect, useId, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { StopCircleIcon, MapPinIcon } from 'react-native-heroicons/solid';
 import styles from '../../styles';
 import Header from '../header/Header';
 import Location from './Location';
@@ -12,7 +11,6 @@ import { fetchCreateOneTrip, fetchStartGPS } from '../../api/DataFetching';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TokenContext } from '../../redux/tokenContext';
 import { format } from 'date-fns';
-import { StatusBar } from 'react-native';
 
 const Book = () => {
   const context = useContext(BookingFormContext);
@@ -27,17 +25,6 @@ const Book = () => {
     takeAddressFromGPS();
     console.log(item);
   }, [item, eniqueId]);
-
-
-  // useEffect(() => {
-  //   context.setBookingForm({
-  //     ...context.bookingForm,
-  //     eniqueId,
-  //     endPoint: item,
-  //   });
-  // }, [item, eniqueId]);
-
-  
 
   const takeAddressFromGPS = async () => {
     const latString = await AsyncStorage.getItem('lat');
@@ -68,32 +55,31 @@ const Book = () => {
     const latEnd = context.bookingForm.endPoint.coordinates.lat;
     const lngEnd = context.bookingForm.endPoint.coordinates.lng;
     const coordEnd = latEnd + ',' + lngEnd;
-    navigation.navigate('FindScreen',item);
-    // fetchCreateOneTrip({
-    //   start_name: currentPosition.start_name,
-    //   start: currentPosition.start,
-    //   end_name: item.name,
-    //   end: item.address,
-    //   comment: context.bookingForm.note,
-    //   is_punish: context.bookingForm.isPunish,
-    //   start_time: context.bookingForm.departureTime,
-    //   vehicle_category_id: context.bookingForm.typeCar,
-    //   coordinates_start: coordStart,
-    //   coordinates_end: coordEnd
-    // },contextToken.token).then((data) => {
-    //   // console.log(data);
-    //   if(data.res === 'success'){
-    //     context.setBookingForm({
-    //       ...context.bookingForm,
-    //       eniqueId: data.result,
-    //     })
-    //   }
-    // })
+    fetchCreateOneTrip({
+      start_name: currentPosition.start_name,
+      start: currentPosition.start,
+      end_name: item.name,
+      end: item.address,
+      comment: context.bookingForm.note,
+      is_punish: context.bookingForm.isPunish,
+      start_time: context.bookingForm.departureTime,
+      vehicle_category_id: context.bookingForm.typeCar,
+      coordinates_start: coordStart,
+      coordinates_end: coordEnd
+    },contextToken.token).then((data) => {
+      // console.log(data);
+      if(data.res === 'success'){
+        navigation.navigate('FindScreen',item);
+        context.setBookingForm({
+          ...context.bookingForm,
+          eniqueId: data.result,
+        })
+      }
+    })
   }
 
   return (
-    <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
-      <StatusBar barStyle="light-content" animated={true} />
+    <SafeAreaView style={[styles.flexFull, styles.relative]}>
       <View style={[styles.flexFull, styles.bgBlack]}>
         {/* header */}
         <Header navigation={navigation} title="Đặt chuyến" />

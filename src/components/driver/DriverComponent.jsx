@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,7 @@ import Header from '../header/Header';
 import { BoltIcon, CurrencyDollarIcon, ViewfinderCircleIcon } from 'react-native-heroicons/outline';
 import Slider from '@react-native-community/slider';
 import { Switch } from 'react-native';
-import { StatusBar } from 'react-native';
+
 const DriverComponent = () => {
     const navigation = useNavigation();
     const [timeRange, setTimeRange] = useState(30);
