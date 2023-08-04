@@ -6,6 +6,8 @@ import styles from '../../styles';
 const EditTextComponent = ({ label, maxLength, value, onChangeText }) => {
     const [isEditing, setIsEditing] = useState(false);
     const textInputRef = useRef(null);
+
+    // console.log('changed text',onChangeText);
     const handleToggleEdit = () => {
         setIsEditing(!isEditing);
     };

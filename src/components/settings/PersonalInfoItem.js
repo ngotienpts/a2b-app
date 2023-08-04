@@ -6,6 +6,7 @@ import styles from '../../styles';
 import EditTextComponent from '../editTextSetting';
 import EditDateOfBirth from '../editDateOfBirthSetting';
 import DropdownModal from '../pickerSelect/DropdownModal';
+import DropdownModal1 from '../pickerSelectCateVehicle/DropdownModal1';
 import PhoneNumberInput from '../editPhoneNumberSetting';
 import BankNumberSetting from '../editBankNumberSetting';
 import NumberSetting from '../editNumberSetting';
@@ -17,6 +18,7 @@ const PersonalInfoItem = ({
     value,
     onChangeText,
     onDateChange,
+    onChangeDropdown,
     data,
     onValueChange,
     linkFb,
@@ -70,6 +72,16 @@ const PersonalInfoItem = ({
                         style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}
                         data={data}
                         selectedName={selectedName}
+                        onChangeDropdown={onChangeDropdown}
+                    />
+                );
+            case 'dropdown1':
+                return (
+                    <DropdownModal1
+                        style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}
+                        data={data}
+                        selectedName={selectedName}
+                        onChangeDropdown={onChangeDropdown}
                     />
                 );
             case 'phoneNumber':
@@ -111,7 +123,6 @@ const PersonalInfoItem = ({
                 );
         }
     };
-
     return (
         <View
             style={[styles.bg161e, styles.px15, styles.py12, styles.flexBetween, styles.borderBot]}

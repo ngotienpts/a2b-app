@@ -1,11 +1,11 @@
 import { View } from 'react-native';
 import React from 'react';
-// import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 const MapScreen = () => {
   return (
     <View style={{ flex: 1 }}>
-      {/* <MapView
+      <MapView
         style={{ flex: 1 }}
         initialRegion={{
           latitude: 37.78825,
@@ -19,7 +19,7 @@ const MapScreen = () => {
           title="Marker Title"
           description="This is the marker description"
         />
-      </MapView> */}
+      </MapView>
     </View>
   );
 };

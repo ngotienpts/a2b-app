@@ -94,8 +94,18 @@ export const fetchListMyCar = (token) => {
     const ListMyCar = `${baseUrl}/${token}/vehicle/get`;
     return apiCall(ListMyCar);
 }
+//lấy 1 danh mục xe
+export const fetchGetOneCategoryVehicle = (token,params) => {
+    const listCategoryVehicle = `${baseUrl}/${token}/category/one`;
+    return apiCall(listCategoryVehicle, params);
+}
 //cập nhật thông tin mycar
 export const fetchUpdateMycar = (data, token) => {
-    const createTrip = `${baseUrl}/${token}/vehicle/update`;
-    return postApi(createTrip,data);
+    const UpdateMyCar = `${baseUrl}/${token}/vehicle/update`;
+    return postApi(UpdateMyCar,data);
+}
+//lấy thông tin user
+export const fetchGetUserProfile = (token) => {
+    const listUserProfile = `${baseUrl}/${token}/profile/get`;
+    return apiCall(listUserProfile);
 }

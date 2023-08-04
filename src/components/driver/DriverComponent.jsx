@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StopCircleIcon, MapPinIcon } from 'react-native-heroicons/solid';
@@ -9,12 +9,53 @@ import Header from '../header/Header';
 import { BoltIcon, CurrencyDollarIcon, ViewfinderCircleIcon } from 'react-native-heroicons/outline';
 import Slider from '@react-native-community/slider';
 import { Switch } from 'react-native';
+import { fallbackImage, fetchListMyCar, fetchGetOneCategoryVehicle, fetchListCategoryVehicle } from '../../api/DataFetching';
 const DriverComponent = () => {
+    useEffect(() => {
+        showMyCar();
+    }, [])
+
     const navigation = useNavigation();
+    const [nameStart, setnameStart] = useState('');
+    const [addressStart, setaddressStart] = useState('');
+    const [nameEnd, setnameEnd] = useState('');
+    const [addressEnd, setaddressEnd] = useState('');
     const [timeRange, setTimeRange] = useState(30);
     const [priceRange, setPriceRange] = useState(5000);
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
+    const splitNameAddress = (str) => {
+        if(!str) return [];
+        str = str.replace(', Việt Nam', '');
+        var title = ''; var address = '';
+        title = str.substring(0, str.indexOf(","));
+        address = str.replace(title + ',', '');
+        title = title.trim();
+        address = address.trim();
+        return [title, address];
+    }
+
+    const showMyCar = async () => {
+        try {
+            const data = await fetchListMyCar('79ee7846612b106c445826c19')
+            // .then((data) => {
+            if (data.res == 'success') {
+                setnameStart(splitNameAddress(data.result.start_location)[0]);
+                setaddressStart(splitNameAddress(data.result.start_location)[1]);
+                setnameEnd(splitNameAddress(data.result.end_location)[0]);
+                setaddressEnd(splitNameAddress(data.result.end_location)[1]);
+                // setloading(false);
+            }
+            // })
+            // .finally(()=>setloading(false))
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+        //  finally {
+        //     setloading(false);
+        // }
+    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
@@ -42,7 +83,6 @@ const DriverComponent = () => {
                     {/* location */}
                     <View>
                         {/* vị trí hiện tại */}
-                        <TouchableOpacity onPress={() => navigation.navigate('MapScreen')}>
                             <View style={[styles.flexRow, styles.mb24]}>
                                 <StopCircleIcon
                                     size={20}
@@ -65,7 +105,6 @@ const DriverComponent = () => {
                                     </Text>
                                 </View>
                             </View>
-                        </TouchableOpacity>
 
                         {/* điểm đến */}
                         <TouchableOpacity onPress={() => navigation.navigate('MapScreen')}>

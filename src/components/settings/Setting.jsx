@@ -6,7 +6,7 @@ import { ChevronRightIcon } from 'react-native-heroicons/outline';
 
 import styles from '../../styles';
 import Header from '../header/Header';
-import { fallbackImage, fetchBankNameEndpoint, fetchSettingEndpoint } from '../../api/DataFetching';
+import { fallbackImage, fetchBankNameEndpoint, fetchSettingEndpoint, fetchGetUserProfile } from '../../api/DataFetching';
 import PersonalInfoItem from './PersonalInfoItem';
 import NextPageSetting from './NextPageSetting';
 import { dataGender } from '../../constants';
@@ -34,6 +34,7 @@ const Setting = () => {
     const [bankName, setBankName] = useState(apiBankName);
     const [nameBankAccount, setNameBankAccount] = useState(apiNameBankAccount);
     const [bankNameData, setBankNameData] = useState([]);
+    const [UserProfile, setUserProfile] = useState([]);
 
     const handleAvaterChange = (newValue) => {
         setAvatar(newValue);
@@ -58,35 +59,50 @@ const Setting = () => {
     };
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const response = await fetchSettingEndpoint();
-                if (response && response.result) {
-                    setSettingData(response.result);
-                }
-            } catch (error) {
-                // Xử lý lỗi
-                console.log(error);
-            }
-        }
-        fetchData();
-    }, []);
+        getUserProfile();
+    },[])
 
-    useEffect(() => {
-        // Gọi hàm để lấy dữ liệu từ endpoint
-        async function fetchData() {
-            try {
-                const response = await fetchBankNameEndpoint(); // Gọi endpoint tại đây
-                if (response && response.result) {
-                    setBankNameData(response.result);
-                }
-            } catch (error) {
-                // Xử lý lỗi
-                console.log(error);
+    // useEffect(() => {
+    //     async function fetchData() {
+    //         try {
+    //             const response = await fetchSettingEndpoint();
+    //             if (response && response.result) {
+    //                 setSettingData(response.result);
+    //             }
+    //         } catch (error) {
+    //             // Xử lý lỗi
+    //             console.log(error);
+    //         }
+    //     }
+    //     fetchData();
+    // }, []);
+
+    // useEffect(() => {
+    //     // Gọi hàm để lấy dữ liệu từ endpoint
+    //     async function fetchData() {
+    //         try {
+    //             const response = await fetchBankNameEndpoint(); // Gọi endpoint tại đây
+    //             if (response && response.result) {
+    //                 setBankNameData(response.result);
+    //             }
+    //         } catch (error) {
+    //             // Xử lý lỗi
+    //             console.log(error);
+    //         }
+    //     }
+    //     fetchData();
+    // }, []);
+
+    const getUserProfile = () =>{
+        fetchGetUserProfile('79ee7846612b106c445826c19')
+        .then((data) => {
+            if(data.res == 'success'){
+                setUserProfile(data.result);
             }
-        }
-        fetchData();
-    }, []);
+        })
+    }
+
+    // console.log(UserProfile);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
@@ -104,7 +120,7 @@ const Setting = () => {
                             Điểm của bạn
                         </Text>
                         <View style={[styles.flexBaseLine, styles.justifyCenter, styles.my10]}>
-                            <Text style={[styles.fs32, styles.textRedE8, styles.fw700]}>30</Text>
+                            <Text style={[styles.fs32, styles.textRedE8, styles.fw700]}>{UserProfile?.coin}</Text>
                             <Text style={[styles.fs18, styles.textRedE8, styles.fw700]}>k</Text>
                         </View>
                         <View style={[styles.flexBetween, styles.gap15]}>
@@ -187,14 +203,14 @@ const Setting = () => {
                             <PersonalInfoItem
                                 label="Tên"
                                 type="text"
-                                value={name}
+                                value={UserProfile?.fullname}
                                 onChangeText={handleNameChange}
                             />
                             {/* Ngày sinh */}
                             <PersonalInfoItem
                                 label="Ngày sinh"
                                 type="date"
-                                value={dateOfBirth}
+                                value={UserProfile?.birthday}
                                 onDateChange={handleDateChange}
                             />
                             {/* Giới tính */}
@@ -202,7 +218,7 @@ const Setting = () => {
                                 label="Giới tính"
                                 type="dropdown"
                                 data={dataGender}
-                                selectedName={'Nam'}
+                                selectedName={UserProfile?.sex == 0 ? 'Nam' : 'Nữ'}
                             />
                             {/* Xác minh danh tính */}
                             <NextPageSetting

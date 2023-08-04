@@ -135,14 +135,13 @@ export const notifications = [
 export const dataGender = [
     { id: 0, shortname: 'Nam' },
     { id: 1, shortname: 'Nữ' },
-    { id: 2, shortname: 'Khác' },
 ];
 
-export const typeCar = [
-    { id: 0, shortname: 'Sedan' },
-    { id: 1, shortname: 'SUV' },
-    { id: 2, shortname: '16 chỗ' },
-];
+// export const typeCar = [
+//     { id: 0, shortname: 'Sedan' },
+//     { id: 1, shortname: 'SUV' },
+//     { id: 2, shortname: '16 chỗ' },
+// ];
 
 export const licenseColor = [
     { id: 0, shortname: 'Trắng' },
@@ -150,11 +149,11 @@ export const licenseColor = [
 ];
 
 export const bill = [
-    { id: 0, shortname: 'Có' },
-    { id: 1, shortname: 'Không' },
+    { id: 0, shortname: 'Không' },
+    { id: 1, shortname: 'Có' },
 ];
 
 export const water = [
-    { id: 0, shortname: 'Có' },
-    { id: 1, shortname: 'Không' },
+    { id: 0, shortname: 'Không' },
+    { id: 1, shortname: 'Có' },
 ];
