@@ -34,6 +34,7 @@ import DriverCompleteScreen from '../screens/DriverCompleteScreen';
 import LoadPointsScreen from '../screens/LoadPointsScreen';
 import CancelBookClientScreen from '../screens/CancelBookClientScreen';
 import CancelBookDriverScreen from '../screens/CancelBookDriverScreen';
+import MapScreenStart from '../screens/MapScreenStart';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -98,6 +99,7 @@ const AppNavigation = () => {
                                 <Stack.Screen name="DriverScreen" component={DriverScreen} />
                                 <Stack.Screen name="UserScreen" component={UserScreen} />
                                 <Stack.Screen name="MapScreen" component={MapScreen} />
+                                <Stack.Screen name="MapScreenStart" component={MapScreenStart} />
                                 <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
                                 <Stack.Screen name="FindScreen" component={FindSreen} />
                                 <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
