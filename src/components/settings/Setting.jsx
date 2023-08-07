@@ -271,7 +271,9 @@ const Setting = () => {
                             <View>
                                 {/* Xe của tôi */}
                                 <NextPageSetting
-                                    onPress={() => navigation.navigate('MyCarScreen')}
+                                    onPress={() =>
+                                        navigation.navigate('MyCarScreen', (item = { id: 1 }))
+                                    }
                                     title={'Xe của tôi'}
                                     value={'Volvo S90'}
                                 />

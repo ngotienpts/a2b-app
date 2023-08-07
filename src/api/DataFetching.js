@@ -8,6 +8,7 @@ const settingEndpoint = `${baseUrl}/e1358385819f12b01db7990c1/profile/get`;
 const bankNameEndpoint = `${baseUrl}/${api_key}/bank/list`;
 
 const reviewListEndpoint = (id) => `${baseUrl}/rate/filterCustomer?customer_id=${id}`;
+const myCarEndpoint = (id) => `${baseUrl}/79ee7846612b106c445826c19/vehicle/get`;
 
 // fallback Image
 export const fallbackImage =
@@ -41,4 +42,7 @@ export const fetchBankNameEndpoint = (params) => {
 
 export const fetchReviewListEndpoint = (id) => {
     return apiCall(reviewListEndpoint(id));
+};
+export const fetchMyCarEndpoint = (id) => {
+    return apiCall(myCarEndpoint(id));
 };

@@ -7,44 +7,56 @@ import {
     Dimensions,
     StatusBar,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import styles from '../../styles';
 import Header from '../header/Header';
 import { typeCar, licenseColor, bill, water } from '../../constants';
 import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { bgCar } from '../../assets/images';
-import { fallbackImage } from '../../api/DataFetching';
+import { fallbackImage, fetchMyCarEndpoint } from '../../api/DataFetching';
 import ChoseImage from '../settings/ChoseImage';
 
 const MyCarComponent = () => {
+    const [infoMyCar, setInfoMyCar] = useState({});
     var { width } = Dimensions.get('window');
     const navigation = useNavigation();
-    const apiCarName = 'BMW X5';
-    const apiCarModel = '2021';
-    const apiLicensePlate = '30H-12345';
-    const apiFreight = '7000';
+    const { params: item } = useRoute();
 
-    const [backgroundCar, setBackgroundCar] = useState(bgCar);
-    const [carName, setCarName] = useState(apiCarName);
-    const [carModel, setCarModel] = useState(apiCarModel);
-    const [licensePlate, setLicensePlate] = useState(apiLicensePlate);
-    const [freight, setFreight] = useState(apiFreight);
+    const [carName, setCarName] = useState(null);
+    const [carModel, setCarModel] = useState(null);
+    const [licensePlate, setLicensePlate] = useState(null);
+    const [freight, setFreight] = useState(null);
 
-    const handleCarNameChange = (newValue) => {
+    useEffect(() => {
+        setCarName(infoMyCar?.vehicle_name);
+        setCarModel(infoMyCar?.vehicle_life);
+        setLicensePlate(infoMyCar?.license_plates);
+        setFreight(infoMyCar?.price_per_km);
+    }, [infoMyCar]);
+
+    const handleCarNameChange = useCallback((newValue) => {
         setCarName(newValue);
-    };
-    const handleCarModelChange = (newValue) => {
+    }, []);
+    const handleCarModelChange = useCallback((newValue) => {
         setCarModel(newValue);
-    };
-    const handleLicensePlateChange = (newValue) => {
+    }, []);
+    const handleLicensePlateChange = useCallback((newValue) => {
         setLicensePlate(newValue);
-    };
-    const handleFreightChange = (newValue) => {
+    }, []);
+    const handleFreightChange = useCallback((newValue) => {
         setFreight(newValue);
+    }, []);
+
+    const getMyCarApi = async (id) => {
+        const data = await fetchMyCarEndpoint(id);
+        if (data && data.result) setInfoMyCar(data.result);
     };
+    useEffect(() => {
+        getMyCarApi(item.id);
+    }, [item]);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
