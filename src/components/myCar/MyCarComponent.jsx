@@ -25,18 +25,15 @@ const MyCarComponent = () => {
     const navigation = useNavigation();
     const { params: item } = useRoute();
 
+    const [avatar, setAvatar] = useState(null);
     const [carName, setCarName] = useState(null);
     const [carModel, setCarModel] = useState(null);
     const [licensePlate, setLicensePlate] = useState(null);
     const [freight, setFreight] = useState(null);
 
-    useEffect(() => {
-        setCarName(infoMyCar?.vehicle_name);
-        setCarModel(infoMyCar?.vehicle_life);
-        setLicensePlate(infoMyCar?.license_plates);
-        setFreight(infoMyCar?.price_per_km);
-    }, [infoMyCar]);
-
+    const handleAvatarChange = useCallback((newValue) => {
+        setAvatar(newValue);
+    }, []);
     const handleCarNameChange = useCallback((newValue) => {
         setCarName(newValue);
     }, []);
@@ -54,6 +51,15 @@ const MyCarComponent = () => {
         const data = await fetchMyCarEndpoint(id);
         if (data && data.result) setInfoMyCar(data.result);
     };
+
+    useEffect(() => {
+        setAvatar(infoMyCar?.image);
+        setCarName(infoMyCar?.vehicle_name);
+        setCarModel(infoMyCar?.vehicle_life);
+        setLicensePlate(infoMyCar?.license_plates);
+        setFreight(infoMyCar?.price_per_km);
+    }, [infoMyCar]);
+
     useEffect(() => {
         getMyCarApi(item.id);
     }, [item]);
@@ -75,10 +81,11 @@ const MyCarComponent = () => {
                             resizeMode="cover"
                         /> */}
                         <ChoseImage
-                            avatar={fallbackImage}
+                            avatar={avatar ? avatar : fallbackImage}
                             width={width}
                             height={width / 2}
                             aspect={[2, 1]}
+                            onChangeAvatar={handleAvatarChange}
                         />
                     </View>
 

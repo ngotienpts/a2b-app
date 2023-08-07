@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, Button } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Image, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 import styles from '../../styles';
 
-const ChoseImage = ({ aspect, avatar, width, height, borderFull }) => {
+const ChoseImage = ({ aspect, avatar, width, height, borderFull, onChangeAvatar }) => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     const handleImagePicker = async () => {
@@ -23,6 +23,7 @@ const ChoseImage = ({ aspect, avatar, width, height, borderFull }) => {
 
         if (!result.canceled) {
             setSelectedImage(result.assets[0].uri);
+            onChangeAvatar(result.assets[0].uri);
         }
     };
 
