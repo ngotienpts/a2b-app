@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRightIcon } from 'react-native-heroicons/outline';
@@ -16,8 +16,8 @@ const Setting = () => {
     const navigation = useNavigation();
     const apiName = 'Nguyen Van A';
     const apiBirthday = '2023-05-12';
-    const apiLinkFb = 'mr.otthanh';
     const apiPhoneNumber = '0912345678';
+    const apiLinkFb = 'mr.otthanh';
     const apiMyCar = 'Volvo S90';
     const apiBankAccount = '1111222233334444';
     const apiBankName = 'Techcombank';
@@ -26,41 +26,68 @@ const Setting = () => {
 
     const [settingData, setSettingData] = useState([]);
     const [avatar, setAvatar] = useState(img);
-    const [name, setName] = useState(apiName);
-    const [dateOfBirth, setDateOfBirth] = useState(new Date(apiBirthday));
-    const [linkFb, setLinkFb] = useState(apiLinkFb);
-    const [phoneNumber, setPhoneNumber] = useState(apiPhoneNumber);
-    const [bankAccount, setBankAccount] = useState(apiBankAccount);
-    const [bankName, setBankName] = useState(apiBankName);
-    const [nameBankAccount, setNameBankAccount] = useState(apiNameBankAccount);
+    const [name, setName] = useState('');
+    const [dateOfBirth, setDateOfBirth] = useState(null);
+    const [gender, setGender] = useState('');
+    const [identity, setIdentity] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [linkFb, setLinkFb] = useState('');
+    const [carName, setCarName] = useState('');
+    const [bankAccount, setBankAccount] = useState('');
+    const [bankName, setBankName] = useState('');
+    const [nameBankAccount, setNameBankAccount] = useState('');
     const [bankNameData, setBankNameData] = useState([]);
-    const [UserProfile, setUserProfile] = useState([]);
+    const [userProfile, setUserProfile] = useState({});
+    const [loading, setloading] = useState(true)
 
     const handleAvaterChange = (newValue) => {
         setAvatar(newValue);
     };
-    const handleNameChange = (newValue) => {
+    const handleNameChange = useCallback((newValue) => {
         setName(newValue);
-    };
-    const handleDateChange = (newDate) => {
+    },[]);
+    const handleDateChange = useCallback((newDate) => {
         setDateOfBirth(newDate);
-    };
-    const handleLinkFbChange = (newValue) => {
-        setLinkFb(newValue);
-    };
-    const handlePhoneNumberChange = (newPhoneNumber) => {
+    },[]);
+    const handleGenderChange = useCallback((newValue) => {
+        setGender(newValue);
+    },[]);
+        const handleIdentityChange = useCallback((newValue) => {
+        setIdentity(newValue);
+    },[]);
+    const handlePhoneNumberChange = useCallback((newPhoneNumber) => {
         setPhoneNumber(newPhoneNumber);
-    };
-    const handleBankAccountChange = (newValue) => {
+    },[]);
+    const handleLinkFbChange = useCallback((newValue) => {
+        setLinkFb(newValue);
+    },[]);
+    const handleBankAccountChange = useCallback((newValue) => {
         setBankAccount(newValue);
-    };
-    const handleNameBankAccountChange = (newValue) => {
+    },[]);
+    const handleBankNameChange = useCallback((newValue) => {
+        setBankName(newValue);
+    },[]);
+    const handleNameBankAccountChange = useCallback((newValue) => {
         setNameBankAccount(newValue);
-    };
+    },[]);
 
     useEffect(() => {
         getUserProfile();
+        getListBank();
     },[])
+
+    useEffect(() => {
+        setName(userProfile?.fullname);
+        setDateOfBirth(userProfile?.birthday);
+        setGender(userProfile?.sex);
+        setIdentity(userProfile?.is_confirmed);
+        setPhoneNumber(userProfile?.phone);
+        setLinkFb(userProfile?.link_fb);
+        setCarName(userProfile?.vehicle_name);
+        setBankAccount(userProfile?.bank_number);
+        setBankName(userProfile?.bank_name);
+        setNameBankAccount(userProfile?.bank_account);
+    },[userProfile])
 
     // useEffect(() => {
     //     async function fetchData() {
@@ -92,7 +119,20 @@ const Setting = () => {
     //     }
     //     fetchData();
     // }, []);
-
+    
+    const getListBank = () =>{
+        fetchBankNameEndpoint()
+        .then((data) => {
+            if(data.res == 'success'){
+                setBankNameData(data.result);
+            }
+        })
+        .catch(error => {
+        console.error("Error:", error);
+    })
+        .finally(() => setloading(false))
+    }
+    
     const getUserProfile = () =>{
         fetchGetUserProfile('79ee7846612b106c445826c19')
         .then((data) => {
@@ -100,27 +140,26 @@ const Setting = () => {
                 setUserProfile(data.result);
             }
         })
+        .finally(() => setloading(false))
     }
-
-    // console.log(UserProfile);
-
+       
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Tài khoản" />
-
-                {/* body */}
+                {loading ? (<Text>Đang lấy dữ liệu...</Text>) : (
+                /* body */
                 <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
                     {/* top */}
                     <View style={[styles.bg161e, styles.px15, styles.py12]}>
                         <Text
                             style={[styles.fs16, styles.lh24, styles.textWhite, styles.textCenter]}
                         >
-                            Điểm của bạn
+                            Điểm của bạn {dateOfBirth}
                         </Text>
                         <View style={[styles.flexBaseLine, styles.justifyCenter, styles.my10]}>
-                            <Text style={[styles.fs32, styles.textRedE8, styles.fw700]}>{UserProfile?.coin}</Text>
+                            <Text style={[styles.fs32, styles.textRedE8, styles.fw700]}>{userProfile?.coin}</Text>
                             <Text style={[styles.fs18, styles.textRedE8, styles.fw700]}>k</Text>
                         </View>
                         <View style={[styles.flexBetween, styles.gap15]}>
@@ -203,14 +242,14 @@ const Setting = () => {
                             <PersonalInfoItem
                                 label="Tên"
                                 type="text"
-                                value={UserProfile?.fullname}
+                                value={name}
                                 onChangeText={handleNameChange}
                             />
                             {/* Ngày sinh */}
                             <PersonalInfoItem
                                 label="Ngày sinh"
                                 type="date"
-                                value={UserProfile?.birthday}
+                                value={dateOfBirth}
                                 onDateChange={handleDateChange}
                             />
                             {/* Giới tính */}
@@ -218,13 +257,14 @@ const Setting = () => {
                                 label="Giới tính"
                                 type="dropdown"
                                 data={dataGender}
-                                selectedName={UserProfile?.sex == 0 ? 'Nam' : 'Nữ'}
+                                selectedName={gender == 0 ? 'Nam' : 'Nữ'}
+                                onChangeDropdown = {handleGenderChange}
                             />
                             {/* Xác minh danh tính */}
                             <NextPageSetting
-                                onPress={() => navigation.navigate('VerificationScreen')}
+                                // onPress={() => navigation.navigate('VerificationScreen')}
                                 title={'Xác minh danh tính'}
-                                value={'Chưa'}
+                                value={identity == 0 ? 'Chưa xác thực' : 'Dã xác thực'}
                             />
                         </View>
                         {/* thông tin liên hệ */}
@@ -246,7 +286,7 @@ const Setting = () => {
                             <PersonalInfoItem
                                 label="Số điện thoại"
                                 type="phoneNumber"
-                                value={phoneNumber}
+                                value={phoneNumber != 0 ? phoneNumber : phoneNumber}
                                 onValueChange={handlePhoneNumberChange}
                             />
                             {/* Liên kết fb */}
@@ -280,7 +320,7 @@ const Setting = () => {
                                 <NextPageSetting
                                     onPress={() => navigation.navigate('MyCarScreen')}
                                     title={'Xe của tôi'}
-                                    value={'Volvo S90'}
+                                    value={carName}
                                 />
                                 {/* Số tài khoản */}
                                 <PersonalInfoItem
@@ -296,6 +336,7 @@ const Setting = () => {
                                     type="dropdown"
                                     data={bankNameData}
                                     selectedName={bankName}
+                                    onChangeDropdown={handleBankNameChange}
                                 />
                                 {/* Tên tài khoản */}
                                 <PersonalInfoItem
@@ -314,9 +355,28 @@ const Setting = () => {
                         </View>
                     </View>
 
+                    <View style={[styles.flexRow]}>
+                <TouchableOpacity
+                    style={[
+                        styles.h48,
+                        styles.bgBlack,
+                        styles.flexFull,
+                        styles.itemsCenter,
+                        styles.justifyCenter,
+                        styles.border1,
+                        styles.borderColorWhite,
+                        styles.borderSolid,
+                        styles.border4,
+                        styles.mx15,
+                    ]}
+                    // onPress={updateMyCar}
+                >
+                    <Text style={[styles.fs16, styles.textWhite]}>Cập nhật</Text>
+                </TouchableOpacity>
+            </View>
                     {/* log out */}
                     <TouchableOpacity style={[styles.flexCenter, styles.mb24]}>
-                        <View>
+                        <View style={[styles.my24]}>
                             <Text style={[styles.fs16, styles.textCenter, styles.textRedE8]}>
                                 Đăng xuất
                             </Text>
@@ -329,7 +389,12 @@ const Setting = () => {
                             />
                         </View>
                     </TouchableOpacity>
+
                 </ScrollView>
+
+                ) }
+            
+
             </View>
         </SafeAreaView>
     );

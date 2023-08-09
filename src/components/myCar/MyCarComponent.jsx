@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
@@ -12,57 +12,69 @@ import { fallbackImage, fetchListMyCar, fetchGetOneCategoryVehicle, fetchListCat
 import ChoseImage from '../settings/ChoseImage';
 
 const MyCarComponent = () => {
+    
+    var { width } = Dimensions.get('window');
+    const navigation = useNavigation();
+    
+    const [image, setImage] = useState(null);
+    const [ListMyCar, setListMyCar] = useState([]);
+    const [CarName, setCarName] = useState(null);  
+    const [CarModel, setCarModel] = useState('');
+    const [CarType, setCarType] = useState('');
+    const [LicensePlate, setLicensePlate] = useState(null);
+    const [LicensePlateColor, setLicensePlateColor] = useState([]);
+    const [Bill, setBill] = useState('');
+    const [Bottle, setBottle] = useState('');
+    const [Freight, setFreight] = useState('');
+    const [CateVehicle, setCateVehicle] = useState([]);
+    const [loading, setloading] = useState(true);
+
+    const HandleImageChange = useCallback((newValue) => {
+        setImage(newValue);
+    }, []);
+    const handleCarNameChange = useCallback((newValue) => {
+        setCarName(newValue);
+    }, []);
+    const handleCarModelChange = useCallback((newValue) => {
+        setCarModel(newValue);
+        // console.log('val', newValue);
+    },[]);
+    const handleCarTypeChange = useCallback((newValue) => {
+        setCarType(newValue);
+    },[]);
+    const handleLicensePlateChange = useCallback((newValue) => {
+        setLicensePlate(newValue);
+    },[]);
+    const handleLicensePlateColorChange = (newValue) => {
+        setLicensePlateColor(newValue);
+    };
+    const handleBillChange = useCallback((newValue) => {
+        setBill(newValue);
+    }, []);
+    const handleBottleChange = useCallback((newValue) => {
+        setBottle(newValue);
+    },[]);
+    const handleFreightChange = useCallback((newValue) => {
+        setFreight(newValue);
+    },[]);
+
     useEffect(() => {
         showMyCar();
         ListCategoryVehicle();
     }, []);
     
-    var { width } = Dimensions.get('window');
-    const navigation = useNavigation();
-    const apiCarName = 'BMW X5';
-    const apiCarModel = '2021';
-    const apiLicensePlate = '30H-12345';
-    const apiFreight = '7000';
-    
-    const [ListMyCar, setListMyCar] = useState([]);
-    const [backgroundCar, setBackgroundCar] = useState(bgCar);
-    const [CarName, setCarName] = useState([]);  
-    const [CarModel, setCarModel] = useState('');
-    const [CarType, setCarType] = useState('');
-    const [LicensePlate, setLicensePlate] = useState([]);
-    const [LicensePlateColor, setLicensePlateColor] = useState([]);
-    const [Bill, setBill] = useState([]);
-    const [Bottle, setBottle] = useState([]);
-    const [Freight, setFreight] = useState([]);
-    const [CateVehicle, setCateVehicle] = useState([]);
-    const [loading, setloading] = useState(true);
+    useEffect(() => {
+        setImage(ListMyCar?.image)
+        setCarName(ListMyCar?.vehicle_name);
+        setCarModel(ListMyCar?.vehicle_life);
+        setCarType(ListMyCar?.vehicle_category_id);
+        setLicensePlate(ListMyCar?.license_plates);
+        setLicensePlateColor(ListMyCar?.license_plates_color);
+        setBill(ListMyCar?.is_bill);
+        setBottle(ListMyCar?.is_bottle);
+        setFreight(ListMyCar?.price_per_km);
+    }, [ListMyCar])
 
-    const handleCarNameChange = (newValue) => {
-        setCarName(newValue);
-    };
-    const handleCarModelChange = (newValue) => {
-        setCarModel(newValue);
-        console.log('val', newValue);
-    };
-    const handleCarTypeChange = (newValue) => {
-        setCarType(newValue);
-    };
-    const handleLicensePlateChange = (newValue) => {
-        setLicensePlate(newValue);
-    };
-    const handleLicensePlateColorChange = (newValue) => {
-        setLicensePlateColor(newValue);
-    };
-    const handleBillChange = (newValue) => {
-        setBill(newValue);
-    };
-    const handleBottleChange = (newValue) => {
-        setBottle(newValue);
-    };
-    const handleFreightChange = (newValue) => {
-        setFreight(newValue);
-    };
-    
     
     const showMyCar = () => {
         fetchListMyCar('79ee7846612b106c445826c19')
@@ -72,20 +84,7 @@ const MyCarComponent = () => {
                 }
             })
             .finally(() => setloading(false))
-        // finally {
-        //     setloading(false);
-        // }
     }
-
-    // const GetOneCategoryVehicle = (vehicle_category_id) => {
-    //     fetchGetOneCategoryVehicle('79ee7846612b106c445826c19', { vehicle_category_id: vehicle_category_id })
-    //         .then((data) => {
-    //             if (data.res == 'success') {
-    //                 setCarType(data.result.category_name)
-    //             }
-    //         })
-    //         .finally(() => setloading(false))
-    // }
 
     const ListCategoryVehicle = () => {
         // try {
@@ -97,33 +96,29 @@ const MyCarComponent = () => {
                 }
             })
             .finally(() => setloading(false))
-        // } catch (error) {
-        //     console.error('Error fetching data:', error);
-        // } finally {
-        //     setloading(false);
-        // }
     }
-
 
     const updateMyCar = () => {
         fetchUpdateMycar({
+            // image : image == 0 ? base64.encode(ListMyCar?.image) : base64.encode(image),
             vehicleName : CarName == 0 ? ListMyCar?.vehicle_name : CarName,
             vehicleLife : CarModel == 0 ? ListMyCar?.vehicle_life : CarModel,
             vehicleCategory : CarType == 0 ? ListMyCar?.vehicle_category_id : CarType,
             licensePlates : LicensePlate == 0 ? ListMyCar?.license_plates : LicensePlate,
-            platesColor : LicensePlateColor == 0 ? ListMyCar?.license_plates_color : LicensePlateColor,
+            platesColor : LicensePlateColor,
             pricePerKm : Freight == 0 ? ListMyCar?.price_per_km : Freight,
-            isBottle : Bottle == 0 ? ListMyCar?.is_bottle : Bottle,
+            isBottle : Bottle,
         },'79ee7846612b106c445826c19')
         .then((data) => {
             if(data.res === 'success'){
-                // navigation.navigate('DriverScreen');
                 console.log(data);
+                // navigation.navigate('DriverScreen');
             }
         })
+        .finally(() => setloading(false))
         // console.log(CarType == 0 ? ListMyCar?.vehicle_category_id : CarType);
     }
-    // console.log(CarModel);
+    // console.log('1'+ new Date('2023-05-12'));
  
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -141,10 +136,11 @@ const MyCarComponent = () => {
                             resizeMode="cover"
                         /> */}
                             <ChoseImage
-                                avatar={fallbackImage}
+                                avatar={image != 0 ? image : fallbackImage}
                                 width={width}
                                 height={width / 2}
                                 aspect={[2, 1]}
+                                onChangeImage={HandleImageChange}
                             />
                         </View>
 
@@ -156,14 +152,14 @@ const MyCarComponent = () => {
                                 <PersonalInfoItem
                                     label="Dòng xe"
                                     type="text"
-                                    value={ListMyCar?.vehicle_name}
+                                    value={CarName}
                                     onChangeText={handleCarNameChange}
                                 />
                                 {/* Đời xe */}
                                 <PersonalInfoItem
                                     label="Đời xe"
                                     type="number"
-                                    value={ListMyCar?.vehicle_life}
+                                    value={CarModel}
                                     maxLength={4}
                                     onChangeText={handleCarModelChange}
                                 />
@@ -173,7 +169,7 @@ const MyCarComponent = () => {
                                     label="Loại hình xe"
                                     type="dropdown1"
                                     data={CateVehicle}
-                                    selectedName={ListMyCar?.vehicle_category_id == 1 ? 'Xe Sedan' : 'Xe SUV'}
+                                    selectedName={CarType == 1 ? 'Xe Sedan' : 'Xe SUV'}
                                     onChangeDropdown={handleCarTypeChange}
                                 />
 
@@ -181,7 +177,7 @@ const MyCarComponent = () => {
                                 <PersonalInfoItem
                                     label="Biển số xe"
                                     type="license"
-                                    value={ListMyCar?.license_plates}
+                                    value={LicensePlate}
                                     onChangeText={handleLicensePlateChange}
                                     maxLength={9}
                                 />
@@ -191,17 +187,8 @@ const MyCarComponent = () => {
                                     label="Màu biển"
                                     type="dropdown"
                                     data={licenseColor}
-                                    selectedName={ListMyCar?.license_plates_color == 0 ? 'Trắng' : 'Vàng'}
+                                    selectedName={LicensePlateColor == 0 ? 'Trắng' : 'Vàng'}
                                     onChangeDropdown={handleLicensePlateColorChange}
-                                />
-
-                                {/* Xuất hóa đơn */}
-                                <PersonalInfoItem
-                                    label="Xuất hóa đơn"
-                                    type="dropdown"
-                                    data={bill}
-                                    selectedName={ListMyCar?.is_bill == 0 ? 'Không' : 'Có'}
-                                    onChangeDropdown={handleBillChange}
                                 />
 
                                 {/* Nước uống */}
@@ -209,7 +196,7 @@ const MyCarComponent = () => {
                                     label="Nước uống đóng chai miễn phí"
                                     type="dropdown"
                                     data={water}
-                                    selectedName={ListMyCar?.is_bottle == 0 ? 'Không' : 'Có'}
+                                    selectedName={Bottle == 0 ? 'Không' : 'Có'}
                                     onChangeDropdown={handleBottleChange}
                                 />
 
@@ -217,7 +204,7 @@ const MyCarComponent = () => {
                                 <PersonalInfoItem
                                     label="Cước phí /1km"
                                     type="number"
-                                    value={ListMyCar?.price_per_km}
+                                    value={Freight}
                                     pay
                                     suffixes="VND"
                                     maxLength={10}

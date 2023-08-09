@@ -60,7 +60,9 @@ export const fetchHistorySearch = (token) => {
 export const fetchSettingEndpoint = (params) => {
     return apiCall(settingEndpoint, params);
 };
+// danh sách tên các ngân hàng
 export const fetchBankNameEndpoint = (params) => {
+    const bankNameEndpoint = `${baseUrl}/58289193774ccae754cd6506a/bank/list`;
     return apiCall(bankNameEndpoint, params);
 };
 

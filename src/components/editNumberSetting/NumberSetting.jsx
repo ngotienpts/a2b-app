@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 
 import styles from '../../styles';
-const NumberSetting = ({ maxLength, value, label, suffixes, pay }) => {
+const NumberSetting = ({ maxLength, value, label, suffixes, pay, onChangeText }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [text, setText] = useState(value);
     const textInputRef = useRef(null);
@@ -33,7 +33,7 @@ const NumberSetting = ({ maxLength, value, label, suffixes, pay }) => {
                     ref={textInputRef}
                     value={text}
                     maxLength={maxLength}
-                    onChangeText={(newText) => setText(newText)}
+                    onChangeText={onChangeText}
                     onBlur={handleSave}
                     autoFocus
                     style={[styles.textWhite, styles.fs16, styles.lh24]}
