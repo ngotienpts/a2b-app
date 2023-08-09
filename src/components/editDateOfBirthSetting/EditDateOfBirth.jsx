@@ -7,10 +7,10 @@ import styles from '../../styles';
 
 const EditDateOfBirth = ({ label, initialValue, onDateChange }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [date, setDate] = useState(new Date(initialValue));
+    const [date, setDate] = useState(initialValue ? new Date(initialValue) : '');
 
     useEffect(() => {
-        setDate(new Date(initialValue));
+        setDate(initialValue ? new Date(initialValue) : '');
     }, [initialValue]);
 
     const handleToggleEdit = () => {
@@ -30,16 +30,18 @@ const EditDateOfBirth = ({ label, initialValue, onDateChange }) => {
         <View>
             {isEditing ? (
                 <DateTimePicker
-                    value={date}
+                    value={date !== '' ? date : undefined}
                     mode="date"
                     display="default"
                     onChange={onChangeDate}
                 />
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
-                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
-                        {format(date, 'dd/MM/yyyy')}
-                    </Text>
+                    {date !== '' && (
+                        <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
+                            {format(date, 'dd/MM/yyyy')}
+                        </Text>
+                    )}
                 </TouchableOpacity>
             )}
         </View>

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRightIcon } from 'react-native-heroicons/outline';
@@ -25,10 +25,10 @@ const Setting = () => {
     const apiNameBankAccount = 'NGUYEN VAN A';
     const img = 'https://media.a2b.vn/user/2023/05/12/khanhhoang-093520.jpg';
 
-    const [settingData, setSettingData] = useState([]);
+    const [settingData, setSettingData] = useState({});
     const [avatar, setAvatar] = useState(img);
     const [name, setName] = useState(apiName);
-    const [dateOfBirth, setDateOfBirth] = useState(new Date(apiBirthday));
+    const [dateOfBirth, setDateOfBirth] = useState(null);
     const [gender, setGender] = useState(apiGender);
     const [linkFb, setLinkFb] = useState(apiLinkFb);
     const [phoneNumber, setPhoneNumber] = useState(apiPhoneNumber);
@@ -37,30 +37,33 @@ const Setting = () => {
     const [nameBankAccount, setNameBankAccount] = useState(apiNameBankAccount);
     const [bankNameData, setBankNameData] = useState([]);
 
-    const handleAvaterChange = (newValue) => {
+    const handleAvaterChange = useCallback((newValue) => {
         setAvatar(newValue);
-    };
-    const handleNameChange = (newValue) => {
+    }, []);
+    const handleNameChange = useCallback((newValue) => {
         setName(newValue);
-    };
-    const handleDateChange = (newDate) => {
+    }, []);
+    const handleDateChange = useCallback((newDate) => {
         setDateOfBirth(newDate);
-    };
-    const handleGenderChange = (newDate) => {
+    }, []);
+    const handleGenderChange = useCallback((newDate) => {
         setGender(newDate);
-    };
-    const handleLinkFbChange = (newValue) => {
+    }, []);
+    const handleLinkFbChange = useCallback((newValue) => {
         setLinkFb(newValue);
-    };
-    const handlePhoneNumberChange = (newPhoneNumber) => {
+    }, []);
+    const handlePhoneNumberChange = useCallback((newPhoneNumber) => {
         setPhoneNumber(newPhoneNumber);
-    };
-    const handleBankAccountChange = (newValue) => {
+    }, []);
+    const handleBankAccountChange = useCallback((newValue) => {
         setBankAccount(newValue);
-    };
-    const handleNameBankAccountChange = (newValue) => {
+    }, []);
+    const handleBankNameChange = useCallback((newDate) => {
+        setBankName(newDate);
+    }, []);
+    const handleNameBankAccountChange = useCallback((newValue) => {
         setNameBankAccount(newValue);
-    };
+    }, []);
 
     useEffect(() => {
         async function fetchData() {
@@ -75,11 +78,9 @@ const Setting = () => {
             }
         }
         fetchData();
-    }, []);
 
-    useEffect(() => {
-        // Gọi hàm để lấy dữ liệu từ endpoint
-        async function fetchData() {
+        // Gọi hàm để lấy dữ liệu từ bank name endpoint
+        async function fetchBankData() {
             try {
                 const response = await fetchBankNameEndpoint(); // Gọi endpoint tại đây
                 if (response && response.result) {
@@ -90,8 +91,12 @@ const Setting = () => {
                 console.log(error);
             }
         }
-        fetchData();
+        fetchBankData();
     }, []);
+
+    useEffect(() => {
+        setDateOfBirth(settingData?.birthday);
+    }, [settingData]);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -291,6 +296,7 @@ const Setting = () => {
                                     type="dropdown"
                                     data={bankNameData}
                                     selectedName={bankName}
+                                    onChangeDropdown={handleBankNameChange}
                                 />
                                 {/* Tên tài khoản */}
                                 <PersonalInfoItem
