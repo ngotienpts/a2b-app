@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 
 import styles from '../../styles';
 
-const BankNumberSetting = ({ label, maxLength, value }) => {
+const BankNumberSetting = ({ label, maxLength, value, onChangeText }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [bankAccount, setBankAccount] = useState(value);
     const textInputRef = useRef(null);
@@ -18,6 +18,7 @@ const BankNumberSetting = ({ label, maxLength, value }) => {
     const handleBankAccountChange = (value) => {
         const formattedValue = formatStringWithDash(value);
         setBankAccount(formattedValue);
+        onChangeText(formattedValue)
     };
 
     const handleToggleEdit = () => {

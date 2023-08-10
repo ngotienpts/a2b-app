@@ -112,7 +112,7 @@ const MyCarComponent = () => {
         .then((data) => {
             if(data.res === 'success'){
                 console.log(data);
-                // navigation.navigate('DriverScreen');
+                navigation.navigate('DriverScreen');
             }
         })
         .finally(() => setloading(false))

@@ -6,7 +6,7 @@ import { ChevronRightIcon } from 'react-native-heroicons/outline';
 
 import styles from '../../styles';
 import Header from '../header/Header';
-import { fallbackImage, fetchBankNameEndpoint, fetchSettingEndpoint, fetchGetUserProfile } from '../../api/DataFetching';
+import { fallbackImage, fetchBankNameEndpoint, fetchSettingEndpoint, fetchGetUserProfile, fetchUpdateProfile } from '../../api/DataFetching';
 import PersonalInfoItem from './PersonalInfoItem';
 import NextPageSetting from './NextPageSetting';
 import { dataGender } from '../../constants';
@@ -23,6 +23,7 @@ const Setting = () => {
     const apiBankName = 'Techcombank';
     const apiNameBankAccount = 'NGUYEN VAN A';
     const img = 'https://media.a2b.vn/user/2023/05/12/khanhhoang-093520.jpg';
+    const regex = /\d/;
 
     const [settingData, setSettingData] = useState([]);
     const [avatar, setAvatar] = useState(img);
@@ -88,38 +89,7 @@ const Setting = () => {
         setBankName(userProfile?.bank_name);
         setNameBankAccount(userProfile?.bank_account);
     },[userProfile])
-
-    // useEffect(() => {
-    //     async function fetchData() {
-    //         try {
-    //             const response = await fetchSettingEndpoint();
-    //             if (response && response.result) {
-    //                 setSettingData(response.result);
-    //             }
-    //         } catch (error) {
-    //             // Xử lý lỗi
-    //             console.log(error);
-    //         }
-    //     }
-    //     fetchData();
-    // }, []);
-
-    // useEffect(() => {
-    //     // Gọi hàm để lấy dữ liệu từ endpoint
-    //     async function fetchData() {
-    //         try {
-    //             const response = await fetchBankNameEndpoint(); // Gọi endpoint tại đây
-    //             if (response && response.result) {
-    //                 setBankNameData(response.result);
-    //             }
-    //         } catch (error) {
-    //             // Xử lý lỗi
-    //             console.log(error);
-    //         }
-    //     }
-    //     fetchData();
-    // }, []);
-    
+   
     const getListBank = () =>{
         fetchBankNameEndpoint()
         .then((data) => {
@@ -142,7 +112,31 @@ const Setting = () => {
         })
         .finally(() => setloading(false))
     }
-       
+
+    const updateProfile = () => {
+        fetchUpdateProfile({
+            fullName: name,
+            birthday: typeof dateOfBirth == 'object' ?  dateOfBirth.toISOString().slice(0, 10) : '',
+            sex: gender,
+            phone: phoneNumber.replace('84','0'),
+            link_fb: linkFb,
+            bank_number: bankAccount.replace(/-/g, ''),
+            bank_id: regex.test(bankName) ? bankName : '',
+            bank_name: nameBankAccount,
+        },'79ee7846612b106c445826c19')
+        .then((data) => {
+            if(data.res === 'success'){
+                console.log(data);
+                alert('Cập nhật thành công')
+                // navigation.navigate('DriverScreen');
+            }
+            else{
+                alert(data.status.fullname || data.status.birthday || data.status.phone || data.status.bankId || data.status.bankName || data.status.bankNumber || data.status.image)
+            }
+        })
+        .finally(() => setloading(false))
+    }
+    // console.log(bankAccount);
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
@@ -156,7 +150,7 @@ const Setting = () => {
                         <Text
                             style={[styles.fs16, styles.lh24, styles.textWhite, styles.textCenter]}
                         >
-                            Điểm của bạn {dateOfBirth}
+                            Điểm của bạn 
                         </Text>
                         <View style={[styles.flexBaseLine, styles.justifyCenter, styles.my10]}>
                             <Text style={[styles.fs32, styles.textRedE8, styles.fw700]}>{userProfile?.coin}</Text>
@@ -218,6 +212,7 @@ const Setting = () => {
                             height={114}
                             aspect={[1, 1]}
                             borderFull={styles.borderFull}
+                            onChangeImage={handleAvaterChange}
                         />
                     </View>
 
@@ -262,7 +257,7 @@ const Setting = () => {
                             />
                             {/* Xác minh danh tính */}
                             <NextPageSetting
-                                // onPress={() => navigation.navigate('VerificationScreen')}
+                                onPress={() => navigation.navigate('VerificationScreen')}
                                 title={'Xác minh danh tính'}
                                 value={identity == 0 ? 'Chưa xác thực' : 'Dã xác thực'}
                             />
@@ -286,7 +281,7 @@ const Setting = () => {
                             <PersonalInfoItem
                                 label="Số điện thoại"
                                 type="phoneNumber"
-                                value={phoneNumber != 0 ? phoneNumber : phoneNumber}
+                                value={phoneNumber ? phoneNumber.replace('84', 0) : phoneNumber}
                                 onValueChange={handlePhoneNumberChange}
                             />
                             {/* Liên kết fb */}
@@ -333,7 +328,7 @@ const Setting = () => {
                                 {/* Tên ngân hàng */}
                                 <PersonalInfoItem
                                     label="Tên ngân hàng"
-                                    type="dropdown"
+                                    type="dropdownBankData"
                                     data={bankNameData}
                                     selectedName={bankName}
                                     onChangeDropdown={handleBankNameChange}
@@ -369,7 +364,7 @@ const Setting = () => {
                         styles.border4,
                         styles.mx15,
                     ]}
-                    // onPress={updateMyCar}
+                    onPress={updateProfile}
                 >
                     <Text style={[styles.fs16, styles.textWhite]}>Cập nhật</Text>
                 </TouchableOpacity>

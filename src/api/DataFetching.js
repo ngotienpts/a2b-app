@@ -111,3 +111,9 @@ export const fetchGetUserProfile = (token) => {
     const listUserProfile = `${baseUrl}/${token}/profile/get`;
     return apiCall(listUserProfile);
 }
+//cập nhật thông tin profile
+export const fetchUpdateProfile = (data, token) => {
+    // return data;
+    const UpdateProfile = `${baseUrl}/${token}/profile/update`;
+    return postApi(UpdateProfile,data);
+}
