@@ -9,11 +9,14 @@ import Header from './Header';
 import Result from './Result';
 import ResultDefault from './ResultDefault';
 import { debounce } from 'lodash';
-import { fetchHistorySearch, fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
+import { fetchHistorySearch, fetchListNoti, fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from 'react-native';
+import { useNotification } from '../../redux/notificationContext';
 
 const Home = () => {
+  const { handleHiddenNoti } = useNotification();
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -24,7 +27,21 @@ const Home = () => {
   useEffect(() => {
     showProfile();
     historySearch();
+    listNotification();
   }, []) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
+
+  const listNotification = () => {
+    let params = {}
+    fetchListNoti(params,context.token)
+    .then((data) => {
+        if (data.res === 'success') {
+            handleHiddenNoti(data.count);
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+  };
 
   const historySearch = async () => {
     fetchHistorySearch(context.token)
@@ -34,11 +51,6 @@ const Home = () => {
           setHistory(data.result);
         }
       })
-  }
-
-  const removeItem = async () => {
-    await AsyncStorage.removeItem('lat');
-    await AsyncStorage.removeItem('lng');
   }
 
   const requestLocationService = async () => {
@@ -130,7 +142,8 @@ const Home = () => {
   //debounce la sẽ tạo ra 1 phiên bản mới của hàm và ham co kha nang tri hoan việc thực thi và sẽ thực thi sau độ trễ đã xác định.
   //Trong TH nếu có thêm 1 hàm được gọi thì cái trước sẽ bị hủy và hàm mới sẽ chạy 
   return (
-    <SafeAreaView style={[styles.flexFull, styles.relative]}>
+    <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+      <StatusBar barStyle="light-content" animated={true} />
       <View style={[styles.flexFull, styles.bgBlack]}>
         {/* header */}
         <Header navigation={navigation} />

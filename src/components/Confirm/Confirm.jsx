@@ -17,28 +17,16 @@ import { fallbackImage } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
 import { DetailTripContext } from '../../redux/detailTripContext';
+import { MapContext } from '../../redux/mapContext';
+import Contact from '../contact';
+
 
 const Confirm = () => {
     const context = useContext(BookingFormContext);
+    const contextMap = useContext(MapContext);
     const contextDetailTrip = useContext(DetailTripContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
-
-    const handleMakeCall = () => {
-        if(item?.phone !== ''){
-            Linking.openURL(`tel:${item?.phone}`);
-        }else{
-            alert('Tài xế này chưa có số điện thoại!');
-        }
-    }
-
-    const handleMakeCallZalo = () => {
-        if(item?.phone !== ''){
-            Linking.openURL(`https://zalo.me/${item?.phone}`);
-        }else{
-            alert('Tài xế này chưa có số điện thoại!');
-        }
-    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -85,7 +73,7 @@ const Confirm = () => {
                         </Text>
                     </View>
 
-                    <SentFormBooking context={context} title="Tài xế đang đến" />
+                    <SentFormBooking context={context} contextMap={contextMap} title="Tài xế đang đến" />
 
                     {/* thông tin tài xế */}
 
@@ -145,83 +133,9 @@ const Confirm = () => {
                         </View>
 
                         {/* contact */}
-                        <View style={[styles.flexCenter, styles.mb24]}>
-                            {/* phone */}
-                            <TouchableOpacity onPress={handleMakeCall}>
-                                <View
-                                    style={[
-                                        styles.flexCenter,
-                                        styles.px12,
-                                        styles.py5,
-                                        styles.bgCyan2F,
-                                        styles.borderLeftTop4,
-                                        styles.borderLeftBot4,
-                                    ]}
-                                >
-                                    <PhoneIcon size={16} color={'white'} />
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                            styles.ml5,
-                                        ]}
-                                    >
-                                        Gọi
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                           
-                            {/* facebook */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgBlue237,
-                                ]}
-                            >
-                                <ChatBubbleOvalLeftIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Facebook
-                                </Text>
-                            </View>
-                            {/* zalo */}
-                            <TouchableOpacity onPress={handleMakeCallZalo}>
-                                <View
-                                    style={[
-                                        styles.flexCenter,
-                                        styles.px12,
-                                        styles.py5,
-                                        styles.bgBlue009,
-                                        styles.borderRightTop4,
-                                        styles.borderRightBot4,
-                                    ]}
-                                >
-                                    <PhoneIcon size={16} color={'white'} />
-                                    <Text
-                                        style={[
-                                            styles.textWhite,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw400,
-                                            styles.ml5,
-                                        ]}
-                                    >
-                                        Zalo
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                        <Contact 
+                            item={item}
+                        />
 
                         {/* thông tin xe */}
                         <View
@@ -253,7 +167,7 @@ const Confirm = () => {
                                     >
                                         {item?.vehicle_name} - {item?.vehicle_life}
                                     </Text>
-                                    {item?.is_confirmed_vehicle === 1 && (
+                                    {item?.is_confirmed_vehicle == 1 && (
                                         <ShieldCheckIcon size={16} color={'white'} />
                                     )}
                                 </View>

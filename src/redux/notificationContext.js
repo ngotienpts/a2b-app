@@ -8,14 +8,14 @@ export const useNotification = () => {
 };
 
 export const NotificationProvider = ({ children }) => {
-    const [hasUnreadNotification, setHasUnreadNotification] = useState(true);
+    const [countNoti, setCountNoti] = useState(0);
 
-    const handleHiddenNoti = () => {
-        setHasUnreadNotification(false);
+    const handleHiddenNoti = (count) => {
+        setCountNoti(count);
     };
 
     return (
-        <NotificationContext.Provider value={{ hasUnreadNotification, handleHiddenNoti }}>
+        <NotificationContext.Provider value={{ countNoti, handleHiddenNoti }}>
             {children}
         </NotificationContext.Provider>
     );

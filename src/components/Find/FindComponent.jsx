@@ -31,11 +31,13 @@ import { fallbackImage, fetchDetailTrip, fetchListReport } from '../../api/DataF
 import SentFormBooking from '../sentFormBooking/SentFormBooking';
 import { DetailTripContext } from '../../redux/detailTripContext';
 import { TokenContext } from '../../redux/tokenContext';
+import { MapContext } from '../../redux/mapContext';
 
 
 const FindComponent = () => {
     const context = useContext(BookingFormContext);
     const contextToken = useContext(TokenContext);
+    const contextMap = useContext(MapContext);
     const contextDetailTrip = useContext(DetailTripContext);
     const [detail, setDetail] = useState({});
     const [reports, setReports] = useState({});
@@ -121,7 +123,7 @@ const FindComponent = () => {
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                 >
-                    <SentFormBooking context={context}  title="Bạn đang đặt chuyến" />
+                    <SentFormBooking context={context} contextMap={contextMap}  title="Bạn đang đặt chuyến" />
                     {/* khoang cach & thoi gian */}
                     <View
                         style={[

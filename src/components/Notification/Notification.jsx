@@ -6,7 +6,7 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import styles from '../../styles';
 import Header from '../header';
 import MomentComponent from '../moment';
-import { fetchListNoti, fetchReadAllNoti } from '../../api/DataFetching';
+import { fetchListNoti, fetchReadAllNoti, fetchReadOneNoti } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import { useNotification } from '../../redux/notificationContext';
 
@@ -17,9 +17,11 @@ const Notification = () => {
     const [notifications, setNotifications] = useState({});
     // const prevNoti = useRef(null);
     const [isUnmounted, setIsUnmounted] = useState(false);
-    const [dot, setDot] = useState(true);
+    const [isDot, setIsDot] = useState(true);
     const isFocused = useIsFocused();
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(2);
+    const [count, setCount] = useState(0);
 
     // useEffect này chỉ chạy một lần khi component mount
     useEffect(() => {
@@ -35,7 +37,7 @@ const Notification = () => {
     //       setIsUnmounted(false);
     //     }
     //   }, [isFocused]);
-    
+
     // useEffect(() => {
     // // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
     // // console.log(isUnmounted);
@@ -46,13 +48,83 @@ const Notification = () => {
 
     //     }
     // }, [isUnmounted]);   
-    
+
     const listNotification = () => {
-        fetchListNoti(context.token)
+        let params = {}
+        fetchListNoti(params,context.token)
         .then((data) => {
             if (data.res === 'success') {
-                // console.log('Fetched notifications:', data.result);
                 setNotifications(data.result);
+                handleHiddenNoti(data.count);
+                setCount(data.count - 1);
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setLoading(true);
+        });
+    };
+
+    // Xử lý khi thông báo được ẩn
+    const handleHideNotification = () => {
+        const updatedNotifications = notifications.map((noti) => ({
+            ...noti,
+            isRead: true
+        }));
+        setNotifications(updatedNotifications);
+        fetchReadAllNoti(context.token)
+        .then((data) => {
+            // console.log(data);
+            if(data.res === 'success') {
+                handleHiddenNoti(0);
+                // handleHiddenNoti(context.token);
+            }
+        })
+    };
+
+    // Xử lý từng thông báo bị ẩn
+    const handleClickOneNoti = (noti) => {
+        const index = notifications.findIndex((n) => n.notify_id === noti.notify_id && n.status == 0); //tim vi tri key noti chon voi danh sach noti api
+        if (index !== -1) {
+            // Đánh dấu thông báo là đã đọc bằng cách đặt isRead thành true
+            const updatedNotifications = [...notifications]; // lay danh sách noti của api kết hợp
+            updatedNotifications[index] = { ...noti, isRead: true }; // kết hợp noti thứ i của api với noti được chọn và thêm key isRead = true
+            setNotifications(updatedNotifications); // cập nhật lại noti
+            setCount(prevCount => Math.max(0, prevCount - 1));
+            handleHiddenNoti(count)
+        }
+        fetchReadOneNoti({
+            notify_id: noti.notify_id
+        },context.token)
+        .then((data) => {
+            if(data.res === 'success'){
+               
+            }
+        })
+    }
+
+    const handleScroll = (event) => {
+        const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+        const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 80;
+        if (isCloseToBottom) {
+            loadMoreData();
+        }
+
+    };
+
+    const loadMoreData = async () => {
+        setLoading(true);
+        const params = {
+            page: page
+        }
+        fetchListNoti(params,context.token)
+        .then((data) => {
+            if (data.res === 'success') {
+                setNotifications([...notifications, ...data.result]);
+                setPage(page + 1);
+                setLoading(false);
             }
         })
         .catch((err) => {
@@ -62,20 +134,8 @@ const Notification = () => {
             setLoading(true);
             // console.log('render');
         });
-    };
 
-    const handleClickAllNoti = () => {
-        fetchReadAllNoti(context.token)
-        .then((data) => {
-            if(data.res === 'success') {
-                setDot(false);
-            }
-        })
     }
-    // Xử lý khi thông báo được ẩn
-    const handleHideNotification = () => {
-        handleHiddenNoti();
-    };
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -88,6 +148,8 @@ const Notification = () => {
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
+                    onScroll={handleScroll}
+                    scrollEventThrottle={1600} 
                 >
                     {/* title */}
                     <View style={[styles.flexBetween, styles.mb24, styles.px15]}>
@@ -102,30 +164,31 @@ const Notification = () => {
 
                     {/* list notification */}
                     {loading &&
-                    <View style={{ paddingBottom: 100 }}>
-                        {notifications.map((noti, index) => (
-                            <TouchableOpacity
-                                key={noti.notify_id}
-                                style={[
-                                    styles.bg161e,
-                                    styles.px15,
-                                    styles.py10,
-                                    { marginBottom: index < notifications.length ? 12 : 0 },
-                                ]}
-                                onPress={() => navigation.navigate('UserScreen')}
-                            >
-                                <View style={[styles.flexBetween, styles.mb12]}>
-                                    <MomentComponent
-                                        timeString={noti.created_at}
-                                        style={[
-                                            styles.textGray77,
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.fw300,
-                                        ]}
-                                    />
+                        <View style={{ paddingBottom: 100 }}>
+                            {notifications.map((noti, index) => (
+                                <TouchableOpacity
+                                    key={noti.notify_id + Math.random()}
+                                    style={[
+                                        styles.bg161e,
+                                        styles.px15,
+                                        styles.py10,
+                                        { marginBottom: index < notifications.length ? 12 : 0 },
+                                    ]}
+                                    onPress={() => handleClickOneNoti(noti)}
+                                >
+                                    <View style={[styles.flexBetween, styles.mb12]}>
+                                        <MomentComponent
+                                            timeString={noti.created_at}
+                                            style={[
+                                                styles.textGray77,
+                                                styles.fs16,
+                                                styles.lh24,
+                                                styles.fw300,
+                                            ]}
+                                        />
 
-                                    {noti.status == 0 && dot && (
+                                     
+                                    {!noti.isRead && noti.status == 0 && (
                                         <Text
                                             style={[
                                                 styles.bgRed,
@@ -134,15 +197,16 @@ const Notification = () => {
                                             ]}
                                         ></Text>
                                     )}
-                                </View>
-                                <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
-                                    {noti.content}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+        
+                                    </View>
+                                    <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
+                                        {noti.content}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
                     }
-                    
+
                 </ScrollView>
             </View>
         </SafeAreaView>

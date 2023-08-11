@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar, Modal } from 'react-native';
 import React, { useState, useEffect, useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
@@ -13,12 +13,15 @@ import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
 import MomentComponent from '../moment';
 import { TokenContext } from '../../redux/tokenContext';
-import { DetailDriverContext } from '../../redux/detailDriverContext';
 import { DetailTripContext } from '../../redux/detailTripContext';
+import { MapContext } from '../../redux/mapContext';
+import { filterReview } from '../../constants';
+import { Dimensions } from 'react-native';
 
 const FindDetail = () => {
     const context = useContext(BookingFormContext);
     const contextToken = useContext(TokenContext);
+    const contextMap = useContext(MapContext);
     const contextDetailDriver = useContext(DetailTripContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
@@ -30,17 +33,22 @@ const FindDetail = () => {
     const [loadingReview, setLoadingReview] = useState(false);
     const isFocused = useIsFocused();
     const [isUnmounted, setIsUnmounted] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectItem, setSelectItem] = useState('Mới nhất');
+    const maxHeight = Dimensions.get('window').height * 0.7;
 
-    const getReviewList = (driverId) => {
+    const getReviewList = (driverId, name='', filter='') => {
         const params = {
             driver_id: driverId,
-            name: filter
+            name: name,
+            filter: filter,
         }
         fetchListReviewDriver(params)
         .then((data) => {
             if(data.res === 'success'){
                 setReviewDriver(data.result.list);
                 setRateCount(data.result.rates_count);
+                // console.log(data.result);
             }
         })
         .catch((err) => {
@@ -55,7 +63,6 @@ const FindDetail = () => {
     const getDetailDriver = (driverId) => {
         const params = {
             driver_id: driverId,
-            a: 1
         }
         fetchDetailDriver(params)
         .then((data) => {
@@ -80,21 +87,27 @@ const FindDetail = () => {
                     <StarIcon
                         key={index}
                         size={12}
-                        color={index < value ? 'white' : undefined}
+                        color={index < value ? 'white' : 'black'}
                         stroke={index < value ? undefined : 'white'}
                     />
                 ))}
             </View>
         );
     };
+
+    const handleSelectItem = (title, name, filter) => {
+        setSelectItem(title);
+        setModalVisible(false);
+        getReviewList(item?.driver_id,name,filter)
+    }
     
     useEffect(() => {
         if (!isFocused) {
-          // Màn hình bị blur, thực hiện unmount
-          setIsUnmounted(true);
+            // Màn hình bị blur, thực hiện unmount
+            setIsUnmounted(true);
         } else {
-          // Màn hình được focus lại, không cần unmount
-          setIsUnmounted(false);
+            // Màn hình được focus lại, không cần unmount
+            setIsUnmounted(false);
         }
       }, [isFocused]);
     
@@ -130,7 +143,7 @@ const FindDetail = () => {
                         showsVerticalScrollIndicator={false}
                         style={[styles.flexFull, styles.pt15]}
                     >
-                        <SentFormBooking context={context} title="Bạn đang đặt chuyến" />
+                        <SentFormBooking context={context} contextMap={contextMap} title="Bạn đang đặt chuyến" />
 
                         {/* thông tin tài xế */}
 
@@ -290,9 +303,62 @@ const FindDetail = () => {
                                     >
                                         Đánh giá ({reviewDriver.length !== 0 ? rateCount : 0})
                                     </Text>
-                                    <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
-                                        Mới nhất
-                                    </Text>
+                                    <TouchableOpacity onPress={() => setModalVisible(true)}>
+                                        <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
+                                            {selectItem}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <Modal
+                                        visible={modalVisible} 
+                                        animationType="slide" 
+                                        transparent
+                                    >
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.flexFull,
+                                                styles.itemsCenter,
+                                                styles.justifyCenter,
+                                                styles.bgBlack50,
+                                            ]}
+                                            onPress={() => setModalVisible(false)}
+                                        >
+                                            <View
+                                                style={[
+                                                    styles.bgWhite,
+                                                    styles.border10,
+                                                    styles.hidden,
+                                                    { maxHeight: maxHeight, width: '60%' },
+                                                ]}
+                                            >
+                                                <ScrollView showsVerticalScrollIndicator={false}>
+                                                    {filterReview.map((item, index) => (
+                                                        <TouchableOpacity
+                                                            key={index}
+                                                            onPress={() => handleSelectItem(item?.title, item?.name, item?.filter)}
+                                                            style={[
+                                                                styles.py10,
+                                                                selectItem === item?.title && styles.bg161e,
+                                                            ]}
+                                                        >
+                                                            <Text
+                                                                style={[
+                                                                    styles.fs18,
+                                                                    styles.px10,
+
+                                                                    selectItem === item?.title
+                                                                        ? styles.textWhite
+                                                                        : styles.textGray77,
+                                                                ]}
+                                                            >
+                                                                {item?.title}
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    ))}
+                                                </ScrollView>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </Modal>
+                                    
                                 </View>
                                 
                                 {/* many reviews */}
