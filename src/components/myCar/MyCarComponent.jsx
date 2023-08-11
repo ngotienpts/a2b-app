@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'rea
 import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { ChevronRightIcon } from 'react-native-heroicons/outline';
 
 import styles from '../../styles';
 import Header from '../header/Header';
@@ -10,15 +11,16 @@ import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { bgCar } from '../../assets/images';
 import { fallbackImage, fetchListMyCar, fetchGetOneCategoryVehicle, fetchListCategoryVehicle, fetchUpdateMycar } from '../../api/DataFetching';
 import ChoseImage from '../settings/ChoseImage';
+import NextPageSetting from '../settings/NextPageSetting';
 
 const MyCarComponent = () => {
-    
+
     var { width } = Dimensions.get('window');
     const navigation = useNavigation();
-    
+
     const [image, setImage] = useState(null);
     const [ListMyCar, setListMyCar] = useState([]);
-    const [CarName, setCarName] = useState(null);  
+    const [CarName, setCarName] = useState(null);
     const [CarModel, setCarModel] = useState('');
     const [CarType, setCarType] = useState('');
     const [LicensePlate, setLicensePlate] = useState(null);
@@ -38,13 +40,13 @@ const MyCarComponent = () => {
     }, []);
     const handleCarModelChange = useCallback((newValue) => {
         setCarModel(newValue);
-    },[]);
+    }, []);
     const handleCarTypeChange = useCallback((newValue) => {
         setCarType(newValue);
-    },[]);
+    }, []);
     const handleLicensePlateChange = useCallback((newValue) => {
         setLicensePlate(newValue);
-    },[]);
+    }, []);
     const handleLicensePlateColorChange = (newValue) => {
         setLicensePlateColor(newValue);
     };
@@ -53,16 +55,16 @@ const MyCarComponent = () => {
     }, []);
     const handleBottleChange = useCallback((newValue) => {
         setBottle(newValue);
-    },[]);
+    }, []);
     const handleFreightChange = useCallback((newValue) => {
         setFreight(newValue);
-    },[]);
+    }, []);
 
     useEffect(() => {
         showMyCar();
         ListCategoryVehicle();
     }, []);
-    
+
     useEffect(() => {
         setImage(ListMyCar?.image)
         setCarName(ListMyCar?.vehicle_name);
@@ -74,7 +76,7 @@ const MyCarComponent = () => {
         setBottle(ListMyCar?.is_bottle);
         setFreight(ListMyCar?.price_per_km);
     }, [ListMyCar])
-    
+
     const showMyCar = () => {
         fetchListMyCar('79ee7846612b106c445826c19')
             .then((data) => {
@@ -97,26 +99,26 @@ const MyCarComponent = () => {
 
     const updateMyCar = () => {
         fetchUpdateMycar({
-            image : base64Regex.test(image) ? image : '',
-            vehicleName : CarName == 0 ? ListMyCar?.vehicle_name : CarName,
-            vehicleLife : CarModel == 0 ? ListMyCar?.vehicle_life : CarModel,
-            vehicleCategory : CarType == 0 ? ListMyCar?.vehicle_category_id : CarType,
-            licensePlates : LicensePlate == 0 ? ListMyCar?.license_plates : LicensePlate,
-            platesColor : LicensePlateColor,
-            pricePerKm : Freight == 0 ? ListMyCar?.price_per_km : Freight,
-            isBottle : Bottle,
-        },'79ee7846612b106c445826c19')
-        .then((data) => {
-            if(data.res === 'success'){
-                console.log(data);
-                navigation.navigate('DriverScreen');
-            }
-        })
-        .finally(() => setloading(false))
+            image: base64Regex.test(image) ? image : '',
+            vehicleName: CarName == 0 ? ListMyCar?.vehicle_name : CarName,
+            vehicleLife: CarModel == 0 ? ListMyCar?.vehicle_life : CarModel,
+            vehicleCategory: CarType == 0 ? ListMyCar?.vehicle_category_id : CarType,
+            licensePlates: LicensePlate == 0 ? ListMyCar?.license_plates : LicensePlate,
+            platesColor: LicensePlateColor,
+            pricePerKm: Freight == 0 ? ListMyCar?.price_per_km : Freight,
+            isBottle: Bottle,
+        }, '79ee7846612b106c445826c19')
+            .then((data) => {
+                if (data.res === 'success') {
+                    console.log(data);
+                    navigation.navigate('DriverScreen');
+                }
+            })
+            .finally(() => setloading(false))
         // console.log(CarType == 0 ? ListMyCar?.vehicle_category_id : CarType);
     }
     // console.log('1'+ new Date('2023-05-12'));
- 
+
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <View style={[styles.flexFull, styles.bgBlack]}>
@@ -188,6 +190,12 @@ const MyCarComponent = () => {
                                     onChangeDropdown={handleLicensePlateColorChange}
                                 />
 
+                                <NextPageSetting
+                                    onPress={() => navigation.navigate('WifiScreen')}
+                                    title={'Wifi miễn phí'}
+                                    value={<ChevronRightIcon size={20} color={'white'}/>}
+                                />
+
                                 {/* Nước uống */}
                                 <PersonalInfoItem
                                     label="Nước uống đóng chai miễn phí"
@@ -228,7 +236,7 @@ const MyCarComponent = () => {
                         styles.mx15,
                     ]}
                     onPress={updateMyCar}
-                    // onPress={() => navigation.navigate('DriverScreen')}
+                // onPress={() => navigation.navigate('DriverScreen')}
                 >
                     <Text style={[styles.fs16, styles.textWhite]}>Tìm khách</Text>
                 </TouchableOpacity>

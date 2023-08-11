@@ -122,3 +122,8 @@ export const fetchUpdateImageIdentify = (data, token) => {
     const UpdateImageIdentify = `${baseUrl}/${token}/profile/identification`;
     return postApi(UpdateImageIdentify,data);
 }
+//cập nhật Wifi
+export const fetchUpdateWifi = (data, token) => {
+    const UpdateWifi = `${baseUrl}/${token}/vehicle/wifi`;
+    return postApi(UpdateWifi,data);
+}

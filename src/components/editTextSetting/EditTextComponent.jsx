@@ -37,7 +37,7 @@ const EditTextComponent = ({ label, maxLength, value, onChangeText }) => {
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
                     <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
-                        {value}
+                        {value ? value : '...'}
                     </Text>
                 </TouchableOpacity>
             )}

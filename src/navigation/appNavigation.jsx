@@ -7,6 +7,7 @@ import { BellIcon, CalendarIcon, HomeIcon } from 'react-native-heroicons/outline
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import BookScreen from '../screens/BookScreen';
+import WifiScreen from '../screens/WifiScreen';
 import DiaryScreen from '../screens/DiaryScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import DriverScreen from '../screens/DriverScreen';
@@ -83,6 +84,7 @@ const AppNavigation = () => {
                 <NavigationContainer>
                     <Stack.Navigator screenOptions={{ headerShown: false }}>
                         <Stack.Screen name="UserScreen" component={UserScreen} />
+                        <Stack.Screen name="WifiScreen" component={WifiScreen} />
                         <Stack.Screen name="MyCarScreen" component={MyCarScreen} />
                         <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
                         <Stack.Screen name="Login" component={LoginScreen} />

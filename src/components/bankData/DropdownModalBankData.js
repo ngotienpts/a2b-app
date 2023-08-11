@@ -8,7 +8,7 @@ const DropdownModalBankData = ({ style, data, selectedName, onChangeDropdown }) 
     }
 
     const [selectedItem, setSelectedItem] = useState(
-        () => selectedName.length > 0 ? selectedName : (data.length > 0 ? data[0].shortname : '')
+        () => selectedName ? selectedName : (data.length > 0 ? data[0].shortname : '')
     );
  
     const [modalVisible, setModalVisible] = useState(false);
