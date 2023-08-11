@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -24,9 +24,10 @@ const Setting = () => {
     const apiNameBankAccount = 'NGUYEN VAN A';
     const img = 'https://media.a2b.vn/user/2023/05/12/khanhhoang-093520.jpg';
     const regex = /\d/;
+    const base64Regex = /^data:image\/jpeg;base64/;
 
     const [settingData, setSettingData] = useState([]);
-    const [avatar, setAvatar] = useState(img);
+    const [avatar, setAvatar] = useState('');
     const [name, setName] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [gender, setGender] = useState('');
@@ -78,6 +79,7 @@ const Setting = () => {
     },[])
 
     useEffect(() => {
+        setAvatar(userProfile?.image);
         setName(userProfile?.fullname);
         setDateOfBirth(userProfile?.birthday);
         setGender(userProfile?.sex);
@@ -115,6 +117,7 @@ const Setting = () => {
 
     const updateProfile = () => {
         fetchUpdateProfile({
+            image: base64Regex.test(avatar) ? avatar : '',
             fullName: name,
             birthday: typeof dateOfBirth == 'object' ?  dateOfBirth.toISOString().slice(0, 10) : '',
             sex: gender,
@@ -127,7 +130,7 @@ const Setting = () => {
         .then((data) => {
             if(data.res === 'success'){
                 console.log(data);
-                alert('Cập nhật thành công')
+                Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK' }])
                 // navigation.navigate('DriverScreen');
             }
             else{
@@ -135,6 +138,8 @@ const Setting = () => {
             }
         })
         .finally(() => setloading(false))
+        // console.log(base64Regex.test(avatar));
+        // console.log(avatar);
     }
     // console.log(bankAccount);
     return (
@@ -259,7 +264,7 @@ const Setting = () => {
                             <NextPageSetting
                                 onPress={() => navigation.navigate('VerificationScreen')}
                                 title={'Xác minh danh tính'}
-                                value={identity == 0 ? 'Chưa xác thực' : 'Dã xác thực'}
+                                value={identity == 0 ? 'Chưa xác thực' : 'Đang xác thực'}
                             />
                         </View>
                         {/* thông tin liên hệ */}

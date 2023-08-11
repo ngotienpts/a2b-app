@@ -117,3 +117,8 @@ export const fetchUpdateProfile = (data, token) => {
     const UpdateProfile = `${baseUrl}/${token}/profile/update`;
     return postApi(UpdateProfile,data);
 }
+//cập nhật ảnh chứng minh thư nhân dân
+export const fetchUpdateImageIdentify = (data, token) => {
+    const UpdateImageIdentify = `${baseUrl}/${token}/profile/identification`;
+    return postApi(UpdateImageIdentify,data);
+}

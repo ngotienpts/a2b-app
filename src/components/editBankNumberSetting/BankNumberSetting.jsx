@@ -5,7 +5,7 @@ import styles from '../../styles';
 
 const BankNumberSetting = ({ label, maxLength, value, onChangeText }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [bankAccount, setBankAccount] = useState(value);
+    const [bankAccount, setBankAccount] = useState(value ? value : '');
     const textInputRef = useRef(null);
     const isFirstRender = useRef(true);
 

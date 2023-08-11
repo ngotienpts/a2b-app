@@ -28,6 +28,7 @@ const MyCarComponent = () => {
     const [Freight, setFreight] = useState('');
     const [CateVehicle, setCateVehicle] = useState([]);
     const [loading, setloading] = useState(true);
+    const base64Regex = /^data:image\/jpeg;base64/;
 
     const HandleImageChange = useCallback((newValue) => {
         setImage(newValue);
@@ -37,7 +38,6 @@ const MyCarComponent = () => {
     }, []);
     const handleCarModelChange = useCallback((newValue) => {
         setCarModel(newValue);
-        // console.log('val', newValue);
     },[]);
     const handleCarTypeChange = useCallback((newValue) => {
         setCarType(newValue);
@@ -74,7 +74,6 @@ const MyCarComponent = () => {
         setBottle(ListMyCar?.is_bottle);
         setFreight(ListMyCar?.price_per_km);
     }, [ListMyCar])
-
     
     const showMyCar = () => {
         fetchListMyCar('79ee7846612b106c445826c19')
@@ -87,12 +86,10 @@ const MyCarComponent = () => {
     }
 
     const ListCategoryVehicle = () => {
-        // try {
         fetchListCategoryVehicle('79ee7846612b106c445826c19')
             .then((data) => {
                 if (data.res == 'success') {
                     setCateVehicle(data.result)
-                    // setloading(false);
                 }
             })
             .finally(() => setloading(false))
@@ -100,7 +97,7 @@ const MyCarComponent = () => {
 
     const updateMyCar = () => {
         fetchUpdateMycar({
-            // image : image == 0 ? base64.encode(ListMyCar?.image) : base64.encode(image),
+            image : base64Regex.test(image) ? image : '',
             vehicleName : CarName == 0 ? ListMyCar?.vehicle_name : CarName,
             vehicleLife : CarModel == 0 ? ListMyCar?.vehicle_life : CarModel,
             vehicleCategory : CarType == 0 ? ListMyCar?.vehicle_category_id : CarType,
