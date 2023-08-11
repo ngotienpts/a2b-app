@@ -221,3 +221,8 @@ export const fetchDetailCustomer = (params) => {
     const detailCustomer = `${baseUrl}/1/profile/detail`;
     return apiCall(detailCustomer,params);
 }
+//lay thong tin xe 
+export const fetchListMyCar = (token) => {
+    const ListMyCar = `${baseUrl}/${token}/vehicle/get`;
+    return apiCall(ListMyCar);
+}

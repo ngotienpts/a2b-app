@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
 import { View, useWindowDimensions, TouchableOpacity, Text, Animated, StatusBar } from 'react-native';
-// import {
-//     View,
-//     useWindowDimensions,
-//     TouchableOpacity,
-//     Text,
-//     Animated,
-//     StatusBar,
-// } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';

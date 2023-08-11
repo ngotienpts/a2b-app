@@ -75,7 +75,7 @@ const DriverComponent = () => {
             if(data.res === 'success'){
                 setDriver(data.result);
                 setTimeRange(data.result.distane_to_customer)
-                setPriceRange(data.result.price_per_km)
+                setPriceRange(parseInt(data.result.price_per_km))
                 if(data.result.end_location){
                     // console.log(1);
                     setIsEnabled(true)

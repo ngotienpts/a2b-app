@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert, StatusBar } from 'react-native';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRightIcon } from 'react-native-heroicons/outline';
@@ -11,6 +11,7 @@ import PersonalInfoItem from './PersonalInfoItem';
 import NextPageSetting from './NextPageSetting';
 import { dataGender } from '../../constants';
 import ChoseImage from './ChoseImage';
+import { TokenContext } from '../../redux/tokenContext';
 
 const Setting = () => {
     const navigation = useNavigation();
@@ -41,6 +42,7 @@ const Setting = () => {
     const [bankNameData, setBankNameData] = useState([]);
     const [userProfile, setUserProfile] = useState({});
     const [loading, setloading] = useState(true)
+    const contextToken = useContext(TokenContext);
 
     const handleAvaterChange = (newValue) => {
         setAvatar(newValue);
@@ -106,7 +108,7 @@ const Setting = () => {
     }
     
     const getUserProfile = () =>{
-        fetchGetUserProfile('79ee7846612b106c445826c19')
+        fetchGetUserProfile(contextToken.token)
         .then((data) => {
             if(data.res == 'success'){
                 setUserProfile(data.result);
@@ -126,7 +128,7 @@ const Setting = () => {
             bank_number: bankAccount.replace(/-/g, ''),
             bank_id: regex.test(bankName) ? bankName : '',
             bank_name: nameBankAccount,
-        },'79ee7846612b106c445826c19')
+        },contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
                 console.log(data);
@@ -143,7 +145,8 @@ const Setting = () => {
     }
     // console.log(bankAccount);
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Tài khoản" />
