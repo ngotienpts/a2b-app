@@ -209,3 +209,9 @@ export const cancelBookClient = [
     { id: 0, title: 'Do tôi thay đổi hành trình, thời gian', des: 'Tôi muốn hủy chuyến đi này' },
     { id: 1, title: 'Lý do khác', des: 'Các lý do khác' },
 ];
+export const filterReview = [
+    { id: 0, title: 'Mới nhất', name: 'rate_id', filter: 'DESC' },
+    { id: 1, title: 'Cũ nhất', name: 'rate_id', filter: 'ASC' },
+    { id: 2, title: 'Tốt nhất', name: 'star', filter: 'DESC' },
+    { id: 3, title: 'Tệ nhất', name: 'star', filter: 'ASC' },
+]

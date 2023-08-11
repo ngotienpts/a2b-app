@@ -5,7 +5,7 @@ import { MapPinIcon } from 'react-native-heroicons/outline';
 import styles from '../../styles';
 import { MapContext } from '../../redux/mapContext';
 
-const Result = ({ results, navigation, style, paddingBottom, point }) => {
+const ResultStart = ({ results, navigation, style, paddingBottom, point }) => {
     const handleScroll = () => {
         Keyboard.dismiss();
     };
@@ -14,13 +14,13 @@ const Result = ({ results, navigation, style, paddingBottom, point }) => {
         // console.log(item);
         contextMap.setMap({
             ...contextMap.map,
-            end: {
+            start: {
                 name: item.name,
                 address: item.address,
                 coordinates: item.coordinates
             }
         })
-        // navigation.navigate('Book', {point: 'end'});
+        // navigation.navigate('Book', {point: 'start'});
         navigation.goBack();
     }
     return (
@@ -61,4 +61,4 @@ const Result = ({ results, navigation, style, paddingBottom, point }) => {
     );
 };
 
-export default Result;
+export default ResultStart;

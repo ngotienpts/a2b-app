@@ -75,9 +75,9 @@ export const fetchProfileUser = (token) => { // nhan tham so la params la 1 obje
     const profileEndpoint = `${baseUrl}/${token}/profile/get`;
     return apiCall(profileEndpoint);
 }
-//lay gps
+//lay gps ben khach
 export const fetchStartGPS = (params, token) => {
-    const updateGPS = `${baseUrl}/${token}/search/address?1`;
+    const updateGPS = `${baseUrl}/${token}/search/address`;
     // return params
     return apiCall(updateGPS,params);
 }
@@ -93,14 +93,19 @@ export const fetchListCategoryVehicle = (token) => {
     return apiCall(listCategoryVehicle);
 }
 //danh sach thong bao
-export const fetchListNoti = (token) => {
-    const listNoti = `${baseUrl}/${token}/notification/list?1234`;
-    return apiCall(listNoti);
+export const fetchListNoti = (params={},token) => {
+    const listNoti = `${baseUrl}/${token}/notification/list`;
+    return apiCall(listNoti,params);
 }
 //doc tat ca thong bao
 export const fetchReadAllNoti = (token) => {
     const readAllNoti = `${baseUrl}/${token}/notification/read`;
     return postApi(readAllNoti);
+}
+//doc 1 thong báo
+export const fetchReadOneNoti = (params,token) => {
+    const readOneNoti = `${baseUrl}/${token}/notification/one`;
+    return apiCall(readOneNoti,params);
 }
 //thong tin chi tiet chuyen di 
 export const fetchDetailTrip = (params,token) => {
@@ -137,11 +142,24 @@ export const fetchDetailDriver = (params) => {
     const detailDriver = `${baseUrl}/1/vehicle/detail`;
     return apiCall(detailDriver, params);
 }
-//lấy thông tin mycar
-export const fetchListMyCar = (token) => {
-    const ListMyCar = `${baseUrl}/${token}/vehicle/get`;
-    return apiCall(ListMyCar);
+//ve ma qr code
+export const fetchQrCode = (data) => {
+    const drawQrCode = `${baseUrl}/1/vehicle/qrcode`;
+    // return params;
+    return postApi(drawQrCode, data);
 }
+//danh gia tai xe
+export const fetchReviewDriver = (data,token) => {
+    const drawQrCode = `${baseUrl}/${token}/rate/evaluateDriver`;
+    // return params;
+    return postApi(drawQrCode, data);
+}
+//lay thong tin danh gia
+export const fetchGetOneRate = (params,token) => {
+    const getOneRate = `${baseUrl}/${token}/rate/get`;
+    return apiCall(getOneRate, params);
+} 
+
 //lấy 1 danh mục xe
 export const fetchGetOneCategoryVehicle = (token,params) => {
     const listCategoryVehicle = `${baseUrl}/${token}/category/one`;
@@ -172,4 +190,34 @@ export const fetchUpdateImageIdentify = (data, token) => {
 export const fetchUpdateWifi = (data, token) => {
     const UpdateWifi = `${baseUrl}/${token}/vehicle/wifi`;
     return postApi(UpdateWifi,data);
+}
+//lay va cap nhat GPS ben tai xe
+export const fetchGetAndUpdateGPSDriver = (params,token) => {
+    const getAndUpdateGPSDriver = `${baseUrl}/${token}/vehicle/updateGPS`;
+    return postApi(getAndUpdateGPSDriver,params);
+}
+//cap nhat tinh trang bao gia (tu dong hoac thu cong)
+export const fetchUpdateStatusPrice = (data,token) => {
+    const updateStatusPrice = `${baseUrl}/${token}/vehicle/updateStatusPrice`;
+    return postApi(updateStatusPrice,data);
+}
+//cap nhat cung duong cua tai xe
+export const fetchUpdateRoad = (data,token) => {
+    const updateRoad = `${baseUrl}/${token}/vehicle/updateRoad`;
+    return postApi(updateRoad,data);
+}
+//tro thanh tai xe
+export const fetchBecomeDriver = (token) => {
+    const becomeDriver = `${baseUrl}/${token}/vehicle/find`;
+    return postApi(becomeDriver);
+}
+//tim khach hang
+export const fetchFindCustomer = (token) => {
+    const findCustomer = `${baseUrl}/${token}/vehicle/reload`;
+    return postApi(findCustomer);
+}
+//thong tin chi tiet khach hang
+export const fetchDetailCustomer = (params) => {
+    const detailCustomer = `${baseUrl}/1/profile/detail`;
+    return apiCall(detailCustomer,params);
 }

@@ -5,8 +5,9 @@ import { ChevronDownIcon, ClockIcon, PencilIcon, TruckIcon } from 'react-native-
 import Collapsible from 'react-native-collapsible';
 
 import styles from '../../styles';
+import { format } from 'date-fns';
 
-const SentFormBooking = ({ title, context, contextMap }) => {
+const FormCustomer = ({ title, tripId, detail, cateVehicle}) => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const rotationValue = useState(new Animated.Value(0))[0];
 
@@ -19,10 +20,6 @@ const SentFormBooking = ({ title, context, contextMap }) => {
         }).start();
     }, [isDropdownVisible]);
 
-    // const detailTrip = async() => {
-
-    // }
-
     const toogleDropdown = () => {
         setDropdownVisible((isDropdownVisible) => !isDropdownVisible);
     };
@@ -33,7 +30,7 @@ const SentFormBooking = ({ title, context, contextMap }) => {
                     {title}
                 </Text>
                 <Text style={[styles.fs14, styles.textGray77]}>
-                #{context.bookingForm?.eniqueId}
+                #{tripId}
                 </Text>
             </View>
             <View style={[styles.px15]}>
@@ -42,10 +39,10 @@ const SentFormBooking = ({ title, context, contextMap }) => {
                     <StopCircleIcon size={20} color={'white'} style={{ marginTop: 2 }} />
                     <View style={[styles.ml5, styles.flexFull]}>
                         <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                            Vị trí hiện tại: {contextMap.map.start.length !== 0 ? contextMap.map.start.name : context.bookingForm?.startPoint?.start_name}
+                            Vị trí hiện tại: {detail?.start_name}
                         </Text>
                         <Text style={[styles.textGray77, styles.fs15]}>
-                            {contextMap.map.start.length !== 0 ? contextMap.map.start.address : context.bookingForm?.startPoint?.start}
+                            {detail?.start_location}
                         </Text>
                     </View>
                 </View>
@@ -54,10 +51,10 @@ const SentFormBooking = ({ title, context, contextMap }) => {
                     <MapPinIcon size={22} color={'white'} style={{ marginTop: 2 }} />
                     <View style={[styles.ml5, styles.flexFull]}>
                         <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                            {contextMap.map.end.length !== 0 ? contextMap.map.end.name : context.bookingForm?.endPoint?.name}
+                           {detail?.end_name}
                         </Text>
                         <Text style={[styles.textGray77, styles.fs15]}>
-                            {contextMap.map.end.length !== 0 ? contextMap.map.end.address : context.bookingForm?.endPoint?.address}
+                            {detail?.end_location}   
                         </Text>
                     </View>
                 </View>
@@ -70,7 +67,9 @@ const SentFormBooking = ({ title, context, contextMap }) => {
                                 Loại hình xe
                             </Text>
                             <Text style={[styles.textGray77, styles.fs15]}>
-                                {context.bookingForm.nameCar}
+                                {cateVehicle.map((cate) => (
+                                    cate?.vehicle_category_id == detail?.vehicle_category_id && cate?.category_name
+                                ))}
                             </Text>
                         </View>
                     </View>
@@ -83,13 +82,13 @@ const SentFormBooking = ({ title, context, contextMap }) => {
                                 Thời gian khởi hành
                             </Text>
                             <Text style={[styles.textGray77, styles.fs15]}>
-                                {context.bookingForm.departureTime}
+                                {format(new Date(detail?.start_time), 'dd-MM-yyyy HH:mm')}
                             </Text>
                         </View>
                     </View>
 
                     {/* note */}
-                    {context.bookingForm.note && (
+                    
                         <View style={[styles.flexRow, styles.mb24]}>
                             <PencilIcon size={22} color={'white'} style={{ marginTop: 2 }} />
                             <View style={[styles.ml5, styles.flexFull]}>
@@ -104,11 +103,11 @@ const SentFormBooking = ({ title, context, contextMap }) => {
                                     Ghi chú
                                 </Text>
                                 <Text style={[styles.textGray77, styles.fs15]}>
-                                    {context.bookingForm.note}
+                                    {detail?.comment ? detail?.comment : 'Không có'}
                                 </Text>
                             </View>
                         </View>
-                    )}
+
                 </Collapsible>
 
                 <TouchableOpacity style={[styles.flexCenter, styles.mb24]} onPress={toogleDropdown}>
@@ -133,4 +132,4 @@ const SentFormBooking = ({ title, context, contextMap }) => {
     );
 };
 
-export default SentFormBooking;
+export default FormCustomer;

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, Image, SafeAreaView, StatusBar } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import BottomSheet, { BottomSheetScrollView, TouchableOpacity } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StarIcon } from 'react-native-heroicons/solid';
@@ -13,7 +13,7 @@ import {
 } from 'react-native-heroicons/outline';
 
 import styles from '../../styles';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { fallbackImage } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking';
 import { BookingFormContext } from '../../redux/bookingFormContext';
@@ -21,41 +21,29 @@ import { Linking } from 'react-native';
 import { DetailTripContext } from '../../redux/detailTripContext';
 import MapViewDirections from 'react-native-maps-directions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MapContext } from '../../redux/mapContext';
+import Contact from '../contact';
 
 const PickComponent = () => {
     const context = useContext(BookingFormContext);
+    const contextMap = useContext(MapContext);
     const contextDetailTrip = useContext(DetailTripContext);
     const bottomSheetRef = useRef(null);
     const { params: item } = useRoute();
+    const navigation = useNavigation();
     const [duration, setDuration] = useState('');
     const [coordinatesPassenger, setCoordinatesPassenger] = useState({});
 
     useEffect(() => {
-        getCoordinates()
-    })
+        getCoordinates();
+        // console.log(item);
+    },[])
 
     const getCoordinates = async () => {
         setCoordinatesPassenger({
             latitude: await AsyncStorage.getItem('lat'),
             longitude: await AsyncStorage.getItem('lng')
         })
-    }
-
-    // console.log(item);
-    const handleMakeCall = () => {
-        if(item?.phone !== ''){
-            Linking.openURL(`tel:${item?.phone}`);
-        }else{
-            alert('Tài xế này chưa có số điện thoại!');
-        }
-    }
-
-    const handleMakeCallZalo = () => {
-        if(item?.phone !== ''){
-            Linking.openURL(`https://zalo.me/${item?.phone}`);
-        }else{
-            alert('Tài xế này chưa có số điện thoại!');
-        }
     }
 
     const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
@@ -99,23 +87,34 @@ const PickComponent = () => {
                     <MapView
                         style={[styles.flexFull]}
                         initialRegion={{
-                            latitude: coordinatesPassenger.lat,
-                            longitude: coordinatesPassenger.lng,
+                            latitude: item?.lat,
+                            longitude: item?.lng,
                             latitudeDelta: 0.0922,
                             longitudeDelta: 0.0421,
                         }}
+                        mapType={Platform.OS == "android" ? "none" : "standard"}
+                        // provider={PROVIDER_GOOGLE}
                     >
                         <Marker
-                            coordinate={{ latitude: coordinatesPassenger.lat, longitude: coordinatesPassenger.lng }}
-                            title="Marker Title"
-                            description="This is the marker description"
+                            coordinate={{ latitude: item?.lat, longitude: item?.lng }}
+                            title="Vị trí của tài xế"
+                            description="Vị trí di chuyển chi tiết của tài xế"
+                            // onDragEnd={(e) => this.setState({ x: e.nativeEvent.coordinate })}
                         />
-                        <Marker
-                            coordinate={{ latitude: 20.97709739400339, longitude: 105.78411489129546 }}
-                            title="Marker Title"
-                            description="This is the marker description"
-                        />
-                        <MapViewDirections
+                        {contextMap.map.start.length !== 0 ? (
+                            <Marker
+                                coordinate={{ latitude: contextMap.map.start.coordinates.lat, longitude: contextMap.map.start.coordinates.lng }}
+                                title="Vị trí của khách đặt"
+                                description="Vị trí di chuyển chi tiết của khách đặt"
+                            />
+                        ) : (
+                            <Marker
+                                coordinate={{ latitude: coordinatesPassenger.lat, longitude: coordinatesPassenger.lng }}
+                                title="Vị trí của khách đặt"
+                                description="Vị trí di chuyển chi tiết của khách đặt"
+                            />
+                        )}
+                        {/* <MapViewDirections
                             origin={{ latitude: coordinatesPassenger.lat, longitude: coordinatesPassenger.lng }}
                             destination={{ latitude: 20.97709739400339, longitude: 105.78411489129546 }}
                             apikey={'AIzaSyD7824wLI-u0xlws9cJ1RlS8r4h65P1SzU'}
@@ -128,7 +127,7 @@ const PickComponent = () => {
                             }
                             
                             }
-                        />
+                        /> */}
                     </MapView>
 
                     {/* Bottom Sheet Drawer */}
@@ -190,82 +189,9 @@ const PickComponent = () => {
                                 </View>
 
                                 {/* contact */}
-                                <View style={[styles.flexCenter, styles.mb24]}>
-                                    {/* phone */}
-                                    <TouchableOpacity onPress={handleMakeCall}>
-                                        <View
-                                            style={[
-                                                styles.flexCenter,
-                                                styles.px12,
-                                                styles.py5,
-                                                styles.bgCyan2F,
-                                                styles.borderLeftTop4,
-                                                styles.borderLeftBot4,
-                                            ]}
-                                        >
-                                            <PhoneIcon size={16} color={'white'} />
-                                            <Text
-                                                style={[
-                                                    styles.textWhite,
-                                                    styles.fs16,
-                                                    styles.lh24,
-                                                    styles.fw400,
-                                                    styles.ml5,
-                                                ]}
-                                            >
-                                                Gọi
-                                            </Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                    {/* facebook */}
-                                    <View
-                                        style={[
-                                            styles.flexCenter,
-                                            styles.px12,
-                                            styles.py5,
-                                            styles.bgBlue237,
-                                        ]}
-                                    >
-                                        <ChatBubbleOvalLeftIcon size={16} color={'white'} />
-                                        <Text
-                                            style={[
-                                                styles.textWhite,
-                                                styles.fs16,
-                                                styles.lh24,
-                                                styles.fw400,
-                                                styles.ml5,
-                                            ]}
-                                        >
-                                            Facebook
-                                        </Text>
-                                    </View>
-                                    {/* zalo */}
-                                    <TouchableOpacity onPress={handleMakeCallZalo}>
-                                        <View
-                                            style={[
-                                                styles.flexCenter,
-                                                styles.px12,
-                                                styles.py5,
-                                                styles.bgBlue009,
-                                                styles.borderRightTop4,
-                                                styles.borderRightBot4,
-                                            ]}
-                                        >
-                                            <PhoneIcon size={16} color={'white'} />
-                                            <Text
-                                                style={[
-                                                    styles.textWhite,
-                                                    styles.fs16,
-                                                    styles.lh24,
-                                                    styles.fw400,
-                                                    styles.ml5,
-                                                ]}
-                                            >
-                                                Zalo
-                                            </Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
+                                <Contact 
+                                    item={item}
+                                />
 
                                 {/* thông tin xe */}
                                 <View
@@ -297,7 +223,7 @@ const PickComponent = () => {
                                             >
                                                 {item?.vehicle_name} - {item?.vehicle_life}
                                             </Text>
-                                            {item?.is_confirmed_vehicle === 1 && (
+                                            {item?.is_confirmed_vehicle == 1 && (
                                                 <ShieldCheckIcon size={16} color={'white'} />
                                             )}
                                         </View>
@@ -359,7 +285,10 @@ const PickComponent = () => {
                                 </View>
                             </View>
 
-                            <SentFormBooking context={context} title="Tài xế đang đến" />
+                            <SentFormBooking context={context} contextMap={contextMap} title="Tài xế đang đến" />
+                            <TouchableOpacity onPress={() => navigation.navigate('MovingScreen',item)}>
+                                <Text style={[styles.textWhite, styles.flexCenter, styles.fs27]}>Go Moving</Text>
+                            </TouchableOpacity>
                         </BottomSheetScrollView>
                     </BottomSheet>
                 </GestureHandlerRootView>

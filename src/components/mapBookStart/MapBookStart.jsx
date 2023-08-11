@@ -8,7 +8,7 @@ import {
     Dimensions,
     Keyboard,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
@@ -16,25 +16,52 @@ import { debounce } from 'lodash';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import styles from '../../styles';
-import { fetchSearchEndpoint } from '../../api/DataFetching';
+import { fetchSearchEndpoint, fetchStartGPS } from '../../api/DataFetching';
 import Result from '../home/Result';
+import ResultStart from './ResultStart'
+import { TokenContext } from '../../redux/tokenContext';
+import { MapContext } from '../../redux/mapContext';
 
 const MapBookStart = () => {
     const navigation = useNavigation();
     const { params: item } = useRoute();
 
+    const contextToken = useContext(TokenContext);
+    const contextMap = useContext(MapContext);
     const [results, setResults] = useState([]);
     const [inputValue, setInputValue] = useState('');
+    const [address, setAddress] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const [coordinates, setCoordinates] = useState({
         latitude: item?.coordinates.lat,
         longitude: item?.coordinates.lng
     });
 
+    // console.log(1);
+
     const handleRegionChange = (region) => {
         setCoordinates({
             latitude: region.latitude,
             longitude: region.longitude,
+        })
+        fetchStartGPS({
+            start: region.latitude+','+region.longitude
+        },contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                contextMap.setMap({
+                    ...contextMap.map,
+                    start: {
+                        coordinates: data.result.coordinates,
+                        name: data.result.start_name,
+                        address: data.result.start
+                    }
+                })
+            }
+        })
+        .finally(() => {
+            setLoading(true);
         })
     }
 
@@ -62,6 +89,8 @@ const MapBookStart = () => {
             setResults([]);
         }
     };
+
+    const handleRegionChangeDebounce = useCallback(debounce(handleRegionChange,100), []);
     const handleSearchDebounce = useCallback(debounce(handleSearch, 400), []);
     const handleClearInput = () => {
         setInputValue('');
@@ -140,7 +169,7 @@ const MapBookStart = () => {
 
                     {/* result */}
                     {inputValue.length > 0 ? (
-                        <Result
+                        <ResultStart
                             results={results}
                             navigation={navigation}
                             point={'start'}
@@ -163,7 +192,7 @@ const MapBookStart = () => {
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}
-                    onRegionChange={handleRegionChange}
+                    onRegionChange={handleRegionChangeDebounce}
                 >
                     <Marker
                         coordinate={{

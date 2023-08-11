@@ -1,6 +1,6 @@
 import MapBookStart from "../components/mapBookStart";
 
-const MapBookStart = () => {
+const MapScreenStart = () => {
     return <MapBookStart />;
 };
 
