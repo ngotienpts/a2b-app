@@ -6,6 +6,8 @@ import styles from '../../styles';
 const EditTextComponent = ({ label, maxLength, value, onChangeText }) => {
     const [isEditing, setIsEditing] = useState(false);
     const textInputRef = useRef(null);
+
+    // console.log('changed text',onChangeText);
     const handleToggleEdit = () => {
         setIsEditing(!isEditing);
     };
@@ -35,7 +37,7 @@ const EditTextComponent = ({ label, maxLength, value, onChangeText }) => {
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
                     <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
-                        {value}
+                        {value ? value : '...'}
                     </Text>
                 </TouchableOpacity>
             )}

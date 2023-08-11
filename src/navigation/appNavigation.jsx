@@ -7,6 +7,7 @@ import { BellIcon, CalendarIcon, HomeIcon } from 'react-native-heroicons/outline
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import BookScreen from '../screens/BookScreen';
+import WifiScreen from '../screens/WifiScreen';
 import DiaryScreen from '../screens/DiaryScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import DriverScreen from '../screens/DriverScreen';
@@ -14,7 +15,6 @@ import UserScreen from '../screens/UserScreen';
 import MapScreen from '../screens/MapScreen';
 import PreMapScreen from '../screens/PreMapScreen';
 import TokenProvider from '../redux/tokenContext';
-import { NotificationProvider, useNotification } from '../redux/notificationContext';
 import FindSreen from '../screens/FindSreen';
 import FindDetailScreen from '../screens/FindDetailScreen';
 import BookingFormProvider from '../redux/bookingFormContext';
@@ -27,13 +27,6 @@ import VerificationScreen from '../screens/VerificationScreen';
 import ShareScreen from '../screens/ShareScreen';
 import DriverFindScreen from '../screens/DriverFindScreen';
 import DriverFindDetailComponent from '../components/driverFindDetail/DriverFindDetailComponent';
-import DetailTripProvider from '../redux/detailTripContext';
-import DriverPickScreen from '../screens/DriverPickScreen';
-import DriverMovingScreen from '../screens/DriverMovingScreen';
-import DriverCompleteScreen from '../screens/DriverCompleteScreen';
-import LoadPointsScreen from '../screens/LoadPointsScreen';
-import CancelBookClientScreen from '../screens/CancelBookClientScreen';
-import CancelBookDriverScreen from '../screens/CancelBookDriverScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -77,7 +70,7 @@ const HomeStackNavigation = () => {
         options={{
           tabBarLabel: 'Thông báo',
           tabBarIcon: ({ color, size }) => <BellIcon color={color} size={size} />,
-          tabBarBadge: hasUnreadNotification ? 2 : null,
+          tabBarBadge: hasUnreadNotification ? 1 : null,
           tabBarBadgeStyle: { fontSize: 10 },
         }}
       />
@@ -87,119 +80,37 @@ const HomeStackNavigation = () => {
 const AppNavigation = () => {
     return (
         <TokenProvider>
-              <NotificationProvider>
-                <DetailTripProvider>
-                    <BookingFormProvider>
-                        <NavigationContainer>
-                            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                                <Stack.Screen name="Login" component={LoginScreen} />
-                                <Stack.Screen name="Home" component={HomeStackNavigation} />
-                                <Stack.Screen name="Book" component={BookScreen} />
-                                <Stack.Screen name="DriverScreen" component={DriverScreen} />
-                                <Stack.Screen name="UserScreen" component={UserScreen} />
-                                <Stack.Screen name="MapScreen" component={MapScreen} />
-                                <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
-                                <Stack.Screen name="FindScreen" component={FindSreen} />
-                                <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
-                                <Stack.Screen name="ConfirmScreen" component={ConfirmScreen} />
-                                <Stack.Screen name="PickScreen" component={PickScreen} />
-                                <Stack.Screen name="MovingScreen" component={MovingScreen} />
-                                <Stack.Screen name="CompleteScreen" component={CompleteScreen} />
-                                <Stack.Screen name="LoadPointsScreen" component={LoadPointsScreen} />
-                                <Stack.Screen name="MyCarScreen" component={MyCarScreen} />
-                                <Stack.Screen
-                                    name="VerificationScreen"
-                                    component={VerificationScreen}
-                                />
-                                <Stack.Screen name="ShareScreen" component={ShareScreen} />
-                                <Stack.Screen name="DriverFindScreen" component={DriverFindScreen} />
-                                <Stack.Screen
-                                    name="DriverFindDetailScreen"
-                                    component={DriverFindDetailComponent}
-                                />
-                                <Stack.Screen name="DriverPickScreen" component={DriverPickScreen} />
-                                <Stack.Screen
-                                    name="DriverMovingScreen"
-                                    component={DriverMovingScreen}
-                                />
-                                <Stack.Screen
-                                    name="DriverCompleteScreen"
-                                    component={DriverCompleteScreen}
-                                />
-                                <Stack.Screen
-                                    name="CancelBookClientScreen"
-                                    component={CancelBookClientScreen}
-                                />
-                                <Stack.Screen
-                                    name="CancelBookDriverScreen"
-                                    component={CancelBookDriverScreen}
-                                />
-                            </Stack.Navigator>
-                        </NavigationContainer>
-                    </BookingFormProvider>
-                </DetailTripProvider>
-
-              </NotificationProvider>
-        </TokenProvider>
-    )
-};
-
-{/* const AppNavigation = () => {
-    return (
-        <TokenProvider>
-            <NotificationProvider>
-                <BookingFormProvider>
-                    <NavigationContainer>
-                        <Stack.Navigator screenOptions={{ headerShown: false }}>
-                            <Stack.Screen name="Login" component={LoginScreen} />
-                            <Stack.Screen name="Home" component={HomeStackNavigation} />
-                            <Stack.Screen name="Book" component={BookScreen} />
-                            <Stack.Screen name="DriverScreen" component={DriverScreen} />
-                            <Stack.Screen name="UserScreen" component={UserScreen} />
-                            <Stack.Screen name="MapScreen" component={MapScreen} />
-                            <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
-                            <Stack.Screen name="FindScreen" component={FindSreen} />
-                            <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
-                            <Stack.Screen name="ConfirmScreen" component={ConfirmScreen} />
-                            <Stack.Screen name="PickScreen" component={PickScreen} />
-                            <Stack.Screen name="MovingScreen" component={MovingScreen} />
-                            <Stack.Screen name="CompleteScreen" component={CompleteScreen} />
-                            <Stack.Screen name="LoadPointsScreen" component={LoadPointsScreen} />
-                            <Stack.Screen name="MyCarScreen" component={MyCarScreen} />
-                            <Stack.Screen
-                                name="VerificationScreen"
-                                component={VerificationScreen}
-                            />
-                            <Stack.Screen name="ShareScreen" component={ShareScreen} />
-                            <Stack.Screen name="DriverFindScreen" component={DriverFindScreen} />
-                            <Stack.Screen
-                                name="DriverFindDetailScreen"
-                                component={DriverFindDetailComponent}
-                            />
-                            <Stack.Screen name="DriverPickScreen" component={DriverPickScreen} />
-                            <Stack.Screen
-                                name="DriverMovingScreen"
-                                component={DriverMovingScreen}
-                            />
-                            <Stack.Screen
-                                name="DriverCompleteScreen"
-                                component={DriverCompleteScreen}
-                            />
-                            <Stack.Screen
-                                name="CancelBookClientScreen"
-                                component={CancelBookClientScreen}
-                            />
-                            <Stack.Screen
-                                name="CancelBookDriverScreen"
-                                component={CancelBookDriverScreen}
-                            />
-                        </Stack.Navigator>
-                    </NavigationContainer>
-                </BookingFormProvider>
-            </NotificationProvider>
->>>>>>> d08ddd538e6a86b8f51f4c773fccc75a29a53e4c
+            <BookingFormProvider>
+                <NavigationContainer>
+                    <Stack.Navigator screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="UserScreen" component={UserScreen} />
+                        <Stack.Screen name="WifiScreen" component={WifiScreen} />
+                        <Stack.Screen name="MyCarScreen" component={MyCarScreen} />
+                        <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
+                        <Stack.Screen name="Login" component={LoginScreen} />
+                        <Stack.Screen name="Home" component={HomeStackNavigation} />
+                        <Stack.Screen name="DriverScreen" component={DriverScreen} />
+                        <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+                        <Stack.Screen name="Book" component={BookScreen} />
+                        <Stack.Screen name="MapScreen" component={MapScreen} />
+                        <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
+                        <Stack.Screen name="FindScreen" component={FindSreen} />
+                        <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
+                        <Stack.Screen name="ConfirmScreen" component={ConfirmScreen} />
+                        <Stack.Screen name="PickScreen" component={PickScreen} />
+                        <Stack.Screen name="MovingScreen" component={MovingScreen} />
+                        <Stack.Screen name="CompleteScreen" component={CompleteScreen} />
+                        <Stack.Screen name="ShareScreen" component={ShareScreen} />
+                        <Stack.Screen name="DriverFindScreen" component={DriverFindScreen} />
+                        <Stack.Screen
+                            name="DriverFindDetailScreen"
+                            component={DriverFindDetailComponent}
+                        />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </BookingFormProvider>
         </TokenProvider>
     );
-}; */}
+};
 
 export default AppNavigation;

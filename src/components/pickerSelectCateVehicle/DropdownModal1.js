@@ -1,22 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 
 import styles from '../../styles';
-const DropdownModal = ({ style, data, selectedName, onChangeDropdown }) => {
+const DropdownModal1 = ({ style, data, selectedName, onChangeDropdown }) => {
     if (!Array.isArray(data)) {
         data = [];
     }
 
     const [selectedItem, setSelectedItem] = useState(
-        () => selectedName || (data.length > 0 ? data[0].shortname : '')
+        () => selectedName.length > 0 ? selectedName : (data.length > 0 ? data[0].category_name : '')
     );
-    // console.log('1'+selectedItem);
+    // console.log('123', data.map((item, index) => (item.category_name))[0]);
+    // useEffect(() => {
+        // console.log('name: ',data.length);
+    // },[]);
+
     const [modalVisible, setModalVisible] = useState(false);
 
     const handleSelectItem = (itemLabel, itemId) => {
         setSelectedItem(itemLabel);
         setModalVisible(false);
-        onChangeDropdown(itemId );
+        onChangeDropdown(itemId);
     };
 
     const handleCloseModal = () => {
@@ -55,10 +59,10 @@ const DropdownModal = ({ style, data, selectedName, onChangeDropdown }) => {
                             {data.map((item, index) => (
                                 <TouchableOpacity
                                     key={index}
-                                    onPress={() => handleSelectItem(item.shortname, item.id)}
+                                    onPress={() => handleSelectItem(item.category_name, item.vehicle_category_id)}
                                     style={[
                                         styles.py10,
-                                        selectedItem === item?.shortname && styles.bg161e,
+                                        selectedItem === item?.category_name && styles.bg161e,
                                     ]}
                                 >
                                     <Text
@@ -66,12 +70,12 @@ const DropdownModal = ({ style, data, selectedName, onChangeDropdown }) => {
                                             styles.fs18,
                                             styles.px10,
 
-                                            selectedItem === item?.shortname
+                                            selectedItem === item?.category_name
                                                 ? styles.textWhite
                                                 : styles.textGray77,
                                         ]}
                                     >
-                                        {item.shortname}
+                                        {item.category_name}
                                     </Text>
                                 </TouchableOpacity>
                             ))}
@@ -83,4 +87,4 @@ const DropdownModal = ({ style, data, selectedName, onChangeDropdown }) => {
     );
 };
 
-export default DropdownModal;
+export default DropdownModal1;

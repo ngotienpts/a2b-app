@@ -1,151 +1,224 @@
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    ScrollView,
-    Image,
-    Dimensions,
-    StatusBar,
-} from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { ChevronRightIcon } from 'react-native-heroicons/outline';
 
 import styles from '../../styles';
 import Header from '../header/Header';
 import { typeCar, licenseColor, bill, water } from '../../constants';
 import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { bgCar } from '../../assets/images';
-import { fallbackImage } from '../../api/DataFetching';
+import { fallbackImage, fetchListMyCar, fetchGetOneCategoryVehicle, fetchListCategoryVehicle, fetchUpdateMycar } from '../../api/DataFetching';
 import ChoseImage from '../settings/ChoseImage';
+import NextPageSetting from '../settings/NextPageSetting';
 
 const MyCarComponent = () => {
+
     var { width } = Dimensions.get('window');
     const navigation = useNavigation();
-    const apiCarName = 'BMW X5';
-    const apiCarModel = '2021';
-    const apiLicensePlate = '30H-12345';
-    const apiFreight = '7000';
 
-    const [backgroundCar, setBackgroundCar] = useState(bgCar);
-    const [carName, setCarName] = useState(apiCarName);
-    const [carModel, setCarModel] = useState(apiCarModel);
-    const [licensePlate, setLicensePlate] = useState(apiLicensePlate);
-    const [freight, setFreight] = useState(apiFreight);
+    const [image, setImage] = useState(null);
+    const [ListMyCar, setListMyCar] = useState([]);
+    const [CarName, setCarName] = useState(null);
+    const [CarModel, setCarModel] = useState('');
+    const [CarType, setCarType] = useState('');
+    const [LicensePlate, setLicensePlate] = useState(null);
+    const [LicensePlateColor, setLicensePlateColor] = useState([]);
+    const [Bill, setBill] = useState('');
+    const [Bottle, setBottle] = useState('');
+    const [Freight, setFreight] = useState('');
+    const [CateVehicle, setCateVehicle] = useState([]);
+    const [loading, setloading] = useState(true);
+    const base64Regex = /^data:image\/jpeg;base64/;
 
-    const handleCarNameChange = (newValue) => {
+    const HandleImageChange = useCallback((newValue) => {
+        setImage(newValue);
+    }, []);
+    const handleCarNameChange = useCallback((newValue) => {
         setCarName(newValue);
-    };
-    const handleCarModelChange = (newValue) => {
+    }, []);
+    const handleCarModelChange = useCallback((newValue) => {
         setCarModel(newValue);
-    };
-    const handleLicensePlateChange = (newValue) => {
+    }, []);
+    const handleCarTypeChange = useCallback((newValue) => {
+        setCarType(newValue);
+    }, []);
+    const handleLicensePlateChange = useCallback((newValue) => {
         setLicensePlate(newValue);
+    }, []);
+    const handleLicensePlateColorChange = (newValue) => {
+        setLicensePlateColor(newValue);
     };
-    const handleFreightChange = (newValue) => {
+    const handleBillChange = useCallback((newValue) => {
+        setBill(newValue);
+    }, []);
+    const handleBottleChange = useCallback((newValue) => {
+        setBottle(newValue);
+    }, []);
+    const handleFreightChange = useCallback((newValue) => {
         setFreight(newValue);
-    };
+    }, []);
 
-    console.log(carName);
+    useEffect(() => {
+        showMyCar();
+        ListCategoryVehicle();
+    }, []);
+
+    useEffect(() => {
+        setImage(ListMyCar?.image)
+        setCarName(ListMyCar?.vehicle_name);
+        setCarModel(ListMyCar?.vehicle_life);
+        setCarType(ListMyCar?.vehicle_category_id);
+        setLicensePlate(ListMyCar?.license_plates);
+        setLicensePlateColor(ListMyCar?.license_plates_color);
+        setBill(ListMyCar?.is_bill);
+        setBottle(ListMyCar?.is_bottle);
+        setFreight(ListMyCar?.price_per_km);
+    }, [ListMyCar])
+
+    const showMyCar = () => {
+        fetchListMyCar('79ee7846612b106c445826c19')
+            .then((data) => {
+                if (data.res == 'success') {
+                    setListMyCar(data.result)
+                }
+            })
+            .finally(() => setloading(false))
+    }
+
+    const ListCategoryVehicle = () => {
+        fetchListCategoryVehicle('79ee7846612b106c445826c19')
+            .then((data) => {
+                if (data.res == 'success') {
+                    setCateVehicle(data.result)
+                }
+            })
+            .finally(() => setloading(false))
+    }
+
+    const updateMyCar = () => {
+        fetchUpdateMycar({
+            image: base64Regex.test(image) ? image : '',
+            vehicleName: CarName == 0 ? ListMyCar?.vehicle_name : CarName,
+            vehicleLife: CarModel == 0 ? ListMyCar?.vehicle_life : CarModel,
+            vehicleCategory: CarType == 0 ? ListMyCar?.vehicle_category_id : CarType,
+            licensePlates: LicensePlate == 0 ? ListMyCar?.license_plates : LicensePlate,
+            platesColor: LicensePlateColor,
+            pricePerKm: Freight == 0 ? ListMyCar?.price_per_km : Freight,
+            isBottle: Bottle,
+        }, '79ee7846612b106c445826c19')
+            .then((data) => {
+                if (data.res === 'success') {
+                    console.log(data);
+                    navigation.navigate('DriverScreen');
+                }
+            })
+            .finally(() => setloading(false))
+        // console.log(CarType == 0 ? ListMyCar?.vehicle_category_id : CarType);
+    }
+    // console.log('1'+ new Date('2023-05-12'));
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
-            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Xe của tôi" />
-
-                {/* body */}
-                <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
-                    {/* image */}
-                    <View style={[styles.flexCenter]}>
-                        {/* <Image
+                {loading ? (<Text>Đang lấy dữ liệu...</Text>) : (
+                    /* body */
+                    <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
+                        {/* image */}
+                        <View style={[styles.flexCenter]}>
+                            {/* <Image
                             source={{ uri: fallbackImage }}
                             style={[{ width: width, height: width / 2 }]}
                             resizeMode="cover"
                         /> */}
-                        <ChoseImage
-                            avatar={fallbackImage}
-                            width={width}
-                            height={width / 2}
-                            aspect={[2, 1]}
-                        />
-                    </View>
-
-                    {/* list */}
-                    <View>
-                        {/* thông tin cá nhân */}
-                        <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
-                            {/* Tên */}
-                            <PersonalInfoItem
-                                label="Dòng xe"
-                                type="text"
-                                value={carName}
-                                onChangeText={handleCarNameChange}
-                            />
-                            {/* Đời xe */}
-                            <PersonalInfoItem
-                                label="Đời xe"
-                                type="number"
-                                value={carModel}
-                                maxLength={4}
-                                onChangeText={handleCarModelChange}
-                            />
-
-                            {/* Loại xe */}
-                            <PersonalInfoItem
-                                label="Loại hình xe"
-                                type="dropdown"
-                                data={typeCar}
-                                selectedName={'SUV'}
-                            />
-
-                            {/* Biển số xe */}
-                            <PersonalInfoItem
-                                label="Biển số xe"
-                                type="license"
-                                value={licensePlate}
-                                onChangeText={handleLicensePlateChange}
-                                maxLength={9}
-                            />
-
-                            {/* Màu biển */}
-                            <PersonalInfoItem
-                                label="Màu biển"
-                                type="dropdown"
-                                data={licenseColor}
-                                selectedName={'Vàng'}
-                            />
-
-                            {/* Xuất hóa đơn */}
-                            <PersonalInfoItem
-                                label="Xuất hóa đơn"
-                                type="dropdown"
-                                data={bill}
-                                selectedName={'Không'}
-                            />
-
-                            {/* Nước uống */}
-                            <PersonalInfoItem
-                                label="Nước uống đóng chai miễn phí"
-                                type="dropdown"
-                                data={water}
-                                selectedName={'Có'}
-                            />
-
-                            {/* Cước */}
-                            <PersonalInfoItem
-                                label="Cước phí /1km"
-                                type="number"
-                                value={freight}
-                                pay
-                                suffixes="VND"
-                                maxLength={10}
-                                onChangeText={handleFreightChange}
+                            <ChoseImage
+                                avatar={image != 0 ? image : fallbackImage}
+                                width={width}
+                                height={width / 2}
+                                aspect={[2, 1]}
+                                onChangeImage={HandleImageChange}
                             />
                         </View>
-                    </View>
-                </ScrollView>
+
+                        {/* list */}
+                        <View>
+                            {/* thông tin cá nhân */}
+                            <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
+                                {/* Tên */}
+                                <PersonalInfoItem
+                                    label="Dòng xe"
+                                    type="text"
+                                    value={CarName}
+                                    onChangeText={handleCarNameChange}
+                                />
+                                {/* Đời xe */}
+                                <PersonalInfoItem
+                                    label="Đời xe"
+                                    type="number"
+                                    value={CarModel}
+                                    maxLength={4}
+                                    onChangeText={handleCarModelChange}
+                                />
+
+                                {/* Loại xe */}
+                                <PersonalInfoItem
+                                    label="Loại hình xe"
+                                    type="dropdown1"
+                                    data={CateVehicle}
+                                    selectedName={CarType == 1 ? 'Xe Sedan' : 'Xe SUV'}
+                                    onChangeDropdown={handleCarTypeChange}
+                                />
+
+                                {/* Biển số xe */}
+                                <PersonalInfoItem
+                                    label="Biển số xe"
+                                    type="license"
+                                    value={LicensePlate}
+                                    onChangeText={handleLicensePlateChange}
+                                    maxLength={9}
+                                />
+
+                                {/* Màu biển */}
+                                <PersonalInfoItem
+                                    label="Màu biển"
+                                    type="dropdown"
+                                    data={licenseColor}
+                                    selectedName={LicensePlateColor == 0 ? 'Trắng' : 'Vàng'}
+                                    onChangeDropdown={handleLicensePlateColorChange}
+                                />
+
+                                <NextPageSetting
+                                    onPress={() => navigation.navigate('WifiScreen')}
+                                    title={'Wifi miễn phí'}
+                                    value={<ChevronRightIcon size={20} color={'white'}/>}
+                                />
+
+                                {/* Nước uống */}
+                                <PersonalInfoItem
+                                    label="Nước uống đóng chai miễn phí"
+                                    type="dropdown"
+                                    data={water}
+                                    selectedName={Bottle == 0 ? 'Không' : 'Có'}
+                                    onChangeDropdown={handleBottleChange}
+                                />
+
+                                {/* Cước */}
+                                <PersonalInfoItem
+                                    label="Cước phí /1km"
+                                    type="number"
+                                    value={Freight}
+                                    pay
+                                    suffixes="VND"
+                                    maxLength={10}
+                                    onChangeText={handleFreightChange}
+                                />
+                            </View>
+                        </View>
+                    </ScrollView>
+                )}
             </View>
             {/* buttom  huy chuyen */}
             <View style={[styles.flexRow]}>
@@ -162,7 +235,8 @@ const MyCarComponent = () => {
                         styles.border4,
                         styles.mx15,
                     ]}
-                    onPress={() => navigation.navigate('DriverScreen')}
+                    onPress={updateMyCar}
+                // onPress={() => navigation.navigate('DriverScreen')}
                 >
                     <Text style={[styles.fs16, styles.textWhite]}>Tìm khách</Text>
                 </TouchableOpacity>

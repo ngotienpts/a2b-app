@@ -60,9 +60,9 @@ export const fetchHistorySearch = (token) => {
 export const fetchSettingEndpoint = (params) => {
     return apiCall(settingEndpoint, params);
 };
-//danh sach ngan hang
-export const fetchBankNameEndpoint = (params,token) => {
-    const bankNameEndpoint = `${baseUrl}/${token}/bank/list`;
+// danh sách tên các ngân hàng
+export const fetchBankNameEndpoint = (params) => {
+    const bankNameEndpoint = `${baseUrl}/58289193774ccae754cd6506a/bank/list`;
     return apiCall(bankNameEndpoint, params);
 };
 
@@ -136,4 +136,40 @@ export const fetchListReviewDriver = (params) => {
 export const fetchDetailDriver = (params) => {
     const detailDriver = `${baseUrl}/1/vehicle/detail`;
     return apiCall(detailDriver, params);
+}
+//lấy thông tin mycar
+export const fetchListMyCar = (token) => {
+    const ListMyCar = `${baseUrl}/${token}/vehicle/get`;
+    return apiCall(ListMyCar);
+}
+//lấy 1 danh mục xe
+export const fetchGetOneCategoryVehicle = (token,params) => {
+    const listCategoryVehicle = `${baseUrl}/${token}/category/one`;
+    return apiCall(listCategoryVehicle, params);
+}
+//cập nhật thông tin mycar
+export const fetchUpdateMycar = (data, token) => {
+    const UpdateMyCar = `${baseUrl}/${token}/vehicle/update`;
+    return postApi(UpdateMyCar,data);
+}
+//lấy thông tin user
+export const fetchGetUserProfile = (token) => {
+    const listUserProfile = `${baseUrl}/${token}/profile/get`;
+    return apiCall(listUserProfile);
+}
+//cập nhật thông tin profile
+export const fetchUpdateProfile = (data, token) => {
+    // return data;
+    const UpdateProfile = `${baseUrl}/${token}/profile/update`;
+    return postApi(UpdateProfile,data);
+}
+//cập nhật ảnh chứng minh thư nhân dân
+export const fetchUpdateImageIdentify = (data, token) => {
+    const UpdateImageIdentify = `${baseUrl}/${token}/profile/identification`;
+    return postApi(UpdateImageIdentify,data);
+}
+//cập nhật Wifi
+export const fetchUpdateWifi = (data, token) => {
+    const UpdateWifi = `${baseUrl}/${token}/vehicle/wifi`;
+    return postApi(UpdateWifi,data);
 }

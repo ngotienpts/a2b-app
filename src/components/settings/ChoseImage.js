@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 import styles from '../../styles';
 
-const ChoseImage = ({ aspect, avatar, width, height, borderFull }) => {
+const ChoseImage = ({ aspect, avatar, width, height, borderFull, onChangeImage }) => {
     const [selectedImage, setSelectedImage] = useState(null);
+    // const [isImageChanged, setIsImageChanged] = useState(false);
+    
+    // useEffect(() => {
+    //     if (isImageChanged) {
+    //         onChangeImage(selectedImage);
+    //         setIsImageChanged(false);
+    //     }
+    // }, [selectedImage, isImageChanged])
 
     const handleImagePicker = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -22,7 +31,13 @@ const ChoseImage = ({ aspect, avatar, width, height, borderFull }) => {
         });
 
         if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
+            // const response = await fetch(result.assets[0].uri);
+            // const blob = await response.blob();
+            const base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, { encoding: 'base64'});
+            // setSelectedImage(result.assets[0].uri);
+            setSelectedImage(`data:image/jpeg;base64,${base64}`);
+            onChangeImage(`data:image/jpeg;base64,${base64}`);
+            // console.log(result);
         }
     };
 
