@@ -181,6 +181,9 @@ const styles = StyleSheet.create({
     bgBlue237: {
         backgroundColor: '#2374E1',
     },
+    bgBlue1A7: {
+        backgroundColor: '#1A73E8',
+    },
     bgBlue009: {
         backgroundColor: '#0091FF',
     },
@@ -199,6 +202,9 @@ const styles = StyleSheet.create({
     },
     textWhite30: {
         color: 'rgba(255,255,255,0.3)',
+    },
+    textWhite80: {
+        color: 'rgba(255,255,255,0.8)',
     },
     textGray77: {
         color: 'rgba(119,125,146,0.8)',
@@ -232,6 +238,9 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top', // Để đoạn văn bản bắt đầu từ đầu của hộp văn bản
         paddingHorizontal: 12,
         paddingVertical: 8,
+    },
+    textItalic: {
+        fontStyle: 'italic',
     },
     /*-------------------------------------------------------------------------- */
     itemsCenter: {

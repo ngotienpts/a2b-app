@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar, Alert } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { StopCircleIcon, MapPinIcon } from 'react-native-heroicons/solid';
@@ -9,56 +9,171 @@ import Header from '../header/Header';
 import { BoltIcon, CurrencyDollarIcon, ViewfinderCircleIcon } from 'react-native-heroicons/outline';
 import Slider from '@react-native-community/slider';
 import { Switch } from 'react-native';
-import { fallbackImage, fetchListMyCar, fetchGetOneCategoryVehicle, fetchListCategoryVehicle } from '../../api/DataFetching';
-const DriverComponent = () => {
-    useEffect(() => {
-        showMyCar();
-    }, [])
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchBecomeDriver, fetchGetAndUpdateGPSDriver, fetchListMyCar, fetchStartGPS, fetchUpdateRoad, fetchUpdateStatusPrice } from '../../api/DataFetching';
+import { TokenContext } from '../../redux/tokenContext';
+import { MapContext } from '../../redux/mapContext';
 
+const DriverComponent = () => {
     const navigation = useNavigation();
-    const [nameStart, setnameStart] = useState('');
-    const [addressStart, setaddressStart] = useState('');
-    const [nameEnd, setnameEnd] = useState('');
-    const [addressEnd, setaddressEnd] = useState('');
-    const [timeRange, setTimeRange] = useState(30);
+    const [timeRange, setTimeRange] = useState(5);
     const [priceRange, setPriceRange] = useState(5000);
     const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+    const [currentPosition, setCurrentPosition] = useState(null);
+    const [driver, setDriver] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [item, setItem] = useState(null);
+    const contextToken = useContext(TokenContext)
+    const contextMap = useContext(MapContext);
+    // console.log(contextMap);
+    const toggleSwitch = () => {
+        setIsEnabled((previousState) => !previousState)
+        if(isEnabled){
+            setPriceRange(0);
+        }
+    };
 
-    const splitNameAddress = (str) => {
-        if(!str) return [];
-        str = str.replace(', Việt Nam', '');
-        var title = ''; var address = '';
-        title = str.substring(0, str.indexOf(","));
-        address = str.replace(title + ',', '');
-        title = title.trim();
-        address = address.trim();
-        return [title, address];
+    useEffect(() => {
+        takeAddressFromGPS();
+        infomationDriver();
+    }, []);
+
+    const takeAddressFromGPS = async () => {
+        const latString = await AsyncStorage.getItem('lat');
+        const lngString = await AsyncStorage.getItem('lng');
+        lat = parseFloat(latString);
+        lng = parseFloat(lngString);
+        const coords = lat + ',' + lng;
+        // setCoordStart(coords);
+        fetchGetAndUpdateGPSDriver({
+            coordinates: coords
+        }, contextToken.token)
+        .then((data) => {
+            // console.log(data);
+            if (data.res == 'success') {
+                const parts = data.result.start_location.split(', ');
+                const country = parts.pop(); // "Việt Nam"
+                // Tách phần "Đường Nguyễn Xiển, Phường Đại Kim, Quận Hoàng Mai, Hà Nội"
+                const street = parts.join(', ');
+                const title = street.substring(0, street.indexOf(","));
+                const address = street.replace(title + ',', '').trim()
+                setCurrentPosition({
+                    title: title,
+                    address: address
+                });
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
-    const showMyCar = async () => {
-        try {
-            const data = await fetchListMyCar('79ee7846612b106c445826c19')
-            // .then((data) => {
-            if (data.res == 'success') {
-                setnameStart(splitNameAddress(data.result.start_location)[0]);
-                setaddressStart(splitNameAddress(data.result.start_location)[1]);
-                setnameEnd(splitNameAddress(data.result.end_location)[0]);
-                setaddressEnd(splitNameAddress(data.result.end_location)[1]);
-                // setloading(false);
+    const infomationDriver = async () => {
+        await fetchListMyCar(contextToken.token)
+        .then((data) => {
+            // console.log(data);
+            if(data.res === 'success'){
+                setDriver(data.result);
+                setTimeRange(data.result.distane_to_customer)
+                setPriceRange(parseInt(data.result.price_per_km))
+                if(data.result.end_location){
+                    // console.log(1);
+                    setIsEnabled(true)
+                    setItem({
+                        name: data.result.end_location,
+                        coordinates: {
+                            lat: data.result.end_lat,
+                            lng: data.result.end_lng
+                        }
+                    })
+                }
             }
-            // })
-            // .finally(()=>setloading(false))
-        } catch (error) {
-            console.error('Error fetching data:', error);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoading(true);
+        })
+    }
+
+    const findCustomer = () => {
+        const item = {
+            radius: timeRange,
+            price: priceRange,
+            isEnabled: isEnabled,
+            currentPosition: currentPosition,
         }
-        //  finally {
-        //     setloading(false);
-        // }
+        // updateStatusPrice(!isEnabled ? 0 : 1, priceRange)
+        // updateRoadDriver(timeRange,contextMap.map.end)
+        if(contextMap.map.end || driver?.end_location){
+            // becomeDriver();
+            const nameEnd = driver?.end_location.substring(0,driver?.end_location.indexOf(','));
+            const addressEnd = driver?.end_location.replace(nameEnd + ',','').trim();
+            contextMap.setMap({
+                ...contextMap.map,
+                end: {
+                    coordinates: {
+                        lat: driver?.end_lat,
+                        lng: driver?.end_lng
+                    },
+                    name: nameEnd,
+                    address: addressEnd
+                }
+            })
+            navigation.navigate('DriverFindScreen', item)
+        }else{
+            Alert.alert(
+                'Thông báo',
+                'Yêu cầu bạn hãy chọn điểm kết thúc để bắt đầu tìm khách!',
+                [
+                    { text: 'Đồng ý' }
+                ],
+                { cancelable: false }
+            )
+        }
+    }
+
+    const updateStatusPrice = async (statusPrice, price) => {
+        await fetchUpdateStatusPrice({
+            status_report: statusPrice,
+            price: price
+        },contextToken.token)
+        .then((data) => {
+            console.log(data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const updateRoadDriver = async (radius, context) => {
+        await fetchUpdateRoad({
+            radius: radius,
+            end: context.name+', '+context.address,
+            coordinates_end: context.coordinates.lat+','+context.coordinates.lng
+        },contextToken.token)
+        .then((data) => {
+            console.log(data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const becomeDriver = async() => {
+        await fetchBecomeDriver(contextToken.token)
+        .then((data) => {
+            console.log(data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Xe tìm khách" />
@@ -83,6 +198,7 @@ const DriverComponent = () => {
                     {/* location */}
                     <View>
                         {/* vị trí hiện tại */}
+                        {/* <TouchableOpacity onPress={() => navigation.navigate('MapScreen')}> */}
                             <View style={[styles.flexRow, styles.mb24]}>
                                 <StopCircleIcon
                                     size={20}
@@ -98,16 +214,17 @@ const DriverComponent = () => {
                                             styles.mb5,
                                         ]}
                                     >
-                                        Vị trí hiện tại
+                                        Vị trí hiện tại: {currentPosition?.title}
                                     </Text>
                                     <Text style={[styles.textGray77, styles.fs15]}>
-                                        286 Nguyễn Xiển, Thanh Trì, Hà Nội.
+                                        {currentPosition?.address}
                                     </Text>
                                 </View>
                             </View>
+                        {/* </TouchableOpacity> */}
 
                         {/* điểm đến */}
-                        <TouchableOpacity onPress={() => navigation.navigate('MapScreen')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('MapScreen', contextMap.map.end ? contextMap.map.end : item)}>
                             <View style={[styles.flexRow, styles.mb24]}>
                                 <MapPinIcon size={22} color={'white'} style={{ marginTop: 2 }} />
                                 <View style={[styles.ml5, styles.flexFull]}>
@@ -119,10 +236,11 @@ const DriverComponent = () => {
                                             styles.mb5,
                                         ]}
                                     >
-                                        Cảng hàng không quốc tế Nội Bài
+                                        {contextMap.map.end.name ? contextMap.map.end.name : (driver?.end_location ? driver?.end_location : 'Nhập để tìm trên bản đồ')} 
+
                                     </Text>
                                     <Text style={[styles.textGray77, styles.fs15]}>
-                                        Phú Minh, Sóc Sơn, Hà Nội
+                                        {contextMap.map.end.address ? contextMap.map.end.address : (driver?.end_location ? driver?.end_location : 'Địa điểm chưa xác định')} 
                                     </Text>
                                 </View>
                             </View>
@@ -152,9 +270,9 @@ const DriverComponent = () => {
                                         height: 40,
                                         marginLeft: -10,
                                     }}
-                                    minimumValue={10}
-                                    maximumValue={100}
-                                    step={5}
+                                    minimumValue={3}
+                                    maximumValue={20}
+                                    step={1}
                                     onValueChange={(newValue) => {
                                         setTimeRange(newValue);
                                     }}
@@ -178,8 +296,7 @@ const DriverComponent = () => {
                                         thumbColor={isEnabled ? '#2884EF' : '#f4f3f4'}
                                         ios_backgroundColor="#3e3e3e"
                                         onValueChange={toggleSwitch}
-                                        value={isEnabled}
-                                        style={{ height: 24 }}
+                                        value={driver?.price_per_km ? isEnabled : ''}
                                     />
                                 </View>
                                 <Text style={[styles.textGray77, styles.fs15]}>
@@ -189,41 +306,43 @@ const DriverComponent = () => {
                         </View>
 
                         {/* Báo giá */}
-                        <View style={[styles.flexRow, styles.mb24]}>
-                            <CurrencyDollarIcon
-                                size={22}
-                                color={'white'}
-                                style={{ marginTop: 2 }}
-                            />
-                            <View style={[styles.ml5, styles.flexFull]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.textWhite,
-                                        styles.mb5,
-                                    ]}
-                                >
-                                    Báo giá: {priceRange} VND/km
-                                </Text>
-                                <Slider
-                                    style={{
-                                        width: '100%',
-                                        height: 40,
-                                        marginLeft: -10,
-                                    }}
-                                    minimumValue={0}
-                                    maximumValue={20000}
-                                    step={1000}
-                                    onValueChange={(newValue) => {
-                                        setPriceRange(newValue);
-                                    }}
-                                    value={priceRange}
-                                    minimumTrackTintColor="#FFFFFF"
-                                    maximumTrackTintColor="rgba(255, 255, 255, 0.50)"
+                        {isEnabled && (
+                            <View style={[styles.flexRow, styles.mb24]}>
+                                <CurrencyDollarIcon
+                                    size={22}
+                                    color={'white'}
+                                    style={{ marginTop: 2 }}
                                 />
+                                <View style={[styles.ml5, styles.flexFull]}>
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.fw700,
+                                            styles.textWhite,
+                                            styles.mb5,
+                                        ]}
+                                    >
+                                        Báo giá: {priceRange} VND/km
+                                    </Text>
+                                    <Slider
+                                        style={{
+                                            width: '100%',
+                                            height: 40,
+                                            marginLeft: -10,
+                                        }}
+                                        minimumValue={0}
+                                        maximumValue={20000}
+                                        step={1000}
+                                        onValueChange={(newValue) => {
+                                            setPriceRange(newValue);
+                                        }}
+                                        value={priceRange}
+                                        minimumTrackTintColor="#FFFFFF"
+                                        maximumTrackTintColor="rgba(255, 255, 255, 0.50)"
+                                    />
+                                </View>
                             </View>
-                        </View>
+                        )}
                     </View>
                 </ScrollView>
             </View>
@@ -249,7 +368,7 @@ const DriverComponent = () => {
                         styles.itemsCenter,
                         styles.justifyCenter,
                     ]}
-                    onPress={() => navigation.navigate('DriverFindScreen')}
+                    onPress={findCustomer}
                 >
                     <Text style={[styles.fs16, styles.textWhite]}>Tìm khách</Text>
                 </TouchableOpacity>

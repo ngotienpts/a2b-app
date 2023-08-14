@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert, StatusBar } from 'react-native';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRightIcon } from 'react-native-heroicons/outline';
@@ -11,6 +11,7 @@ import PersonalInfoItem from './PersonalInfoItem';
 import NextPageSetting from './NextPageSetting';
 import { dataGender } from '../../constants';
 import ChoseImage from './ChoseImage';
+import { TokenContext } from '../../redux/tokenContext';
 
 const Setting = () => {
     const navigation = useNavigation();
@@ -41,6 +42,7 @@ const Setting = () => {
     const [bankNameData, setBankNameData] = useState([]);
     const [userProfile, setUserProfile] = useState({});
     const [loading, setloading] = useState(true)
+    const contextToken = useContext(TokenContext);
 
     const handleAvaterChange = (newValue) => {
         setAvatar(newValue);
@@ -113,6 +115,14 @@ const Setting = () => {
                 }
             })
             .finally(() => setloading(false))
+    // const getUserProfile = () =>{
+    //     fetchGetUserProfile(contextToken.token)
+    //     .then((data) => {
+    //         if(data.res == 'success'){
+    //             setUserProfile(data.result);
+    //         }
+    //     })
+    //     .finally(() => setloading(false))
     }
 
     const updateProfile = () => {
@@ -138,12 +148,25 @@ const Setting = () => {
                 }
             })
             .finally(() => setloading(false))
+        // },contextToken.token)
+        // .then((data) => {
+        //     if(data.res === 'success'){
+        //         console.log(data);
+        //         Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK' }])
+        //         // navigation.navigate('DriverScreen');
+        //     }
+        //     else{
+        //         alert(data.status.fullname || data.status.birthday || data.status.phone || data.status.bankId || data.status.bankName || data.status.bankNumber || data.status.image)
+        //     }
+        // })
+        // .finally(() => setloading(false))
         // console.log(base64Regex.test(avatar));
         // console.log(avatar);
     }
     // console.log(bankAccount);
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Tài khoản" />

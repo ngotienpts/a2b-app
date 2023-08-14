@@ -1,6 +1,10 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.bokazem.a2bapp2">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.bokazem.a2bapp2" xmlns:tools="http://schemas.android.com/tools">
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.RECORD_AUDIO"/>
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -28,6 +32,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="a2b-app-2"/>
         <data android:scheme="com.bokazem.a2bapp2"/>
+        <data android:scheme="exp+a2b-app-2"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>

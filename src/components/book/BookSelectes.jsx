@@ -11,7 +11,6 @@ import Slider from '@react-native-community/slider';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
-
 import styles from '../../styles';
 import { fetchListCategoryVehicle } from '../../api/DataFetching';
 
@@ -176,6 +175,7 @@ const BookSelects = ({ context }) => {
         context.setBookingForm({
             ...context.bookingForm,
             typeCar: vehicleId,
+            nameCar: selectedOption,
             departureTime: getActiveText().time,
             note: note,
             isPunish: getActiveText().isPunish

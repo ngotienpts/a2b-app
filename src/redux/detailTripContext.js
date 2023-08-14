@@ -1,23 +1,18 @@
-import { format } from 'date-fns';
-import React, { createContext, useState } from 'react';
+import { createContext, useState } from "react";
 
-export const detailTripContext = createContext();
+export const DetailTripContext = createContext();
 
-const detailTripContext = ({ children }) => {
+const DetailTripProvider = ({ children }) => {
     const [detailTrip, setDetailTrip] = useState({
-        eniqueId: '',
-        startPoint: '',
-        endPoint: '',
-        typeCar: '' || 1,
-        departureTime: '' || format(new Date(), 'yyyy-MM-dd HH:mm'),
-        note: '',
-        isPunish: 0
+        duration: '',
+        distance: '',
+        price_distance: 0,
     });
     const value = {
         detailTrip,
         setDetailTrip,
     };
-    return <detailTripContext.Provider value={value}>{children}</detailTripContext.Provider>;
+    return <DetailTripContext.Provider value={value}>{children}</DetailTripContext.Provider>;
 };
 
-export default detailTripContext;
+export default DetailTripProvider;

@@ -6,7 +6,7 @@ import Collapsible from 'react-native-collapsible';
 
 import styles from '../../styles';
 
-const SentFormBooking = ({ title, context }) => {
+const SentFormBooking = ({ title, context, contextMap }) => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const rotationValue = useState(new Animated.Value(0))[0];
 
@@ -42,10 +42,10 @@ const SentFormBooking = ({ title, context }) => {
                     <StopCircleIcon size={20} color={'white'} style={{ marginTop: 2 }} />
                     <View style={[styles.ml5, styles.flexFull]}>
                         <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                            Vị trí hiện tại: {context.bookingForm?.startPoint?.start_name}
+                            Vị trí hiện tại: {contextMap.map.start.length !== 0 ? contextMap.map.start.name : context.bookingForm?.startPoint?.start_name}
                         </Text>
                         <Text style={[styles.textGray77, styles.fs15]}>
-                            {context.bookingForm?.startPoint?.start}
+                            {contextMap.map.start.length !== 0 ? contextMap.map.start.address : context.bookingForm?.startPoint?.start}
                         </Text>
                     </View>
                 </View>
@@ -54,10 +54,10 @@ const SentFormBooking = ({ title, context }) => {
                     <MapPinIcon size={22} color={'white'} style={{ marginTop: 2 }} />
                     <View style={[styles.ml5, styles.flexFull]}>
                         <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                            {context.bookingForm?.endPoint?.name}
+                            {contextMap.map.end.length !== 0 ? contextMap.map.end.name : context.bookingForm?.endPoint?.name}
                         </Text>
                         <Text style={[styles.textGray77, styles.fs15]}>
-                            {context.bookingForm?.endPoint?.address}
+                            {contextMap.map.end.length !== 0 ? contextMap.map.end.address : context.bookingForm?.endPoint?.address}
                         </Text>
                     </View>
                 </View>
@@ -70,7 +70,7 @@ const SentFormBooking = ({ title, context }) => {
                                 Loại hình xe
                             </Text>
                             <Text style={[styles.textGray77, styles.fs15]}>
-                                {context.bookingForm.typeCar}
+                                {context.bookingForm.nameCar}
                             </Text>
                         </View>
                     </View>

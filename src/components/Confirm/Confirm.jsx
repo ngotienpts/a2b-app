@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
-import React, { useContext } from 'react';
+
+import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar, Linking } from 'react-native';
+import React, { useContext, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { CheckIcon, StarIcon } from 'react-native-heroicons/solid';
 import {
     CurrencyDollarIcon,
@@ -15,14 +16,21 @@ import Header from '../header/Header';
 import { fallbackImage } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
+import { DetailTripContext } from '../../redux/detailTripContext';
+import { MapContext } from '../../redux/mapContext';
+import Contact from '../contact';
+
 
 const Confirm = () => {
     const context = useContext(BookingFormContext);
+    const contextMap = useContext(MapContext);
+    const contextDetailTrip = useContext(DetailTripContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Thành công" />
@@ -65,7 +73,7 @@ const Confirm = () => {
                         </Text>
                     </View>
 
-                    <SentFormBooking context={context} title="Tài xế đang đến" />
+                    <SentFormBooking context={context} contextMap={contextMap} title="Tài xế đang đến" />
 
                     {/* thông tin tài xế */}
 
@@ -104,9 +112,9 @@ const Confirm = () => {
                                         styles.lh24,
                                     ]}
                                 >
-                                    {item?.name_driver}
+                                    {item?.fullname}
                                 </Text>
-                                {item?.protected && (
+                                {item?.is_confirmed === 1 && (
                                     <View style={[styles.pl10]}>
                                         <ShieldCheckIcon size={16} color={'white'} />
                                     </View>
@@ -114,89 +122,20 @@ const Confirm = () => {
                             </View>
 
                             {/* đánh sao*/}
-                            {item?.star && (
+                            {item?.average_rates.toString() && (
                                 <View style={[styles.flexRow, styles.itemsCenter]}>
                                     <StarIcon size={'16'} color={'white'} />
                                     <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
-                                        {item?.star}
+                                        {item?.average_rates.toString()}
                                     </Text>
                                 </View>
                             )}
                         </View>
 
                         {/* contact */}
-                        <View style={[styles.flexCenter, styles.mb24]}>
-                            {/* phone */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgCyan2F,
-                                    styles.borderLeftTop4,
-                                    styles.borderLeftBot4,
-                                ]}
-                            >
-                                <PhoneIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Gọi
-                                </Text>
-                            </View>
-                            {/* facebook */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgBlue237,
-                                ]}
-                            >
-                                <ChatBubbleOvalLeftIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Facebook
-                                </Text>
-                            </View>
-                            {/* zalo */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgBlue009,
-                                    styles.borderRightTop4,
-                                    styles.borderRightBot4,
-                                ]}
-                            >
-                                <PhoneIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Zalo
-                                </Text>
-                            </View>
-                        </View>
+                        <Contact 
+                            item={item}
+                        />
 
                         {/* thông tin xe */}
                         <View
@@ -226,30 +165,46 @@ const Confirm = () => {
                                             styles.pr10,
                                         ]}
                                     >
-                                        {item?.name_car} - {item?.model}
+                                        {item?.vehicle_name} - {item?.vehicle_life}
                                     </Text>
-                                    {item?.protected && (
+                                    {item?.is_confirmed_vehicle == 1 && (
                                         <ShieldCheckIcon size={16} color={'white'} />
                                     )}
                                 </View>
 
                                 {/* tên xe */}
                                 <View style={[styles.flexRow, styles.itemsCenter, styles.mt5]}>
-                                    <Text
-                                        style={[
-                                            styles.fs16,
-                                            styles.fw400,
-                                            styles.lh24,
-                                            styles.bgYellow,
-                                            styles.px10,
-                                        ]}
-                                    >
-                                        {item?.license_plate}
-                                    </Text>
+                                    {item?.license_plates_color === 1 ? (
+                                        <Text
+                                            style={[
+                                                styles.fs16,
+                                                styles.fw400,
+                                                styles.lh24,
+                                                styles.bgWhite,
+                                                styles.px10,
+                                            ]}
+                                        >
+                                            {item?.license_plates}
+                                        </Text>
+                                    ) : (
+                                        <Text
+                                            style={[
+                                                styles.fs16,
+                                                styles.fw400,
+                                                styles.lh24,
+                                                styles.bgYellow,
+                                                styles.px10,
+                                                styles.textWhite
+                                            ]}
+                                        >
+                                            {item?.license_plates}
+                                        </Text>
+                                    )}
+                                    
                                 </View>
 
                                 {/* đánh sao & giá tiền */}
-                                {item?.bill && (
+                                {contextDetailTrip?.detailTrip.price_distance && (
                                     <View style={[styles.flexRow, styles.itemsCenter, styles.mt5]}>
                                         <CurrencyDollarIcon size={'16'} color={'white'} />
                                         <Text
@@ -260,7 +215,7 @@ const Confirm = () => {
                                                 styles.ml5,
                                             ]}
                                         >
-                                            {item?.bill}
+                                            {contextDetailTrip?.detailTrip.price_distance}
                                         </Text>
                                     </View>
                                 )}
@@ -271,7 +226,7 @@ const Confirm = () => {
                     {/*  */}
                     <TouchableOpacity
                         style={[styles.pb60]}
-                        onPress={() => navigation.navigate('PickScreen')}
+                        onPress={() => navigation.navigate('PickScreen', item)}
                     >
                         <Text style={[styles.textWhite, styles.flexCenter, styles.fs27]}>
                             Go Pick
@@ -294,7 +249,7 @@ const Confirm = () => {
                             styles.border4,
                             styles.mx15,
                         ]}
-                        onPress={() => navigation.goBack()}
+                        onPress={() => navigation.navigate('CancelBookClientScreen')}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>

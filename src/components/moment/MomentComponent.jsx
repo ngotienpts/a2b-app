@@ -10,7 +10,8 @@ const MomentComponent = ({ timeString, style }) => {
     const monthsAgo = duration.asMonths();
     const hoursAgo = duration.asHours();
     const daysAgo = duration.asDays();
-
+    const minutesAgo = duration.asMinutes();
+    // console.log(daysAgo);
     let output;
     switch (true) {
         case monthsAgo >= 1:
@@ -22,8 +23,11 @@ const MomentComponent = ({ timeString, style }) => {
         case hoursAgo >= 1:
             output = `${Math.floor(hoursAgo)} giờ trước`;
             break;
+        case minutesAgo >= 1:
+            output = `${Math.floor(minutesAgo)} phút trước`; 
+            break;
         default:
-            output = 'vừa xong';
+            output = 'Vừa xong';
     }
     return (
         <View>

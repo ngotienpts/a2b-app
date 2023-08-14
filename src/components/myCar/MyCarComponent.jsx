@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRightIcon } from 'react-native-heroicons/outline';
@@ -12,6 +12,7 @@ import { bgCar } from '../../assets/images';
 import { fallbackImage, fetchListMyCar, fetchGetOneCategoryVehicle, fetchListCategoryVehicle, fetchUpdateMycar } from '../../api/DataFetching';
 import ChoseImage from '../settings/ChoseImage';
 import NextPageSetting from '../settings/NextPageSetting';
+import { TokenContext } from '../../redux/tokenContext';
 
 const MyCarComponent = () => {
 
@@ -27,10 +28,10 @@ const MyCarComponent = () => {
     const [LicensePlateColor, setLicensePlateColor] = useState([]);
     const [Bill, setBill] = useState('');
     const [Bottle, setBottle] = useState('');
-    const [Freight, setFreight] = useState('');
     const [CateVehicle, setCateVehicle] = useState([]);
     const [loading, setloading] = useState(true);
     const base64Regex = /^data:image\/jpeg;base64/;
+    const contextToken = useContext(TokenContext);
 
     const HandleImageChange = useCallback((newValue) => {
         setImage(newValue);
@@ -56,9 +57,6 @@ const MyCarComponent = () => {
     const handleBottleChange = useCallback((newValue) => {
         setBottle(newValue);
     }, []);
-    const handleFreightChange = useCallback((newValue) => {
-        setFreight(newValue);
-    }, []);
 
     useEffect(() => {
         showMyCar();
@@ -74,11 +72,10 @@ const MyCarComponent = () => {
         setLicensePlateColor(ListMyCar?.license_plates_color);
         setBill(ListMyCar?.is_bill);
         setBottle(ListMyCar?.is_bottle);
-        setFreight(ListMyCar?.price_per_km);
     }, [ListMyCar])
 
     const showMyCar = () => {
-        fetchListMyCar('79ee7846612b106c445826c19')
+        fetchListMyCar(contextToken.token)
             .then((data) => {
                 if (data.res == 'success') {
                     setListMyCar(data.result)
@@ -88,7 +85,7 @@ const MyCarComponent = () => {
     }
 
     const ListCategoryVehicle = () => {
-        fetchListCategoryVehicle('79ee7846612b106c445826c19')
+        fetchListCategoryVehicle(contextToken.token)
             .then((data) => {
                 if (data.res == 'success') {
                     setCateVehicle(data.result)
@@ -105,12 +102,11 @@ const MyCarComponent = () => {
             vehicleCategory: CarType == 0 ? ListMyCar?.vehicle_category_id : CarType,
             licensePlates: LicensePlate == 0 ? ListMyCar?.license_plates : LicensePlate,
             platesColor: LicensePlateColor,
-            pricePerKm: Freight == 0 ? ListMyCar?.price_per_km : Freight,
             isBottle: Bottle,
-        }, '79ee7846612b106c445826c19')
+        }, contextToken.token)
             .then((data) => {
                 if (data.res === 'success') {
-                    console.log(data);
+                    // console.log(data);
                     navigation.navigate('DriverScreen');
                 }
             })
@@ -205,16 +201,6 @@ const MyCarComponent = () => {
                                     onChangeDropdown={handleBottleChange}
                                 />
 
-                                {/* Cước */}
-                                <PersonalInfoItem
-                                    label="Cước phí /1km"
-                                    type="number"
-                                    value={Freight}
-                                    pay
-                                    suffixes="VND"
-                                    maxLength={10}
-                                    onChangeText={handleFreightChange}
-                                />
                             </View>
                         </View>
                     </ScrollView>

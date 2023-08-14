@@ -1,22 +1,26 @@
 import { Text, TouchableOpacity, View, Platform } from 'react-native';
 import React, {useEffect, useContext } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import * as Google from 'expo-auth-session/providers/google';
 import styles from '../../styles';
 import { useNavigation } from '@react-navigation/native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import jwtDecode from 'jwt-decode';
 import { TokenContext } from '../../redux/tokenContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const ios = Platform.OS == 'ios';
 
 const LoginBtn = () => {
   const navigation = useNavigation();
   const androidClientId = '187142393375-7bp1qk9479dibdaepdpj3ibeotm4pr3p.apps.googleusercontent.com';
   const webClientId = '187142393375-c2ai5ek3ap50qat3i710ucc9mirv4j2b.apps.googleusercontent.com';
+  const iosClientId = '187142393375-7u10eperhdm3fih7dgss8c05gtha5shs.apps.googleusercontent.com'
+  const context = useContext(TokenContext);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: androidClientId,
     webClientId: webClientId,
-    expoClientId: webClientId
+    expoClientId: webClientId,
+    iosClientId: iosClientId
   });
 
   // Hành động được thực hiện sau khi component được render hoặc state thay đổi
@@ -28,7 +32,20 @@ const LoginBtn = () => {
       // Xử lý thành công
       getUserInfo(response.authentication.accessToken)
     }
+    getLocalStorage();
+    // removeItem();
   }, [response]) //truyen [] de goi useEffect 1 lan sau khi compoment mounted
+
+  const getLocalStorage = async () => {
+    const checkToken = await AsyncStorage.getItem('token');
+    if(checkToken !== null){
+      navigation.navigate('Home',context.setToken(checkToken));
+    }
+  }
+
+  const removeItem = async () => {
+    await AsyncStorage.removeItem('token');
+  }
 
   const handleGoogleLogin = async () => {
     // Thực hiện các hành động mong muốn ở đây
@@ -66,8 +83,6 @@ const LoginBtn = () => {
     }
   }
 
-  const context = useContext(TokenContext);
-
   const login = async (user) => {
     const url = 'https://api.beta-a2b.work/login?email=' + encodeURIComponent(user.email) + '&fullname=' + encodeURIComponent(user.name) + '&picture=' + encodeURIComponent(user.picture) + '&123';
     const responseUrl = await fetch(url);
@@ -75,8 +90,13 @@ const LoginBtn = () => {
     // console.log(1);
     if (result.res == 'success') {
       // console.log(result.token);
+      setLocalStorage(result.token);
       navigation.navigate('Home', context.setToken(result.token));
     }
+  }
+
+  const setLocalStorage = async (token) => {
+    await AsyncStorage.setItem('token',token);
   }
 
   return (

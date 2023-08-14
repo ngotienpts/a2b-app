@@ -98,7 +98,7 @@ export const reviewTextComplete = [
     },
 ];
 
-export const notifications = [
+export const notis = [
     {
         notify_id: '43',
         user_id: '3',
@@ -132,6 +132,45 @@ export const notifications = [
     },
 ];
 
+export const transaction = [
+    {
+        "payment_id": "11",
+        "trip_id": "22",
+        "user_id": "3",
+        "coin_add": "-8",
+        "coin": "290",
+        "content": "Phí nền tảng. Số dư: 290k",
+        "created_at": "2023-05-26 14:10:43"
+    },
+    {
+        "payment_id": "8",
+        "trip_id": "9",
+        "user_id": "3",
+        "coin_add": "-1",
+        "coin": "298",
+        "content": "Phí nền tảng. Số dư: 298k",
+        "created_at": "2023-05-16 09:51:50"
+    },
+    {
+        "payment_id": "7",
+        "trip_id": "9",
+        "user_id": "3",
+        "coin_add": "-1",
+        "coin": "299",
+        "content": "Phí nền tảng. Số dư: 299k",
+        "created_at": "2023-05-16 09:48:40"
+    },
+    {
+        "payment_id": "3",
+        "trip_id": "0",
+        "user_id": "3",
+        "coin_add": "300",
+        "coin": "300",
+        "content": "Bạn đã được tặng 300k khi đăng ký thông tin xe lần đầu. Số dư: 300k",
+        "created_at": "2023-05-12 11:40:24"
+    }
+];
+
 export const dataGender = [
     { id: 0, shortname: 'Nam' },
     { id: 1, shortname: 'Nữ' },
@@ -157,3 +196,22 @@ export const water = [
     { id: 0, shortname: 'Không' },
     { id: 1, shortname: 'Có' },
 ];
+export const cancelBookDriver = [
+    { id: 0, title: 'Tôi có việc bận đột xuất', des: 'Không thể thực hiện chuyến đi này' },
+    {
+        id: 1,
+        title: 'Do xe của tôi gặp sự cố bất khả kháng',
+        des: 'Xe tôi hỏng, bị sự cố, va trạm trên đường...',
+    },
+    { id: 2, title: 'Lý do khác', des: 'Các lý do khác' },
+];
+export const cancelBookClient = [
+    { id: 0, title: 'Do tôi thay đổi hành trình, thời gian', des: 'Tôi muốn hủy chuyến đi này' },
+    { id: 1, title: 'Lý do khác', des: 'Các lý do khác' },
+];
+export const filterReview = [
+    { id: 0, title: 'Mới nhất', name: 'rate_id', filter: 'DESC' },
+    { id: 1, title: 'Cũ nhất', name: 'rate_id', filter: 'ASC' },
+    { id: 2, title: 'Tốt nhất', name: 'star', filter: 'DESC' },
+    { id: 3, title: 'Tệ nhất', name: 'star', filter: 'ASC' },
+]

@@ -4,17 +4,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
 import * as Location from 'expo-location';
-import { debounce } from 'lodash';
-
 import styles from '../../styles';
 import Header from './Header';
 import Result from './Result';
 import ResultDefault from './ResultDefault';
-import { fetchHistorySearch, fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
+import { debounce } from 'lodash';
+import { fetchHistorySearch, fetchListNoti, fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from 'react-native';
+import { useNotification } from '../../redux/notificationContext';
 
 const Home = () => {
+  const { handleHiddenNoti } = useNotification();
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -25,20 +27,30 @@ const Home = () => {
   useEffect(() => {
     showProfile();
     historySearch();
+    listNotification();
   }, []) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
+
+  const listNotification = () => {
+    let params = {}
+    fetchListNoti(params,context.token)
+    .then((data) => {
+        if (data.res === 'success') {
+            handleHiddenNoti(data.count);
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+  };
 
   const historySearch = async () => {
     fetchHistorySearch(context.token)
       .then((data) => {
         if (data.res === 'success') {
+          // console.log(data);
           setHistory(data.result);
         }
       })
-  }
-
-  const removeItem = async () => {
-    await AsyncStorage.removeItem('lat');
-    await AsyncStorage.removeItem('lng');
   }
 
   const requestLocationService = async () => {
@@ -122,74 +134,76 @@ const Home = () => {
     }
   };
 
+  const handleClearInput = () => {
+    setInputValue('');
+  }
+
   const handleSearchDebounce = useCallback(debounce(handleSearch, 300), []);
   //debounce la sẽ tạo ra 1 phiên bản mới của hàm và ham co kha nang tri hoan việc thực thi và sẽ thực thi sau độ trễ đã xác định.
   //Trong TH nếu có thêm 1 hàm được gọi thì cái trước sẽ bị hủy và hàm mới sẽ chạy 
-    return (
-      <SafeAreaView style={[styles.flexFull, styles.relative]}>
-        <View style={[styles.flexFull, styles.bgBlack]}>
-          {/* header */}
-          <Header navigation={navigation} />
+  return (
+    <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+      <StatusBar barStyle="light-content" animated={true} />
+      <View style={[styles.flexFull, styles.bgBlack]}>
+        {/* header */}
+        <Header navigation={navigation} />
+        {/* body */}
+        <View style={[styles.px15, styles.flexFull]}>
+          <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.mb12]}>
+            Xin chào, {name}
+          </Text>
+          <Text
+            style={[
+              styles.textWhite,
+              styles.fs27,
+              styles.lh40,
+              styles.fw300,
+              styles.mb10,
+            ]}
+          >
+            Bạn cần đi đâu?
+          </Text>
 
-            {/* body */}
-            <View style={[styles.px15, styles.flexFull]}>
-              <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.mb12]}>
-              Xin chào, {name}
-              </Text>
-              <Text
-                style={[
-                  styles.textWhite,
-                  styles.fs27,
-                  styles.lh40,
-                  styles.fw300,
-                  styles.mb10,
-                ]}
-              >
-                Bạn cần đi đâu?
-              </Text>
-
-              {/* search */}
-              <View
-                style={[
-                  styles.relative,
-                  styles.bg161e,
-                  styles.h48,
-                  styles.flexRow,
-                  styles.itemsCenter,
-                  styles.mb24,
-                ]}
-              >
-                <TextInput
-                  onChangeText={(text) => {
-                    setInputValue(text);
-                    handleSearchDebounce(text);
-                  }}
-                  value={inputValue}
-                  style={[styles.fs16, styles.textWhite, styles.pl24, styles.pr50]}
-                  placeholder="Tìm kiếm"
-                  placeholderTextColor={'white'}
-                />
-                <View style={[styles.absolute, styles.r0, styles.p12, styles.bg161e]}>
-                  {inputValue.length > 0 ? (
-                    <TouchableOpacity onPress={handleClearInput}>
-                      <XMarkIcon size={24} color={'white'} />
-                    </TouchableOpacity>
-                  ) : (
-                    <MagnifyingGlassIcon size={24} color={'white'} />
-                  )}
-                </View>
-              </View>
-
-        {/* result */}
-        {inputValue.length > 0 ? (
-          <Result results={results} navigation={navigation} />
-        ) : (
-          <ResultDefault data={history} navigation={navigation} />
-        )}
+          {/* search */}
+          <View
+            style={[
+              styles.relative,
+              styles.bg161e,
+              styles.h48,
+              styles.flexRow,
+              styles.itemsCenter,
+              styles.mb24,
+            ]}
+          >
+            <TextInput
+              onChangeText={(text) => {
+                setInputValue(text);
+                handleSearchDebounce(text);
+              }}
+              value={inputValue}
+              style={[styles.fs16, styles.textWhite,styles.flexFull, styles.pl24, styles.pr50]}
+              placeholder="Tìm kiếm"
+              placeholderTextColor={'white'}
+            />
+            <View style={[styles.absolute, styles.r0, styles.p12, styles.bg161e]}>
+              {inputValue.length > 0 ? (
+                <TouchableOpacity onPress={handleClearInput}>
+                  <XMarkIcon size={24} color={'white'} />
+                </TouchableOpacity>
+              ) : (
+                <MagnifyingGlassIcon size={24} color={'white'} />
+              )}
             </View>
           </View>
 
-
+          {/* result */}
+          {inputValue.length > 0 ? (
+            <Result results={results} navigation={navigation} />
+          ) : (
+            <ResultDefault data={history} navigation={navigation} />
+          )}
+        </View>
+      </View>
     </SafeAreaView >
   );
 

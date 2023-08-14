@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useContext } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StopCircleIcon, MapPinIcon } from 'react-native-heroicons/solid';
@@ -14,16 +14,50 @@ import {
     ViewfinderCircleIcon,
 } from 'react-native-heroicons/outline';
 import { Image } from 'react-native';
-import { fallbackImage } from '../../api/DataFetching';
+import { fallbackImage, fetchFindCustomer } from '../../api/DataFetching';
 import { CircleFade } from 'react-native-animated-spinkit';
 import { BookingFormContext } from '../../redux/bookingFormContext';
+import { MapContext } from '../../redux/mapContext';
+import { TokenContext } from '../../redux/tokenContext';
+import useInterval from '../../hooks/useInterval';
+import { format } from 'date-fns';
 
 const DriverFind = () => {
     const navigation = useNavigation();
+    const {params: item} = useRoute();
     const context = useContext(BookingFormContext);
+    const contextToken = useContext(TokenContext);
+    const contextMap = useContext(MapContext);
+    const [customers, setCustomers] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        findCustomer();
+    },[])
+
+    // useInterval(() => {
+    //     findCustomer();
+    // },10000,true)
+
+    const findCustomer = async () => {
+        await fetchFindCustomer(contextToken.token)
+        .then((data) => {
+            console.log(data);
+            if(data.res === 'success'){
+                setCustomers(data.result)
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoading(true);
+        })
+    }
 
     return (
-        <SafeAreaView style={[styles.flexFull, styles.relative]}>
+        <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
+            <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Xe tìm khách" />
@@ -52,7 +86,7 @@ const DriverFind = () => {
                         <View style={[styles.flexRow, styles.mb24]}>
                             <StopCircleIcon
                                 size={20}
-                                color={'rgba(119,125,146,0.8)'}
+                                color={'white'}
                                 style={{ marginTop: 2 }}
                             />
                             <View style={[styles.ml5, styles.flexFull]}>
@@ -60,14 +94,14 @@ const DriverFind = () => {
                                     style={[
                                         styles.fs16,
                                         styles.fw700,
-                                        styles.textGray77,
+                                        styles.textWhite,
                                         styles.mb5,
                                     ]}
                                 >
-                                    Vị trí hiện tại
+                                    Vị trí hiện tại: {item?.currentPosition.title}
                                 </Text>
                                 <Text style={[styles.textGray77, styles.fs15]}>
-                                    286 Nguyễn Xiển, Thanh Trì, Hà Nội.
+                                    {item?.currentPosition.address}
                                 </Text>
                             </View>
                         </View>
@@ -84,10 +118,10 @@ const DriverFind = () => {
                                         styles.mb5,
                                     ]}
                                 >
-                                    Cảng hàng không quốc tế Nội Bài
+                                    {contextMap?.map.end.name && contextMap?.map.end.name}
                                 </Text>
                                 <Text style={[styles.textGray77, styles.fs15]}>
-                                    Phú Minh, Sóc Sơn, Hà Nội
+                                    {contextMap?.map.end.address && contextMap?.map.end.address}
                                 </Text>
                             </View>
                         </View>
@@ -106,7 +140,7 @@ const DriverFind = () => {
                                 >
                                     Báo giá tự động
                                 </Text>
-                                <Text style={[styles.textGray77, styles.fs15]}>Tắt</Text>
+                                <Text style={[styles.textGray77, styles.fs15]}>{item?.isEnabled ? 'Bật' : 'Tắt'}</Text>
                             </View>
                         </View>
                         {/* Phạm vi đón trả khách */}
@@ -128,7 +162,7 @@ const DriverFind = () => {
                                 >
                                     Phạm vi đón trả khách
                                 </Text>
-                                <Text style={[styles.textGray77, styles.fs15]}>30km</Text>
+                                <Text style={[styles.textGray77, styles.fs15]}>{item?.radius} km</Text>
                             </View>
                         </View>
                     </View>
@@ -143,248 +177,126 @@ const DriverFind = () => {
                             </Text>
                             <Text style={[styles.fs13, styles.textGray77]}>Sắp xếp</Text>
                         </View>
-                        <View>
-                            {/* item */}
-                            <TouchableOpacity
-                                style={[styles.p15, styles.bg161e, styles.mb20]}
-                                onPress={
-                                    () => navigation.navigate('DriverFindDetailScreen', [{ id: 1 }]) //fake tam id
-                                }
-                            >
-                                {/* top */}
-                                <View style={[styles.flexRow, styles.mb10]}>
-                                    <Image
-                                        source={{ uri: fallbackImage }}
-                                        style={[
-                                            styles.w42,
-                                            styles.h42,
-                                            styles.borderFull,
-                                            styles.cover,
-                                        ]}
-                                    />
-                                    <View style={[styles.flexFull, styles.pl15]}>
-                                        <View style={[styles.flexRow, styles.itemsCenter]}>
-                                            <Text
+                        {isLoading && (
+                            <View>
+                                {customers && customers.map((customer) => (
+                                    <TouchableOpacity
+                                        style={[styles.p15, styles.bg161e, styles.mb20]}
+                                        onPress={
+                                            () => navigation.navigate('DriverFindDetailScreen', { id: customer?.trip_id }) //fake tam id
+                                        }
+                                        key={customer?.trip_id + Math.random()}
+                                    >
+                                        <View style={[styles.flexRow, styles.mb10]}>
+                                            <Image
+                                                source={{ uri: customer?.image }}
                                                 style={[
-                                                    styles.textWhite,
-                                                    styles.fs16,
-                                                    styles.lh24,
-                                                    styles.fw700,
-                                                    styles.mr5,
+                                                    styles.w42,
+                                                    styles.h42,
+                                                    styles.borderFull,
+                                                    styles.cover,
                                                 ]}
-                                            >
-                                                Nguyen Van A
-                                            </Text>
-                                            <ShieldCheckIcon size={16} color={'white'} />
+                                            />
+                                            <View style={[styles.flexFull, styles.pl15]}>
+                                                <View style={[styles.flexRow, styles.itemsCenter]}>
+                                                    <Text
+                                                        style={[
+                                                            styles.textWhite,
+                                                            styles.fs16,
+                                                            styles.lh24,
+                                                            styles.fw700,
+                                                            styles.mr5,
+                                                        ]}
+                                                    >
+                                                        {customer?.fullname}
+                                                    </Text>
+                                                    <ShieldCheckIcon size={16} color={'white'} />
+                                                </View>
+                                                <Text
+                                                    style={[styles.textGray77, styles.fs13, styles.fw400]}
+                                                >
+                                                    {customer?.is_report ? 'Đã báo giá' : 'Chưa báo giá'}
+                                                </Text>
+                                            </View>
                                         </View>
-                                        <Text
-                                            style={[styles.textGray77, styles.fs13, styles.fw400]}
-                                        >
-                                            Chưa báo giá
-                                        </Text>
-                                    </View>
-                                </View>
-                                {/* body */}
-                                <View>
-                                    {/* vi tri bat dau */}
-                                    <View style={[styles.flexRow, styles.mb10]}>
-                                        <StopCircleIcon
-                                            size={20}
-                                            color={'white'}
-                                            style={{ marginTop: 2 }}
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.fs16,
-                                                styles.fw400,
-                                                styles.textWhite,
-                                                styles.flexFull,
-                                                styles.ml10,
-                                            ]}
-                                        >
-                                            Vị trí hiện tại
-                                        </Text>
-                                    </View>
-                                    {/* vi tri ket thuc */}
-                                    <View style={[styles.flexRow, styles.mb10]}>
-                                        <MapPinIcon
-                                            size={22}
-                                            color={'white'}
-                                            style={{ marginTop: 2 }}
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.fs16,
-                                                styles.fw400,
-                                                styles.textWhite,
-                                                styles.flexFull,
-                                                styles.ml10,
-                                            ]}
-                                        >
-                                            Vị trí hiện tại
-                                        </Text>
-                                    </View>
-                                    {/* thoi gian */}
-                                    <View style={[styles.flexRow, styles.mb10]}>
-                                        <ClockIcon
-                                            size={22}
-                                            color={'white'}
-                                            style={{ marginTop: 2 }}
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.fs16,
-                                                styles.fw400,
-                                                styles.textWhite,
-                                                styles.flexFull,
-                                                styles.ml10,
-                                            ]}
-                                        >
-                                            Vị trí hiện tại
-                                        </Text>
-                                    </View>
-                                    {/* note */}
-                                    <View style={[styles.flexRow, styles.mb10]}>
-                                        <PencilSquareIcon
-                                            size={22}
-                                            color={'white'}
-                                            style={{ marginTop: 2 }}
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.fs16,
-                                                styles.fw400,
-                                                styles.textWhite,
-                                                styles.flexFull,
-                                                styles.ml10,
-                                            ]}
-                                        >
-                                            Vị trí hiện tại
-                                        </Text>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                            {/* item */}
-                            <TouchableOpacity
-                                style={[styles.p15, styles.bg161e, styles.mb20]}
-                                onPress={
-                                    () => navigation.navigate('DriverFindDetailScreen', [{ id: 2 }]) // fake tam id
-                                }
-                            >
-                                {/* top */}
-                                <View style={[styles.flexRow, styles.mb10]}>
-                                    <Image
-                                        source={{ uri: fallbackImage }}
-                                        style={[
-                                            styles.w42,
-                                            styles.h42,
-                                            styles.borderFull,
-                                            styles.cover,
-                                        ]}
-                                    />
-                                    <View style={[styles.flexFull, styles.pl15]}>
-                                        <View style={[styles.flexRow, styles.itemsCenter]}>
-                                            <Text
-                                                style={[
-                                                    styles.textWhite,
-                                                    styles.fs16,
-                                                    styles.lh24,
-                                                    styles.fw700,
-                                                    styles.mr5,
-                                                ]}
-                                            >
-                                                Nguyen Van A
-                                            </Text>
-                                            <ShieldCheckIcon size={16} color={'white'} />
+                                        <View>
+                                            <View style={[styles.flexRow, styles.mb10, styles.itemsEnd]}>
+                                                <StopCircleIcon
+                                                    size={20}
+                                                    color={'white'}
+                                                    style={{ marginTop: 2 }}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        styles.fs16,
+                                                        styles.fw400,
+                                                        styles.textWhite,
+                                                        styles.flexFull,
+                                                        styles.ml10,
+                                                    ]}
+                                                >
+                                                    {customer?.start_location}
+                                                </Text>
+                                            </View>
+                                            <View style={[styles.flexRow, styles.mb10, styles.itemsEnd]}>
+                                                <MapPinIcon
+                                                    size={22}
+                                                    color={'white'}
+                                                    style={{ marginTop: 2 }}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        styles.fs16,
+                                                        styles.fw400,
+                                                        styles.textWhite,
+                                                        styles.flexFull,
+                                                        styles.ml10,
+                                                    ]}
+                                                >
+                                                    {customer?.end_location}
+                                                </Text>
+                                            </View>
+                                            <View style={[styles.flexRow, styles.mb10, styles.itemsEnd]}>
+                                                <ClockIcon
+                                                    size={22}
+                                                    color={'white'}
+                                                    style={{ marginTop: 2 }}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        styles.fs16,
+                                                        styles.fw400,
+                                                        styles.textWhite,
+                                                        styles.flexFull,
+                                                        styles.ml10,
+                                                    ]}
+                                                >
+                                                    Khởi hành lúc: {format(new Date(customer?.start_time), 'dd-MM-yyyy HH:mm')}
+                                                </Text>
+                                            </View>
+                                            <View style={[styles.flexRow, styles.mb10, styles.itemsEnd]}>
+                                                <PencilSquareIcon
+                                                    size={22}
+                                                    color={'white'}
+                                                    style={{ marginTop: 2 }}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        styles.fs16,
+                                                        styles.fw400,
+                                                        styles.textWhite,
+                                                        styles.flexFull,
+                                                        styles.ml10,
+                                                    ]}
+                                                >
+                                                    Lưu ý: {customer?.comment ? customer?.comment : 'Không có'}
+                                                </Text>
+                                            </View>
                                         </View>
-                                        <Text
-                                            style={[styles.textCyan2F, styles.fs13, styles.fw400]}
-                                        >
-                                            Đã báo giá
-                                        </Text>
-                                    </View>
-                                </View>
-                                {/* body */}
-                                <View>
-                                    {/* vi tri bat dau */}
-                                    <View style={[styles.flexRow, styles.mb10]}>
-                                        <StopCircleIcon
-                                            size={20}
-                                            color={'white'}
-                                            style={{ marginTop: 2 }}
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.fs16,
-                                                styles.fw400,
-                                                styles.textWhite,
-                                                styles.flexFull,
-                                                styles.ml10,
-                                            ]}
-                                        >
-                                            Vị trí hiện tại
-                                        </Text>
-                                    </View>
-                                    {/* vi tri ket thuc */}
-                                    <View style={[styles.flexRow, styles.mb10]}>
-                                        <MapPinIcon
-                                            size={22}
-                                            color={'white'}
-                                            style={{ marginTop: 2 }}
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.fs16,
-                                                styles.fw400,
-                                                styles.textWhite,
-                                                styles.flexFull,
-                                                styles.ml10,
-                                            ]}
-                                        >
-                                            Vị trí hiện tại
-                                        </Text>
-                                    </View>
-                                    {/* thoi gian */}
-                                    <View style={[styles.flexRow, styles.mb10]}>
-                                        <ClockIcon
-                                            size={22}
-                                            color={'white'}
-                                            style={{ marginTop: 2 }}
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.fs16,
-                                                styles.fw400,
-                                                styles.textWhite,
-                                                styles.flexFull,
-                                                styles.ml10,
-                                            ]}
-                                        >
-                                            Vị trí hiện tại
-                                        </Text>
-                                    </View>
-                                    {/* note */}
-                                    <View style={[styles.flexRow, styles.mb10]}>
-                                        <PencilSquareIcon
-                                            size={22}
-                                            color={'white'}
-                                            style={{ marginTop: 2 }}
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.fs16,
-                                                styles.fw400,
-                                                styles.textWhite,
-                                                styles.flexFull,
-                                                styles.ml10,
-                                            ]}
-                                        >
-                                            Vị trí hiện tại
-                                        </Text>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        )}
                     </View>
 
                     {/* tắt thông báo */}
@@ -411,7 +323,7 @@ const DriverFind = () => {
                 <TouchableOpacity
                     style={[
                         styles.h48,
-                        styles.bgGray161,
+                        styles.bgRed,
                         styles.flexFull,
                         styles.itemsCenter,
                         styles.justifyCenter,
