@@ -215,6 +215,9 @@ const styles = StyleSheet.create({
     textCenter: {
         textAlign: 'center',
     },
+    textRight: {
+        textAlign: 'right',
+    },
     textUpper: {
         textTransform: 'uppercase',
     },

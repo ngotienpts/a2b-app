@@ -1,13 +1,17 @@
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import styles from '../../styles';
 
 const BankNumberSetting = ({ label, maxLength, value, onChangeText }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [bankAccount, setBankAccount] = useState(value ? value : '');
+    const [bankAccount, setBankAccount] = useState('');
     const textInputRef = useRef(null);
     const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        setBankAccount(value ? value : '');
+    }, [value]);
 
     const formatStringWithDash = (inputString) => {
         const numbersOnly = inputString.replace(/[^0-9]/g, '');

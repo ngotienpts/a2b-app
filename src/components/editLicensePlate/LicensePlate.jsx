@@ -38,7 +38,7 @@ const LicensePlate = ({ maxLength, value, label, onChangeText }) => {
     };
 
     return (
-        <View>
+        <View style={[styles.flexFull]}>
             {isEditing ? (
                 <TextInput
                     ref={textInputRef}
@@ -47,13 +47,13 @@ const LicensePlate = ({ maxLength, value, label, onChangeText }) => {
                     onChangeText={onChangeText}
                     onBlur={handleSave}
                     autoFocus
-                    style={[styles.textWhite, styles.fs16, styles.lh24]}
+                    style={[styles.textWhite, styles.fs16, styles.lh24,styles.textRight]}
                     keyboardType="default"
                 />
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
-                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
-                        {text}
+                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400,styles.textRight]}>
+                        {text ? text : '...'}
                     </Text>
                 </TouchableOpacity>
             )}

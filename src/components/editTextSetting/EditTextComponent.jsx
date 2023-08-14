@@ -23,7 +23,7 @@ const EditTextComponent = ({ label, maxLength, value, onChangeText }) => {
         }
     };
     return (
-        <View>
+        <View style={[styles.flexFull]}>
             {isEditing ? (
                 <TextInput
                     ref={textInputRef}
@@ -32,11 +32,11 @@ const EditTextComponent = ({ label, maxLength, value, onChangeText }) => {
                     onChangeText={onChangeText}
                     onBlur={handleSave}
                     autoFocus
-                    style={[styles.textWhite, styles.fs16, styles.lh24]}
+                    style={[styles.flexFull,styles.textWhite, styles.fs16, styles.lh24,styles.textRight]}
                 />
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
-                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
+                    <Text style={[styles.flexFull,styles.textWhite, styles.fs16, styles.lh24, styles.fw400,styles.textRight]}>
                         {value ? value : '...'}
                     </Text>
                 </TouchableOpacity>
