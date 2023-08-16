@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar, Alert } from 'react-native';
 import React, { useState, useEffect, useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -13,37 +13,28 @@ import {
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchDetailCustomer, fetchDetailTrip, fetchListCategoryVehicle, fetchReviewListEndpoint } from '../../api/DataFetching';
-import { BookingFormContext } from '../../redux/bookingFormContext';
-import SentFormBooking from '../sentFormBooking';
-import MomentComponent from '../moment';
+import { fallbackImage, fetchCancelReport, fetchCheckReport, fetchDetailCustomer, fetchDetailTrip, fetchGetOneCategoryVehicle, fetchSendReport } from '../../api/DataFetching';
 import PayNumber from '../editPayNumber';
 import { MapContext } from '../../redux/mapContext';
 import FormCustomer from '../formCustomer';
 import { TokenContext } from '../../redux/tokenContext';
 import Contact from '../contact';
-import { Dimensions } from 'react-native';
-import { Modal } from 'react-native';
-import { filterReview } from '../../constants';
-import getDirections from 'react-native-google-maps-directions';
+import { CustomerFormContext } from '../../redux/customerFormContext';
+import DistanceInfomation from '../distanceInfomation/DistanceInfomation';
+import ReviewCustomer from '../reviewCustomer/ReviewCustomer';
 
 const DriverFindDetailComponent = () => {
-    const context = useContext(BookingFormContext);
+    const context = useContext(CustomerFormContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
-    const [reviewDriver, setReviewDriver] = useState([]);
     const [price, setPrice] = useState(0);
     const [detail, setDetail] = useState(null);
     const [customer, setCustomer] = useState(null);
-    const [cateVehicle, setCateVehicle] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingCustomer, setIsLoadingCustomer] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [selectItem, setSelectItem] = useState('Mới nhất');
     const [coords, setCoords] = useState(null);
-    const contextMap = useContext(MapContext);
+    const [status, setStatus] = useState(null);
     const contextToken = useContext(TokenContext);
-    const maxHeight = Dimensions.get('window').height * 0.7;
 
     const handlePriceChange = (newPrice) => {
         setPrice(newPrice);
@@ -55,31 +46,23 @@ const DriverFindDetailComponent = () => {
         }
         await fetchDetailTrip(params,contextToken.token)
         .then((data) => {
-            setDetail(data.result);
             if(data.res === 'success'){
-                if(data.result.price_per_km){
-                    setPrice(parseInt(data.result.price_per_km) * parseInt(data.result.distance_price))
-                    const coordStart = data.result.coordinates_start.split(',');
-                    const coordEnd = data.result.coordinates_end.split(',');
-                    setCoords({
-                        latStart: coordStart[0],
-                        lngStart: coordStart[1],
-                        latEnd: coordEnd[0],
-                        lngEnd: coordEnd[1]
-                    })
+                oneCateVehicle(data);
+                detailCustomer(data?.result.user_id)
+                const coordStart = data.result.coordinates_start.split(',');
+                const coordEnd = data.result.coordinates_end.split(',');
+                setCoords({
+                    latStart: coordStart[0],
+                    lngStart: coordStart[1],
+                    latEnd: coordEnd[0],
+                    lngEnd: coordEnd[1]
+                })
+                if(data.result.status_report == 1){
+                    setPrice(parseFloat(data.result.price_report));
+                }else{
+                    setPrice(parseFloat(data.result.price_per_km) * parseFloat(data.result.distance_price))
                 }
-                fetchDetailCustomer({
-                    user_id: data?.result.user_id
-                })
-                .then((data) => {
-                    setCustomer(data.result);
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
-                .finally(() => {
-                    setIsLoadingCustomer(true);
-                })
+            
             }
         })
         .catch((err) => {
@@ -90,79 +73,136 @@ const DriverFindDetailComponent = () => {
         })
     }
 
-    const getReviewList = async (id) => {
-        await fetchReviewListEndpoint(id)
-        .then((data) => {
-            if(data.res === 'success'){
-                setReviewDriver(data.result.list);
-            }
-        }) 
-    };
+    const createContext = (data, nameCar) => {
+        context.setCustomerForm({
+            ...context.customerForm,
+            tripId: item?.id,
+            startPoint: {
+                start_name: data.result.start_name,
+                start: data.result.start_location, 
+            },
+            endPoint: {
+                end_name: data.result.end_name,
+                end: data.result.end_location, 
+            },
+            typeCar: data.result.vehicle_category_id,
+            nameCar: nameCar,
+            startTime: data.result.start_time,
+            comment: data.result.comment,
+            duration: data?.result.duration_all,
+            distance: data?.result.distance_all, 
+            coordinates: {
+                start: data.result.coordinates_start,
+                end: data.result.coordinates_end,
+            },
+            price: data.result.status_report == 1 ? parseFloat(data.result.price_report) : parseFloat(data.result.price_per_km * data.result.distance_price)
+        })
+    }
 
-    const listCateVehicle = async () => {
-        await fetchListCategoryVehicle(contextToken.token)
-        .then((data) => {
-            if(data.res === 'success'){
-                setCateVehicle(data.result);
+    const oneCateVehicle = async (data) => {
+        await fetchGetOneCategoryVehicle(contextToken.token,{
+            vehicle_category_id: data?.result.vehicle_category_id
+        })
+        .then((res) => {
+            if(res.res === 'success'){
+                createContext(data,res.result.category_name)
             }
         })
         .catch((err) => {
             console.log(err);
         })
     }
-
-    const StarsDisplay = ({ value }) => {
-        const starCount = 5;
-
-        return (
-            <View style={[styles.flexRow, styles.itemsCenter]}>
-                {[...Array(starCount)].map((_, index) => (
-                    <StarIcon
-                        key={index}
-                        size={12}
-                        color={index < value ? 'white' : undefined}
-                        stroke={index < value ? undefined : 'white'}
-                    />
-                ))}
-            </View>
-        );
-    };
-
-    const handleSelectItem = (title, name, filter) => {
-        setSelectItem(title);
-        setModalVisible(false);
-        // getReviewList(item?.driver_id,name,filter)
+    
+    const detailCustomer = async (id) => {
+        await fetchDetailCustomer({
+            user_id: id
+        })
+        .then((data) => {
+            setCustomer(data.result);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoadingCustomer(true);
+        })
     }
 
-    const openGoogleMap = () => {
-        const data = {
-            source: {
-                latitude: parseFloat(coords?.latStart),
-                longitude: parseFloat(coords?.lngStart)
-            },
-            destination: {
-                latitude: parseFloat(coords?.latEnd),
-                longitude: parseFloat(coords?.lngEnd)
-            },
-            params: [
-                {
-                    key: "travelmode",
-                    value: "driving"        // may be "walking", "bicycling" or "transit" as well
-                },
-                {
-                    key: "dir_action",
-                    value: "navigate"       // this instantly initializes navigation using the given travel mode
+    const checkReport = async () => {
+        await fetchCheckReport({
+            trip_id: item?.id
+        },contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                setStatus(true);
+            }else{
+                setStatus(false);
+            }
+        })
+    }
+
+    const handleReport = async (handle) => {
+        // console.log(handle);
+        if(handle == 'cancel'){
+            const data = {
+                trip_id: item?.id,
+                user_id: customer?.user_id
+            }
+            await fetchCancelReport(data, contextToken.token)
+            .then((data) => {
+                console.log(data);
+                if(data.res == 'success'){
+                    setPrice(0);
+                    setStatus(false)
+                    Alert.alert(
+                        'Thông báo',
+                        data.status,
+                        [
+                            { text: 'Đồng ý' }
+                        ],
+                        { cancelable: false }
+                    )
+                }else{
+                    Alert.alert(
+                        'Thông báo',
+                        data.status,
+                        [
+                            { text: 'Đồng ý' }
+                        ],
+                        { cancelable: false }
+                    )
                 }
-            ]
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }else if(handle == 'send'){
+            const data = {
+                trip_id: item?.id,
+                trip_price: price,
+                distance: context?.customerForm.distance,
+                user_id: customer?.user_id
+            }
+            await fetchSendReport(data,contextToken.token)
+            .then((data) => {
+                Alert.alert(
+                    'Thông báo',
+                    data.status,
+                    [
+                        { text: 'Đồng ý' }
+                    ],
+                    { cancelable: false }
+                )
+                if(data.res === 'success'){
+                    setStatus(true);
+                }
+            })
         }
-      
-        getDirections(data)
     }
 
     useEffect(() => {
-        getReviewList(item.id);
         detailTrip();
-        listCateVehicle();
+        checkReport();
     }, [item.id]);
 
     return (
@@ -177,119 +217,13 @@ const DriverFindDetailComponent = () => {
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                 >
-                    {isLoading && isLoadingCustomer && (
-                        <FormCustomer tripId={item.id} cateVehicle={cateVehicle} detail={detail} title="Thông tin chuyến đi" />
+                    {isLoadingCustomer && (
+                        <FormCustomer context={context} title="Thông tin chuyến đi" />
                     )}
                     {/* khoang cach & thoi gian */}
-                    <View
-                        style={[
-                            styles.mb24,
-                            styles.py15,
-                            styles.border1,
-                            styles.borderTop,
-                            styles.borderBot,
-                            styles.flexRow,
-                        ]}
-                    >
-                        <View
-                            style={[
-                                styles.flexFull,
-                                styles.justifyBetween,
-                                styles.itemsCenter,
-                                styles.borderRight,
-                                styles.borderSolid,
-                            ]}
-                        >
-                            <Text
-                                style={[
-                                    styles.fs16,
-                                    styles.textGray77,
-                                    styles.lh24,
-                                    styles.textCenter,
-                                ]}
-                            >
-                                Quãng đường
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexRow,
-                                    styles.justifyCenter,
-                                    styles.itemsCenter,
-                                    styles.pt20,
-                                ]}
-                            >
-                                <Text style={[styles.fs42, styles.textWhite, { lineHeight: 42 }]}>
-                                    {detail?.distance_all}
-                                </Text>
-                                <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>km</Text>
-                            </View>
-                        </View>
-                        <View
-                            style={[
-                                styles.flexFull,
-                                styles.justifyBetween,
-                                styles.itemsCenter,
-                                styles.borderRight,
-                                styles.borderSolid,
-                            ]}
-                        >
-                            <Text
-                                style={[
-                                    styles.fs16,
-                                    styles.textGray77,
-                                    styles.lh24,
-                                    styles.textCenter,
-                                ]}
-                            >
-                                Thời gian
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexRow,
-                                    styles.justifyCenter,
-                                    styles.itemsCenter,
-                                    styles.pt20,
-                                ]}
-                            >
-                                <Text
-                                    style={[
-                                        styles.fs42,
-                                        styles.textWhite,
-                                        { lineHeight: 42, includeFontPadding: false },
-                                    ]}
-                                >
-                                    {detail?.duration_all}
-                                </Text>
-                                <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
-                            </View>
-                        </View>
-                        {isLoading && (
-                            <TouchableOpacity onPress={openGoogleMap} style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
-                                <View >
-                                    <Text
-                                        style={[
-                                            styles.fs16,
-                                            styles.textGray77,
-                                            styles.lh24,
-                                            styles.textCenter,
-                                        ]}
-                                    >
-                                        Google map
-                                    </Text>
-                                    <View
-                                        style={[
-                                            styles.flexCenter,
-                                            styles.bgGray161,
-                                            styles.mt20,
-                                            { width: 73, height: 42 },
-                                        ]}
-                                    >
-                                        <ArrowUturnRightIcon size={25} color={'white'} />
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    </View>
+                    {isLoading && (
+                        <DistanceInfomation context={context}/>
+                    )}
 
                     {/* bang tinh */}
                     <View style={[styles.bgWhite, styles.p15]}>
@@ -301,55 +235,59 @@ const DriverFindDetailComponent = () => {
                             <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
                                 Thời gian dự tính
                             </Text>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{detail?.duration_all} phút</Text>
+                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{context?.customerForm.duration} phút</Text>
                         </View>
                         {/* khoang cach */}
                         <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
                             <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
                                 Khoảng cách
                             </Text>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{detail?.distance_all} km</Text>
+                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{context?.customerForm.distance} km</Text>
                         </View>
                         {/* bao gia */}
-                        <View style={[styles.borderBot5, styles.py10]}>
-                            <View style={[styles.flexBetween, styles.mb15]}>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                    Báo giá (VNĐ)
-                                </Text>
-                                <View
-                                    style={[
-                                        styles.border1,
-                                        styles.borderSolid,
-                                        styles.borderColorCyan2F,
-                                        styles.px10,
-                                    ]}
-                                >
-                                    <PayNumber
-                                        value={price}
-                                        label={'Báo giá'}
-                                        onChange={handlePriceChange}
-                                        style={[styles.fs16, styles.lh24, styles.fwBold]}
-                                        maxLength={9}
-                                    />
+                        {isLoading && (
+                            <View style={[styles.borderBot5, styles.py10]}>
+                                <View style={[styles.flexBetween, styles.mb15]}>
+                                    <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
+                                        Báo giá (VNĐ)
+                                    </Text>
+                                    <View
+                                        style={[
+                                            styles.border1,
+                                            styles.borderSolid,
+                                            styles.borderColorCyan2F,
+                                            styles.px10,
+                                        ]}
+                                    >
+                                        <PayNumber
+                                            value={price}
+                                            label={'Báo giá'}
+                                            onChange={handlePriceChange}
+                                            style={[styles.fs16, styles.lh24, styles.fwBold]}
+                                            maxLength={9}
+                                            editable={!status}
+                                        />
+                                    </View>
                                 </View>
-                            </View>
-                            <TouchableOpacity
-                                style={[styles.bgCyan2F, styles.h46, styles.flexCenter]}
-                            >
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.fw400,
-                                        styles.lh24,
-                                        styles.flexFull,
-                                        styles.textCenter,
-                                    ]}
+                                <TouchableOpacity
+                                    style={[!status ? styles.bgCyan2F : styles.bgRed, styles.h46, styles.flexCenter]}
+                                    onPress={() => handleReport(!status ? 'send' : 'cancel')}
                                 >
-                                    Gửi khách
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.fw400,
+                                            styles.lh24,
+                                            styles.flexFull,
+                                            styles.textCenter,
+                                        ]}
+                                    >
+                                        {!status ? 'Gửi khách' : 'Hủy báo giá'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
                         {/* so du diem */}
                         <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
                             <View style={[styles.flexRow, styles.itemsCenter]}>
@@ -445,126 +383,7 @@ const DriverFindDetailComponent = () => {
                         <Contact item={customer}/>
 
                         {/* đánh giá */}
-                        <View style={[styles.px15, styles.pb60]}>
-                            {/* header */}
-                            <View style={[styles.flexBetween, styles.mb24]}>
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.lh24,
-                                    ]}
-                                >
-                                    Đánh giá ({reviewDriver.length !== 0 ? reviewDriver.length : 0})
-                                </Text>
-                                <TouchableOpacity onPress={() => setModalVisible(true)}>
-                                    <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
-                                        {selectItem}
-                                    </Text>
-                                </TouchableOpacity>
-                                <Modal
-                                    visible={modalVisible} 
-                                    animationType="slide" 
-                                    transparent
-                                >
-                                    <TouchableOpacity
-                                        style={[
-                                            styles.flexFull,
-                                            styles.itemsCenter,
-                                            styles.justifyCenter,
-                                            styles.bgBlack50,
-                                        ]}
-                                        onPress={() => setModalVisible(false)}
-                                    >
-                                        <View
-                                            style={[
-                                                styles.bgWhite,
-                                                styles.border10,
-                                                styles.hidden,
-                                                { maxHeight: maxHeight, width: '60%' },
-                                            ]}
-                                        >
-                                            <ScrollView showsVerticalScrollIndicator={false}>
-                                                {filterReview.map((item, index) => (
-                                                    <TouchableOpacity
-                                                        key={index}
-                                                        onPress={() => handleSelectItem(item?.title, item?.name, item?.filter)}
-                                                        style={[
-                                                            styles.py10,
-                                                            selectItem === item?.title && styles.bg161e,
-                                                        ]}
-                                                    >
-                                                        <Text
-                                                            style={[
-                                                                styles.fs18,
-                                                                styles.px10,
-
-                                                                selectItem === item?.title
-                                                                    ? styles.textWhite
-                                                                    : styles.textGray77,
-                                                            ]}
-                                                        >
-                                                            {item?.title}
-                                                        </Text>
-                                                    </TouchableOpacity>
-                                                ))}
-                                            </ScrollView>
-                                        </View>
-                                    </TouchableOpacity>
-                                </Modal>
-                            </View>
-
-                            {/* many reviews */}
-                            {reviewDriver.length !== 0 ? reviewDriver.map((item) => (
-                                <View key={item.rate_id} style={[styles.flexRow, styles.mb24]}>
-                                    <Image
-                                        source={{ uri: item?.image || fallbackImage }}
-                                        style={{ width: 52, height: 52, borderRadius: 999 }}
-                                        resizeMode="cover"
-                                    />
-                                    <View style={[styles.pl10, styles.flexFull]}>
-                                        <Text
-                                            style={[
-                                                styles.textWhite,
-                                                styles.fs16,
-                                                styles.lh24,
-                                                styles.fw400,
-                                            ]}
-                                        >
-                                            {item?.name}: {item?.comment}
-                                        </Text>
-                                        <View
-                                            style={[styles.flexRow, styles.itemsCenter, styles.mt5]}
-                                        >
-                                            <StarsDisplay value={item?.star} />
-                                            <MomentComponent
-                                                style={[
-                                                    styles.textGray77,
-                                                    styles.fs14,
-                                                    styles.lh24,
-                                                    styles.fw400,
-                                                    styles.ml15,
-                                                ]}
-                                                timeString={item?.created_at}
-                                            />
-                                        </View>
-                                    </View>
-                                </View>
-                            )) : (
-                                <View>
-                                    <Text 
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                    ]}>
-                                        Chưa có bình luận nào cả
-                                    </Text>
-                                </View>
-                            )}
-                        </View>
+                        <ReviewCustomer />
                     </View>
                 </ScrollView>
 
@@ -590,7 +409,7 @@ const DriverFindDetailComponent = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.navigate('DriverPickScreen', item)}
+                        onPress={() => navigation.navigate('DriverPickScreen', customer)}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Đón khách</Text>
                     </TouchableOpacity>

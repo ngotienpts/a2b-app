@@ -6,8 +6,6 @@ const baseUrl = 'https://api.beta-a2b.work';
 const settingEndpoint = `${baseUrl}/e1358385819f12b01db7990c1/profile/get`;
 // const bankNameEndpoint = `${baseUrl}/${api_key}/bank/list`;
 
-const reviewListEndpoint = (id) => `${baseUrl}/rate/filterCustomer?customer_id=${id}`;
-
 // fallback Image
 export const fallbackImage =
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmUiF-YGjavA63_Au8jQj7zxnFxS_Ay9xc6pxleMqCxH92SzeNSjBTwZ0l61E4B3KTS7o&usqp=CAU';
@@ -66,9 +64,10 @@ export const fetchBankNameEndpoint = (params) => {
     return apiCall(bankNameEndpoint, params);
 };
 
-//danh gia
-export const fetchReviewListEndpoint = (id) => {
-    return apiCall(reviewListEndpoint(id));
+//danh gia cua tai xe
+export const fetchListReviewCustomer = (params) => {
+    const listReviewCustomer = `${baseUrl}/rate/filterCustomer`;
+    return apiCall(listReviewCustomer,params);
 };
 //api thong tin khach hang
 export const fetchProfileUser = (token) => { // nhan tham so la params la 1 object
@@ -150,9 +149,15 @@ export const fetchQrCode = (data) => {
 }
 //danh gia tai xe
 export const fetchReviewDriver = (data,token) => {
-    const drawQrCode = `${baseUrl}/${token}/rate/evaluateDriver`;
+    const reviewDriver = `${baseUrl}/${token}/rate/evaluateDriver`;
     // return params;
-    return postApi(drawQrCode, data);
+    return postApi(reviewDriver, data);
+}
+//danh gia khach hang
+export const fetchReviewCustomer = (data,token) => {
+    const reviewCustomer = `${baseUrl}/${token}/rate/evaluateCustomer`;
+    // return params;
+    return postApi(reviewCustomer, data);
 }
 //lay thong tin danh gia
 export const fetchGetOneRate = (params,token) => {
@@ -225,4 +230,19 @@ export const fetchDetailCustomer = (params) => {
 export const fetchListMyCar = (token) => {
     const ListMyCar = `${baseUrl}/${token}/vehicle/get`;
     return apiCall(ListMyCar);
+}
+//huy bao gia 
+export const fetchCancelReport = (data,token) => {
+    const cancelReport = `${baseUrl}/${token}/report/cancel`;
+    return postApi(cancelReport,data);
+}
+//kiem tra bao gia
+export const fetchCheckReport = (params,token) => {
+    const checkReport = `${baseUrl}/${token}/report/check`;
+    return apiCall(checkReport,params);
+}
+//bao gia thu cong
+export const fetchSendReport = (data,token) => {
+    const sendReport = `${baseUrl}/${token}/report/send`;
+    return postApi(sendReport,data);
 }

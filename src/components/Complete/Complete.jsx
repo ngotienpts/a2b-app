@@ -21,6 +21,7 @@ import QrCode from '../qrCode/QrCode';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import { DetailTripContext } from '../../redux/detailTripContext';
 import { TokenContext } from '../../redux/tokenContext';
+import { MapContext } from '../../redux/mapContext';
 
 const Complete = () => {
     const navigation = useNavigation();
@@ -30,6 +31,7 @@ const Complete = () => {
     const context = useContext(BookingFormContext)
     const contextDetailTrip = useContext(DetailTripContext)
     const contextToken = useContext(TokenContext);
+    const contextMap = useContext(MapContext);
     const [profile, setProfile] = useState({});
     const [isLoading, setIsLoading] = useState({});
     const [statusReview, setStatusReview] = useState(0);
@@ -53,6 +55,7 @@ const Complete = () => {
     },[])
 
     useEffect(() => {
+        
         const params = {
             trip_id: 44
         }
@@ -128,6 +131,32 @@ const Complete = () => {
         .catch((err) => {
             console.log(err);
         })
+    }
+
+    const handleBackToHome = () => {
+        const dataMap = {
+            start: '',
+            end: ''
+        }
+        const dataBookingForm = {
+            eniqueId: '',
+            startPoint: '',
+            endPoint: '',
+            typeCar: '' || 1,
+            nameCar: '' || 'Xe Sedan',
+            departureTime: '' || format(new Date(), 'yyyy-MM-dd HH:mm'),
+            note: '',
+            isPunish: 0
+        }
+        const dataDetailTrip = {
+            duration: '',
+            distance: '',
+            price_distance: 0,
+        }
+        context.setBookingForm(dataBookingForm);
+        contextDetailTrip.setDetailTrip(dataDetailTrip);
+        contextMap.setMap(dataMap);
+        navigation.navigate('HomeScreen');
     }
 
     return (
@@ -342,7 +371,7 @@ const Complete = () => {
                                 styles.border4,
                                 styles.mx15,
                             ]}
-                            onPress={() => navigation.navigate('HomeScreen')}
+                            onPress={() => handleBackToHome()}
                         >
                             <Text style={[styles.fs16, styles.textWhite]}>Trang chủ</Text>
                         </TouchableOpacity>

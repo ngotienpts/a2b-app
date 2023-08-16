@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ScrollView, TextInput, StatusBar } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StarIcon } from 'react-native-heroicons/solid';
 import { ShieldCheckIcon, PhoneIcon, ChatBubbleOvalLeftIcon } from 'react-native-heroicons/outline';
 import { AirbnbRating } from 'react-native-ratings';
@@ -9,25 +9,129 @@ import { AirbnbRating } from 'react-native-ratings';
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage } from '../../api/DataFetching';
+import { fallbackImage, fetchGetOneRate, fetchReviewCustomer } from '../../api/DataFetching';
 import { reviewTextComplete } from '../../constants';
-import SentFormBooking from '../sentFormBooking';
-import { BookingFormContext } from '../../redux/bookingFormContext';
+import { CustomerFormContext } from '../../redux/customerFormContext';
+import FormCustomer from '../formCustomer';
+import Contact from '../contact';
+import SpreadSheet from '../spreadSheet';
+import { TokenContext } from '../../redux/tokenContext';
+import { Alert } from 'react-native';
+import { MapContext } from '../../redux/mapContext';
 
 const DriverCompleteComponent = () => {
-    const context = useContext(BookingFormContext);
+    const context = useContext(CustomerFormContext);
+    const contextMap = useContext(MapContext);
+    const contextToken = useContext(TokenContext);
     const navigation = useNavigation();
-    const [rating, setRating] = useState(4);
+    const {params: item} = useRoute();
+    const [rating, setRating] = useState(3);
     const [reviewText, setReviewText] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [statusReview, setStatusReview] = useState(0);
 
     const handleRatingChange = (newRating) => {
         setRating(newRating);
     };
-
+    //danh gia
     const handleSubmitRate = () => {
-        console.log('rate', reviewText);
-        console.log('rating', rating);
+        const data = {
+            trip_id: context?.customerForm.tripId,
+            customer_id: item?.user_id,
+            content: reviewText,
+            star: rating
+        }
+        fetchReviewCustomer(data,contextToken.token)
+        .then((data) => {
+            // console.log(data);
+            if(data.res === 'success'){
+                Alert.alert(
+                    'Thông báo',
+                    data.status,
+                    [
+                        { text: 'Đồng ý' }
+                    ],
+                    { cancelable: false }
+                )
+                setStatusReview(1)
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     };
+    //sua danh gia
+    const handleUpdateRate = () => {
+        const data = {
+            trip_id: context?.customerForm.tripId,
+            customer_id: item?.user_id,
+            content: reviewText,
+            star: rating,
+            is_update: 1
+        }
+        fetchReviewCustomer(data,contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                // console.log(data);
+                Alert.alert(
+                    'Thông báo',
+                    data.status,
+                    [
+                        { text: 'Đồng ý' }
+                    ],
+                    { cancelable: false }
+                )
+                setStatusReview(1)
+            }else{
+                console.log(data);
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+    //quay ve trang chu
+    const handleBackToHome = () => {
+        const dataCustomer = {
+            tripId: '',
+            startPoint: '',
+            endPoint: '',
+            typeCar: '',
+            nameCar: '',
+            startTime: '',
+            comment: '',
+            duration: '',
+            distance: '',
+            coordinates: '',
+            price: '',
+        }
+        const dataMap = {
+            start: '',
+            end: ''
+        }
+        context.setCustomerForm(dataCustomer);
+        contextMap.setMap(dataMap);
+        navigation.navigate('HomeScreen');
+    }
+
+    useEffect(() => {
+        const params = {
+            trip_id: context?.customerForm.tripId
+        }
+        fetchGetOneRate(params,contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                setStatusReview(parseInt(data.result.status));
+                setReviewText(data.result.content)
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoading(true);
+        })
+    },[statusReview])
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -49,7 +153,7 @@ const DriverCompleteComponent = () => {
                             <Image
                                 source={{
                                     uri:
-                                        'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1176&q=80' ||
+                                        item?.image||
                                         fallbackImage,
                                 }}
                                 style={[
@@ -68,95 +172,26 @@ const DriverCompleteComponent = () => {
                                         styles.lh24,
                                     ]}
                                 >
-                                    Nguyễn Văn A
+                                    {item?.fullname}
                                 </Text>
-                                <View style={[styles.pl10]}>
-                                    <ShieldCheckIcon size={16} color={'white'} />
-                                </View>
+                                {item?.is_confirmed == 1 && (
+                                    <View style={[styles.pl10]}>
+                                        <ShieldCheckIcon size={16} color={'white'} />
+                                    </View>
+                                )}
                             </View>
 
                             {/* đánh sao*/}
                             <View style={[styles.flexRow, styles.itemsCenter]}>
                                 <StarIcon size={'16'} color={'white'} />
                                 <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
-                                    5.0
+                                    {item?.average_rates.toString()}
                                 </Text>
                             </View>
                         </View>
 
                         {/* contact */}
-                        <View style={[styles.flexCenter, styles.mb24]}>
-                            {/* phone */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgCyan2F,
-                                    styles.borderLeftTop4,
-                                    styles.borderLeftBot4,
-                                ]}
-                            >
-                                <PhoneIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Gọi
-                                </Text>
-                            </View>
-                            {/* facebook */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgBlue237,
-                                ]}
-                            >
-                                <ChatBubbleOvalLeftIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Facebook
-                                </Text>
-                            </View>
-                            {/* zalo */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgBlue009,
-                                    styles.borderRightTop4,
-                                    styles.borderRightBot4,
-                                ]}
-                            >
-                                <PhoneIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Zalo
-                                </Text>
-                            </View>
-                        </View>
+                        <Contact item={item}/>
 
                         <Text
                             style={[
@@ -174,69 +209,9 @@ const DriverCompleteComponent = () => {
                     </View>
 
                     {/* bang tinh */}
-                    <View style={[styles.bgWhite, styles.p15, styles.mb24]}>
-                        <Text style={[styles.fs27, styles.lh32, styles.fw400, styles.mb15]}>
-                            Bảng tính
-                        </Text>
-                        {/* thoi gian du tinh */}
-                        <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                Thời gian dự tính
-                            </Text>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>45 phút</Text>
-                        </View>
-                        {/* khoang cach */}
-                        <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                Khoảng cách
-                            </Text>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>30 km</Text>
-                        </View>
-                        {/* bao gia */}
-                        <View style={[styles.borderBot5, styles.py10]}>
-                            <View style={[styles.flexBetween, styles.mb15]}>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                    Báo giá (VNĐ)
-                                </Text>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw700]}>21.000</Text>
-                            </View>
-                        </View>
-                        {/* so du diem */}
-                        <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
-                            <View style={[styles.flexRow, styles.itemsCenter]}>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                    Số dư điểm
-                                </Text>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px10,
-                                        styles.flexCenter,
-                                        styles.ml10,
-                                    ]}
-                                >
-                                    <Text style={[styles.textWhite, styles.fs12, styles.lh20]}>
-                                        Nạp
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>30K</Text>
-                        </View>
-                        {/* phi nen tang */}
-                        <View style={[styles.py10]}>
-                            <View style={[styles.flexBetween]}>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                    Phí nền tảng (3%)
-                                </Text>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>- 6K</Text>
-                            </View>
-                            <Text style={[styles.fs12, styles.fw400, styles.textGray77]}>
-                                (Trừ sau khi kết thúc chuyến đi)
-                            </Text>
-                        </View>
-                    </View>
+                    <SpreadSheet context={context}/>
 
-                    <SentFormBooking context={context} title="Thông tin chuyến đi" />
+                    <FormCustomer context={context} title="Thông tin chuyến đi" />
 
                     {/* rate */}
                     <View
@@ -320,20 +295,38 @@ const DriverCompleteComponent = () => {
                                         startingValue={rating}
                                         onFinishRating={handleRatingChange}
                                     />
-                                    <TouchableOpacity onPress={handleSubmitRate}>
-                                        <Text
-                                            style={[
-                                                styles.textWhite,
-                                                styles.bgRed,
-                                                styles.px12,
-                                                styles.py5,
-                                                styles.border4,
-                                                styles.fs14,
-                                            ]}
-                                        >
-                                            Đánh giá
-                                        </Text>
-                                    </TouchableOpacity>
+                                    {isLoading && ( statusReview === 1 ? (
+                                        <TouchableOpacity onPress={handleUpdateRate}>
+                                            <Text
+                                                style={[
+                                                    styles.textWhite,
+                                                    styles.bgRed,
+                                                    styles.px12,
+                                                    styles.py5,
+                                                    styles.border4,
+                                                    styles.fs14,
+                                                ]}
+                                            >
+                                                Sửa
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <TouchableOpacity onPress={handleSubmitRate}>
+                                            <Text
+                                                style={[
+                                                    styles.textWhite,
+                                                    styles.bgRed,
+                                                    styles.px12,
+                                                    styles.py5,
+                                                    styles.border4,
+                                                    styles.fs14,
+                                                ]}
+                                            >
+                                                Đánh giá
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))  
+                                    }
                                 </View>
                             </View>
                         </View>
@@ -354,7 +347,7 @@ const DriverCompleteComponent = () => {
                             styles.border4,
                             styles.mx15,
                         ]}
-                        onPress={() => navigation.navigate('HomeScreen')}
+                        onPress={() => handleBackToHome()}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Trang chủ</Text>
                     </TouchableOpacity>

@@ -16,7 +16,7 @@ const Wifi = () => {
   const [ListMyCar, setListMyCar] = useState([]);
   const [wifiName, setWifiName] = useState(null);
   const [wifiPass, setWifiPass] = useState(null);
-  const [loading, setloading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const HandleWifiNameChange = useCallback((newValue) => {
     setWifiName(newValue);
@@ -41,7 +41,7 @@ const Wifi = () => {
           setListMyCar(data.result)
         }
       })
-      .finally(() => setloading(false))
+      .finally(() => setLoading(false))
   }
 
   const updateWifi = () => {
@@ -51,11 +51,10 @@ const Wifi = () => {
     }, '79ee7846612b106c445826c19')
       .then((data) => {
         if (data.res === 'success') {
-          console.log(data);
-          Alert.alert('Thành công', 'Cập nhật Wifi thành công!', [{ text: 'OK' }])
+          Alert.alert('Thành công', 'Cập nhật Wifi thành công!', [{ text: 'Đồng ý' }])
         }
       })
-      .finally(() => setloading(false))
+      .finally(() => setLoading(false))
     // console.log(CarType == 0 ? ListMyCar?.vehicle_category_id : CarType);
   }
   // console.log('1'+ new Date('2023-05-12'));
