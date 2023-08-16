@@ -81,7 +81,25 @@ const Book = () => {
       end = contextMap.map.end.address;
       coordinatesStart = contextMap.map.start.coordinates.lat + ',' + contextMap.map.start.coordinates.lng
       coordinatesEnd = latEnd + ',' + lngEnd;
-    } else {
+    } else if(Object.keys(contextMap.map.start).length !== 0){
+      startName = contextMap.map.start.name;
+      start = contextMap.map.start.address;
+      coordinatesStart = contextMap.map.start.coordinates.lat + ',' + contextMap.map.start.coordinates.lng
+      latEnd = context.bookingForm.endPoint.coordinates.lat;
+      lngEnd = context.bookingForm.endPoint.coordinates.lng;
+      endName = item.name,
+      end = item.address,
+      coordinatesEnd = latEnd + ',' + lngEnd;
+    }else if(Object.keys(contextMap.map.end).length !== 0){
+      latEnd = contextMap.map.end.coordinates.lat;
+      lngEnd = contextMap.map.end.coordinates.lng;
+      coordinatesEnd = latEnd + ',' + lngEnd;
+      startName = currentPosition.start_name;
+      start = currentPosition.start
+      endName = contextMap.map.end.name;
+      end = contextMap.map.end.address;
+      coordinatesStart = coordStart;
+    }else{
       latEnd = context.bookingForm.endPoint.coordinates.lat;
       lngEnd = context.bookingForm.endPoint.coordinates.lng;
       startName = currentPosition.start_name;
@@ -91,28 +109,28 @@ const Book = () => {
       coordinatesEnd = latEnd + ',' + lngEnd;
       coordinatesStart = coordStart;
     }
-    navigation.navigate('FindScreen');
-    // fetchCreateOneTrip({
-    //   start_name: startName,
-    //   start: start,
-    //   end_name: endName,
-    //   end: end,
-    //   comment: context.bookingForm.note,
-    //   is_punish: context.bookingForm.isPunish,
-    //   start_time: context.bookingForm.departureTime,
-    //   vehicle_category_id: context.bookingForm.typeCar,
-    //   coordinates_start: coordinatesStart,
-    //   coordinates_end: coordinatesEnd
-    // },contextToken.token).then((data) => {
-    //   // console.log(data);
-    //   if(data.res === 'success'){
-    //     navigation.navigate('FindScreen');  
-    //     context.setBookingForm({
-    //       ...context.bookingForm,
-    //       eniqueId: data.result,
-    //     })
-    //   }
-    // })
+    // navigation.navigate('FindScreen');
+    fetchCreateOneTrip({
+      start_name: startName,
+      start: start,
+      end_name: endName,
+      end: end,
+      comment: context.bookingForm.note,
+      is_punish: context.bookingForm.isPunish,
+      start_time: context.bookingForm.departureTime,
+      vehicle_category_id: context.bookingForm.typeCar,
+      coordinates_start: coordinatesStart,
+      coordinates_end: coordinatesEnd
+    },contextToken.token).then((data) => {
+      // console.log(data);
+      if(data.res === 'success'){
+        navigation.navigate('FindScreen');  
+        context.setBookingForm({
+          ...context.bookingForm,
+          eniqueId: data.result,
+        })
+      }
+    })
   }
 
   return (

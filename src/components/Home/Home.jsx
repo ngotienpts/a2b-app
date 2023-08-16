@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -75,27 +75,51 @@ const Home = () => {
       } else if (Platform.OS === 'ios') {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-          console.log('Bạn chưa bật GPS');
+          Alert.alert(
+            'Thông báo',
+            'Điện thoại này không hỗ trợ định vị!',
+            [
+              { text: 'Đồng ý' }
+            ],
+            { cancelable: false }
+          );
           return false;
         }
       }
 
       let { coords } = await Location.getCurrentPositionAsync({});
-      await AsyncStorage.setItem('lat', coords.latitude.toString());
-      await AsyncStorage.setItem('lng', coords.longitude.toString());
+      if(coords){
+        await AsyncStorage.setItem('lat', coords.latitude.toString());
+        await AsyncStorage.setItem('lng', coords.longitude.toString());
+        Alert.alert(
+          'Thông báo',
+          'Đã lấy được vị trí hiện tại của bạn!',
+          [
+            { text: 'Đồng ý' }
+          ],
+          { cancelable: false }
+        );
+      }
 
     } catch (error) {
-      console.error('Lỗi khi lấy vị trí:', error);
+      Alert.alert(
+        'Thông báo',
+        'Lỗi lấy vị trí!',
+        [
+          { text: 'Đồng ý' }
+        ],
+        { cancelable: false }
+      );
       return false;
     }
   };
 
   useEffect(() => {
-    const interval = setInterval(requestLocationService, 120000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    // const interval = setInterval(requestLocationService, 120000);
+    requestLocationService()
+    // return () => {
+    //   clearInterval(interval);
+    // };
   }, []);
 
   const showProfile = () => {

@@ -79,6 +79,7 @@ const FindComponent = () => {
     const detailTrip = (paramsTrip) => {
         fetchDetailTrip(paramsTrip,contextToken.token)
         .then((data) => {
+            console.log(data);
             if(data.res === 'success'){
                 setDetail(data.result);
                 contextDetailTrip.setDetailTrip({
@@ -125,111 +126,113 @@ const FindComponent = () => {
                 >
                     <SentFormBooking context={context} contextMap={contextMap}  title="Bạn đang đặt chuyến" />
                     {/* khoang cach & thoi gian */}
-                    <View
-                        style={[
-                            styles.mb24,
-                            styles.py15,
-                            styles.border1,
-                            styles.borderTop,
-                            styles.borderBot,
-                            styles.flexRow,
-                        ]}
-                    >
+                    {loadingDetailTrip && (
                         <View
                             style={[
-                                styles.flexFull,
-                                styles.justifyBetween,
-                                styles.itemsCenter,
-                                styles.borderRight,
-                                styles.borderSolid,
+                                styles.mb24,
+                                styles.py15,
+                                styles.border1,
+                                styles.borderTop,
+                                styles.borderBot,
+                                styles.flexRow,
                             ]}
                         >
-                            <Text
-                                style={[
-                                    styles.fs16,
-                                    styles.textGray77,
-                                    styles.lh24,
-                                    styles.textCenter,
-                                ]}
-                            >
-                                Quãng đường
-                            </Text>
                             <View
                                 style={[
-                                    styles.flexRow,
-                                    styles.justifyCenter,
+                                    styles.flexFull,
+                                    styles.justifyBetween,
                                     styles.itemsCenter,
-                                    styles.pt20,
-                                ]}
-                            >
-                                <Text style={[styles.fs42, styles.textWhite, { lineHeight: 42 }]}>
-                                    {detail.distance_all}
-                                </Text>
-                                <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>km</Text>
-                            </View>
-                        </View>
-                        <View
-                            style={[
-                                styles.flexFull,
-                                styles.justifyBetween,
-                                styles.itemsCenter,
-                                styles.borderRight,
-                                styles.borderSolid,
-                            ]}
-                        >
-                            <Text
-                                style={[
-                                    styles.fs16,
-                                    styles.textGray77,
-                                    styles.lh24,
-                                    styles.textCenter,
-                                ]}
-                            >
-                                Thời gian
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexRow,
-                                    styles.justifyCenter,
-                                    styles.itemsCenter,
-                                    styles.pt20,
+                                    styles.borderRight,
+                                    styles.borderSolid,
                                 ]}
                             >
                                 <Text
                                     style={[
-                                        styles.fs42,
-                                        styles.textWhite,
-                                        { lineHeight: 42, includeFontPadding: false },
+                                        styles.fs16,
+                                        styles.textGray77,
+                                        styles.lh24,
+                                        styles.textCenter,
                                     ]}
                                 >
-                                    {detail.duration_all}
+                                    Quãng đường
                                 </Text>
-                                <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
+                                <View
+                                    style={[
+                                        styles.flexRow,
+                                        styles.justifyCenter,
+                                        styles.itemsCenter,
+                                        styles.pt20,
+                                    ]}
+                                >
+                                    <Text style={[styles.fs42, styles.textWhite, { lineHeight: 42 }]}>
+                                        {detail.distance_all}
+                                    </Text>
+                                    <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>km</Text>
+                                </View>
                             </View>
-                        </View>
-                        <View style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
-                            <Text
-                                style={[
-                                    styles.fs16,
-                                    styles.textGray77,
-                                    styles.lh24,
-                                    styles.textCenter,
-                                ]}
-                            >
-                                Google map
-                            </Text>
                             <View
                                 style={[
-                                    styles.flexCenter,
-                                    styles.bgGray161,
-                                    styles.mt20,
-                                    { width: 73, height: 42 },
+                                    styles.flexFull,
+                                    styles.justifyBetween,
+                                    styles.itemsCenter,
+                                    styles.borderRight,
+                                    styles.borderSolid,
                                 ]}
                             >
-                                <ArrowUturnRightIcon size={25} color={'white'} />
+                                <Text
+                                    style={[
+                                        styles.fs16,
+                                        styles.textGray77,
+                                        styles.lh24,
+                                        styles.textCenter,
+                                    ]}
+                                >
+                                    Thời gian
+                                </Text>
+                                <View
+                                    style={[
+                                        styles.flexRow,
+                                        styles.justifyCenter,
+                                        styles.itemsCenter,
+                                        styles.pt20,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.fs42,
+                                            styles.textWhite,
+                                            { lineHeight: 42, includeFontPadding: false },
+                                        ]}
+                                    >
+                                        {detail.duration_all}
+                                    </Text>
+                                    <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
+                                </View>
+                            </View>
+                            <View style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
+                                <Text
+                                    style={[
+                                        styles.fs16,
+                                        styles.textGray77,
+                                        styles.lh24,
+                                        styles.textCenter,
+                                    ]}
+                                >
+                                    Google map
+                                </Text>
+                                <View
+                                    style={[
+                                        styles.flexCenter,
+                                        styles.bgGray161,
+                                        styles.mt20,
+                                        { width: 73, height: 42 },
+                                    ]}
+                                >
+                                    <ArrowUturnRightIcon size={25} color={'white'} />
+                                </View>
                             </View>
                         </View>
-                    </View>
+                    )}
 
                     {/* driver list */}
                     <View>
@@ -249,7 +252,7 @@ const FindComponent = () => {
                         {/* list */}
                         {loading && 
                             <View>
-                                {reports.map((item) => (
+                                {reports.length !== undefined && reports.map((item) => (
                                     <TouchableOpacity
                                         key={item.reported_id.toString()}
                                         style={[
