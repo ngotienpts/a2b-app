@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -32,15 +32,15 @@ const Home = () => {
 
   const listNotification = () => {
     let params = {}
-    fetchListNoti(params,context.token)
-    .then((data) => {
+    fetchListNoti(params, context.token)
+      .then((data) => {
         if (data.res === 'success') {
-            handleHiddenNoti(data.count);
+          handleHiddenNoti(data.count);
         }
-    })
-    .catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
-    })
+      })
   };
 
   const historySearch = async () => {
@@ -84,18 +84,15 @@ const Home = () => {
       await AsyncStorage.setItem('lat', coords.latitude.toString());
       await AsyncStorage.setItem('lng', coords.longitude.toString());
 
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Lỗi khi lấy vị trí:', error);
       return false;
     }
   };
 
   useEffect(() => {
-    const interval = setInterval(requestLocationService, 120000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    requestLocationService();
   }, []);
 
   const showProfile = () => {
@@ -181,7 +178,7 @@ const Home = () => {
                 handleSearchDebounce(text);
               }}
               value={inputValue}
-              style={[styles.fs16, styles.textWhite,styles.flexFull, styles.pl24, styles.pr50]}
+              style={[styles.fs16, styles.textWhite, styles.flexFull, styles.pl24, styles.pr50]}
               placeholder="Tìm kiếm"
               placeholderTextColor={'white'}
             />

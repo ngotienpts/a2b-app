@@ -163,7 +163,7 @@ const Setting = () => {
         // console.log(base64Regex.test(avatar));
         // console.log(avatar);
     }
-    // console.log(bankAccount);
+    // console.log(contextToken.token);
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
@@ -195,6 +195,7 @@ const Setting = () => {
                                         styles.h32,
                                         styles.flexCenter,
                                     ]}
+                                    onPress={() => navigation.navigate('DiaryScreen')}
                                 >
                                     <Text
                                         style={[
@@ -217,6 +218,7 @@ const Setting = () => {
                                         styles.h32,
                                         styles.flexCenter,
                                     ]}
+                                    onPress={() => navigation.navigate('AddCoinScreen')}
                                 >
                                     <Text
                                         style={[

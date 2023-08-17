@@ -165,7 +165,7 @@ const Notification = () => {
                     {/* list notification */}
                     {loading &&
                         <View style={{ paddingBottom: 100 }}>
-                            {notifications.map((noti, index) => (
+                            {notifications && notifications.map((noti, index) => (
                                 <TouchableOpacity
                                     key={noti.notify_id + Math.random()}
                                     style={[

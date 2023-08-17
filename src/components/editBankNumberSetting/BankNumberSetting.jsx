@@ -37,7 +37,7 @@ const BankNumberSetting = ({ label, maxLength, value, onChangeText }) => {
     };
 
     return (
-        <View>
+        <View style={[styles.flexFull]}>
             {isEditing || isFirstRender.current ? (
                 <TextInput
                     ref={textInputRef}
@@ -46,12 +46,12 @@ const BankNumberSetting = ({ label, maxLength, value, onChangeText }) => {
                     keyboardType="numeric"
                     maxLength={maxLength}
                     onBlur={handleBlur} // Thêm hàm xử lý khi TextInput mất focus
-                    style={[styles.textWhite, styles.fs16, styles.lh24]}
+                    style={[styles.textWhite, styles.fs16, styles.lh24, styles.textRight]}
                 />
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
-                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
-                        {formatStringWithDash(bankAccount)}
+                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400, styles.textRight]}>
+                        {bankAccount ? formatStringWithDash(bankAccount) : '...'}
                     </Text>
                 </TouchableOpacity>
             )}

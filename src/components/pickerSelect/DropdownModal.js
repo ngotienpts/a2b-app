@@ -29,7 +29,7 @@ const DropdownModal = ({ style, data, selectedName, onChangeDropdown }) => {
         <View style={[styles.flexFull]}>
             {/* Button to open the modal */}
             <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Text style={style.flexFull}>{selectedItem}</Text>
+                <Text style={[styles.flexFull,styles.textWhite, styles.fs16, styles.lh24,styles.textRight]}>{selectedItem}</Text>
             </TouchableOpacity>
 
             {/* Modal */}
