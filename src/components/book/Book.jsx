@@ -14,13 +14,11 @@ import { StatusBar } from 'react-native';
 import LocationStart from './LocationStart';
 import LocationEnd from './LocationEnd';
 import { MapContext } from '../../redux/mapContext';
-import { Keyboard } from 'react-native';
 
 const Book = () => {
   const context = useContext(BookingFormContext);
   const contextToken = useContext(TokenContext);
   const contextMap = useContext(MapContext);
-  const eniqueId = useId();
   const { params: item } = useRoute();
   const navigation = useNavigation();
   const [currentPosition, setCurrentPosition] = useState({});
@@ -28,24 +26,18 @@ const Book = () => {
 
   useEffect(() => {
     takeAddressFromGPS();
-  }, [item, eniqueId]);
+  }, [item]);
 
   const takeAddressFromGPS = async () => {
-    const latString = await AsyncStorage.getItem('lat');
-    const lngString = await AsyncStorage.getItem('lng');
-    lat = parseFloat(latString);
-    lng = parseFloat(lngString);
-    const coords = lat + ',' + lng;
+    const coords = parseFloat(await AsyncStorage.getItem('lat')) + ',' + parseFloat(await AsyncStorage.getItem('lng'));
     setCoordStart(coords);
     fetchStartGPS({
       start: coords
     }, 1).then((data) => {
-      // console.log(data);
       if (data.res == 'success') {
         setCurrentPosition(data.result);
         context.setBookingForm({
           ...context.bookingForm,
-          eniqueId,
           endPoint: item,
           startPoint: data.result,
         })
@@ -62,7 +54,6 @@ const Book = () => {
   }
 
   const createTrip = () => {
-    // console.log(context);
     let latEnd = '';
     let lngEnd = '';
     let coordinatesStart = '';
@@ -71,7 +62,6 @@ const Book = () => {
     let start = '';
     let endName = '';
     let end = '';
-    // console.log(contextMap.map.coordinates);
     if (Object.keys(contextMap.map.end).length !== 0 && Object.keys(contextMap.map.start).length !== 0) {
       latEnd = contextMap.map.end.coordinates.lat;
       lngEnd = contextMap.map.end.coordinates.lng;
@@ -109,7 +99,11 @@ const Book = () => {
       coordinatesEnd = latEnd + ',' + lngEnd;
       coordinatesStart = coordStart;
     }
-    // navigation.navigate('FindScreen');
+    // navigation.navigate('FindScreen');  
+    // context.setBookingForm({
+    //   ...context.bookingForm,
+    //   eniqueId: 83,
+    // })
     fetchCreateOneTrip({
       start_name: startName,
       start: start,
@@ -122,9 +116,8 @@ const Book = () => {
       coordinates_start: coordinatesStart,
       coordinates_end: coordinatesEnd
     },contextToken.token).then((data) => {
-      // console.log(data);
       if(data.res === 'success'){
-        navigation.navigate('FindScreen');  
+        navigation.navigate('FindScreen', {id: data.result});  
         context.setBookingForm({
           ...context.bookingForm,
           eniqueId: data.result,
@@ -161,7 +154,7 @@ const Book = () => {
 
             {/* location */}
             <View style={[styles.borderBot]}>
-              {Object.keys(contextMap.map.start).length !== 0 ? (
+              {contextMap.map.start.length !== 0 ? (
                 <LocationStart
                   navigation={navigation}
                   dataStart={contextMap}
@@ -172,7 +165,7 @@ const Book = () => {
                   currentPosition={currentPosition}
                 />
               )}
-              {Object.keys(contextMap.map.end).length !== 0 ? (
+              {contextMap.map.end.length !== 0 ? (
                 <LocationEnd
                   navigation={navigation}
                   dataEnd={contextMap}

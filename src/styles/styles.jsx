@@ -25,6 +25,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-end',
     },
+    flexStart: {
+        flexDirection: 'row',
+        alignItems: 'flex-start'
+    },
+    flexStart2: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
     flexBaseLine: {
         flexDirection: 'row',
         alignItems: 'baseline',

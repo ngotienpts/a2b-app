@@ -1,16 +1,4 @@
-// import {
-//     View,
-//     Text,
-//     TouchableOpacity,
-//     ScrollView,
-//     Dimensions,
-//     Animated,
-//     Easing,
-//     Image
-// } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-// import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
-// import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
@@ -27,7 +15,7 @@ import { CircleFade } from 'react-native-animated-spinkit';
 import styles from '../../styles';
 import Header from '../header/Header';
 import { BookingFormContext } from '../../redux/bookingFormContext';
-import { fallbackImage, fetchDetailTrip, fetchListReport } from '../../api/DataFetching';
+import { fallbackImage, fetchAutomaticQuote, fetchDetailTrip, fetchListReport } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking/SentFormBooking';
 import { DetailTripContext } from '../../redux/detailTripContext';
 import { TokenContext } from '../../redux/tokenContext';
@@ -46,8 +34,9 @@ const FindComponent = () => {
     const [isUnmounted, setIsUnmounted] = useState(false);
     const isFocused = useIsFocused();
     const navigation = useNavigation();
+    const {params: item} = useRoute();
     const paramsTrip = {
-        trip_id: 44
+        trip_id: item?.id
     }
 
     useEffect(() => {
@@ -74,12 +63,24 @@ const FindComponent = () => {
         // Truyền giá trị từ context vào biến local
         detailTrip(paramsTrip)
         listReport(paramsTrip)
+        automaticQuote(paramsTrip);
     }, []);
 
-    const detailTrip = (paramsTrip) => {
-        fetchDetailTrip(paramsTrip,contextToken.token)
+    const automaticQuote = async (paramsTrip) => {
+        await fetchAutomaticQuote(paramsTrip, contextToken.token)
         .then((data) => {
-            console.log(data);
+            if(data.res === 'success'){
+                listReport(paramsTrip);
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const detailTrip = async (paramsTrip) => {
+        await fetchDetailTrip(paramsTrip,contextToken.token)
+        .then((data) => {
             if(data.res === 'success'){
                 setDetail(data.result);
                 contextDetailTrip.setDetailTrip({
@@ -97,8 +98,8 @@ const FindComponent = () => {
         })
     }
 
-    const listReport = (paramsTrip) => {
-        fetchListReport(paramsTrip,contextToken.token)
+    const listReport = async (paramsTrip) => {
+        await fetchListReport(paramsTrip,contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
                 setReports(data.result);

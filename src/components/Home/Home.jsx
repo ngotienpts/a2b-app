@@ -28,7 +28,7 @@ const Home = () => {
     showProfile();
     historySearch();
     listNotification();
-  }, []) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
+  }, [context.token]) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
 
   const listNotification = () => {
     let params = {}
@@ -91,14 +91,6 @@ const Home = () => {
       if(coords){
         await AsyncStorage.setItem('lat', coords.latitude.toString());
         await AsyncStorage.setItem('lng', coords.longitude.toString());
-        Alert.alert(
-          'Thông báo',
-          'Đã lấy được vị trí hiện tại của bạn!',
-          [
-            { text: 'Đồng ý' }
-          ],
-          { cancelable: false }
-        );
       }
 
     } catch (error) {

@@ -221,6 +221,11 @@ export const fetchFindCustomer = (token) => {
     const findCustomer = `${baseUrl}/${token}/vehicle/reload`;
     return postApi(findCustomer);
 }
+//tat nhan chuyen
+export const fetchTurnOffDriver = (token) => {
+    const turnOffDriver = `${baseUrl}/${token}/vehicle/cancel`;
+    return postApi(turnOffDriver);
+}
 //thong tin chi tiet khach hang
 export const fetchDetailCustomer = (params) => {
     const detailCustomer = `${baseUrl}/1/profile/detail`;
@@ -245,4 +250,40 @@ export const fetchCheckReport = (params,token) => {
 export const fetchSendReport = (data,token) => {
     const sendReport = `${baseUrl}/${token}/report/send`;
     return postApi(sendReport,data);
+}
+//bao gia tu dong
+export const fetchAutomaticQuote = (data,token) => {
+    // return data;
+    const automaticQuote = `${baseUrl}/${token}/report/automatic`;
+    return postApi(automaticQuote,data);
+}
+//dat chuyen di cua tai xe
+export const fetchBookACar = (data,token) => {
+    // return data;
+    const bookACar = `${baseUrl}/${token}/trip/book`;
+    return postApi(bookACar,data);
+}
+//don khach 
+export const fetchPickUpCustomer = (data,token) => {
+    // return data;
+    const pickUpCustomer = `${baseUrl}/${token}/vehicle/pickup`;
+    return postApi(pickUpCustomer,data);
+}
+//bat dau chuyen di
+export const fetchOnAJourney = (data,token) => {
+    // return data;
+    const onAJourney = `${baseUrl}/${token}/trip/journey`;
+    return postApi(onAJourney,data);
+}
+//hoan thanh chuyen di
+export const fetchSuccessTrip = (data,token) => {
+    // return data;
+    const successTrip = `${baseUrl}/${token}/trip/success`;
+    return postApi(successTrip,data);
+}
+//huy chuyen di
+export const fetchCancelTrip = (data,token) => {
+    // return data;
+    const cancelTrip = `${baseUrl}/${token}/trip/cancel`;
+    return postApi(cancelTrip,data);
 }

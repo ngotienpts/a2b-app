@@ -149,9 +149,9 @@ const DriverComponent = () => {
                     }
                 })
             }
-            // becomeDriver();
-            // updateStatusPrice(!isEnabled ? 0 : 1, priceRange)
-            // updateRoadDriver(timeRange,contextMap.map.end)
+            becomeDriver();
+            updateStatusPrice(!isEnabled ? 0 : 1, priceRange)
+            updateRoadDriver(timeRange,contextMap.map.end)
             navigation.navigate('DriverFindScreen', item)
         } 
     }

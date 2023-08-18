@@ -36,6 +36,8 @@ import LoadPointsScreen from '../screens/LoadPointsScreen';
 import CancelBookClientScreen from '../screens/CancelBookClientScreen';
 import CancelBookDriverScreen from '../screens/CancelBookDriverScreen';
 import MapScreenStart from '../screens/MapScreenStart';
+import CancelClientConfirmScreen from '../screens/CancelClientConfirmScreen';
+import CancelDriverConfirmScreen from '../screens/CancelDriverConfirmScreen';
 import MapProvider from '../redux/mapContext';
 import WifiScreen from '../screens/WifiScreen';
 import CustomerFormProvider from '../redux/customerFormContext';
