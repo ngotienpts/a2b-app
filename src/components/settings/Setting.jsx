@@ -107,22 +107,22 @@ const Setting = () => {
             .finally(() => setloading(false))
     }
 
+    // const getUserProfile = () => {
+        // fetchGetUserProfile('79ee7846612b106c445826c19')
+        //     .then((data) => {
+        //         if (data.res == 'success') {
+        //             setUserProfile(data.result);
+        //         }
+        //     })
+        //     .finally(() => setloading(false))
     const getUserProfile = () => {
-        fetchGetUserProfile('79ee7846612b106c445826c19')
-            .then((data) => {
-                if (data.res == 'success') {
-                    setUserProfile(data.result);
-                }
-            })
-            .finally(() => setloading(false))
-    // const getUserProfile = () =>{
-    //     fetchGetUserProfile(contextToken.token)
-    //     .then((data) => {
-    //         if(data.res == 'success'){
-    //             setUserProfile(data.result);
-    //         }
-    //     })
-    //     .finally(() => setloading(false))
+        fetchGetUserProfile(contextToken.token)
+        .then((data) => {
+            if(data.res == 'success'){
+                setUserProfile(data.result);
+            }
+        })
+        .finally(() => setloading(false))
     }
 
     const updateProfile = () => {
@@ -136,32 +136,32 @@ const Setting = () => {
             bank_number: bankAccount.replace(/-/g, ''),
             bank_id: regex.test(bankName) ? bankName : '',
             bank_name: nameBankAccount,
-        }, '79ee7846612b106c445826c19')
-            .then((data) => {
-                if (data.res === 'success') {
-                    console.log(data);
-                    Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK' }])
-                    // navigation.navigate('DriverScreen');
-                }
-                else {
-                    alert(data.status.fullname || data.status.birthday || data.status.phone || data.status.bankId || data.status.bankName || data.status.bankNumber || data.status.image)
-                }
-            })
-            .finally(() => setloading(false))
-        // },contextToken.token)
-        // .then((data) => {
-        //     if(data.res === 'success'){
-        //         console.log(data);
-        //         Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK' }])
-        //         // navigation.navigate('DriverScreen');
-        //     }
-        //     else{
-        //         alert(data.status.fullname || data.status.birthday || data.status.phone || data.status.bankId || data.status.bankName || data.status.bankNumber || data.status.image)
-        //     }
-        // })
-        // .finally(() => setloading(false))
-        // console.log(base64Regex.test(avatar));
-        // console.log(avatar);
+        // }, '79ee7846612b106c445826c19')
+        //     .then((data) => {
+        //         if (data.res === 'success') {
+        //             console.log(data);
+        //             Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK' }])
+        //             // navigation.navigate('DriverScreen');
+        //         }
+        //         else {
+        //             alert(data.status.fullname || data.status.birthday || data.status.phone || data.status.bankId || data.status.bankName || data.status.bankNumber || data.status.image)
+        //         }
+        //     })
+        //     .finally(() => setloading(false))
+        },contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                console.log(data);
+                Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK' }])
+                // navigation.navigate('DriverScreen');
+            }
+            else{
+                alert(data.status.fullname || data.status.birthday || data.status.phone || data.status.bankId || data.status.bankName || data.status.bankNumber || data.status.image)
+            }
+        })
+        .finally(() => setloading(false))
+        console.log(base64Regex.test(avatar));
+        console.log(avatar);
     }
     // console.log(contextToken.token);
     return (

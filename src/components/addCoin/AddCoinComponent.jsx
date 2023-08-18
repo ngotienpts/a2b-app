@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar, Alert } from 'react-native';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { SvgUri } from "react-native-svg";
@@ -11,15 +11,26 @@ import { BookingFormContext } from '../../redux/bookingFormContext';
 import { qrCode } from '../../assets/images';
 import { Dimensions } from 'react-native';
 import { Square2StackIcon } from 'react-native-heroicons/outline';
+import { fetchGetUserProfile } from '../../api/DataFetching'
+import { TokenContext } from '../../redux/tokenContext';
+
 const AddCoinComponent = () => {
+    useEffect(() => {
+        getUserProfile();
+    }, [])
+
+    const [userProfile, setUserProfile] = useState([]);
+    const [loading, setloading] = useState(true)
+
     const context = useContext(BookingFormContext);
     const navigation = useNavigation();
     const { width } = Dimensions.get('window');
-    const img = 'https://api.beta-a2b.work/bank/970416/194433359.svg?c=A2B-UID4';
+    const img = 'https://api.beta-a2b.work/bank/970416/194433359.svg?c=A2B-UID';
     const bank = 'Ngân hàng TMCP Á Châu - ACB';
     const bankNumber = '194433359';
     const bankName = 'ONG THE THANH';
-    const content = 'A2B-UID4';
+    const content = 'A2B-UID';
+
 
     const copyBankToClipboard = async () => {
         await Clipboard.setStringAsync(bank);
@@ -27,9 +38,9 @@ const AddCoinComponent = () => {
             'Thành công',
             'Bạn đã sao chép thành công!',
             [
-              { text: 'Đồng ý' }
+                { text: 'Đồng ý' }
             ],
-          );
+        );
     };
     const copyBankNumberToClipboard = async () => {
         await Clipboard.setStringAsync(bankNumber);
@@ -37,9 +48,9 @@ const AddCoinComponent = () => {
             'Thành công',
             'Bạn đã sao chép thành công!',
             [
-              { text: 'Đồng ý' }
+                { text: 'Đồng ý' }
             ],
-          );
+        );
     };
     const copyBankNameToClipboard = async () => {
         await Clipboard.setStringAsync(bankName);
@@ -47,20 +58,30 @@ const AddCoinComponent = () => {
             'Thành công',
             'Bạn đã sao chép thành công!',
             [
-              { text: 'Đồng ý' }
+                { text: 'Đồng ý' }
             ],
-          );
+        );
     };
     const copyContentToClipboard = async () => {
-        await Clipboard.setStringAsync(content);
+        await Clipboard.setStringAsync(content+userProfile?.user_id);
         Alert.alert(
             'Thành công',
             'Bạn đã sao chép thành công!',
             [
-              { text: 'Đồng ý' }
+                { text: 'Đồng ý' }
             ],
-          );
+        );
     };
+
+    const getUserProfile = () => {
+        fetchGetUserProfile(contextToken.token)
+            .then((data) => {
+                if (data.res == 'success') {
+                    setUserProfile(data.result);
+                }
+            })
+            .finally(() => setloading(false))
+    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -70,185 +91,186 @@ const AddCoinComponent = () => {
                 <Header navigation={navigation} title="Nạp điểm" />
 
                 {/* body */}
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={[styles.flexFull, styles.pt15]}
-                >
-                    {/* qr code */}
-                    <View
-                        style={[
-                            styles.bgWhite,
-                            styles.flexColumn,
-                            styles.itemsCenter,
-                            styles.justifyCenter,
-                            styles.p15,
-                        ]}
+                {loading ? (<Text>Đang lấy dữ liệu...</Text>) : (
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        style={[styles.flexFull, styles.pt15]}
                     >
-                        {/* <Image
-                            source={(require = qrCode)}
-                            style={{ width: 174, height: 174 }}
-                            resizeMode="cover"
-                        /> */}
-                        <SvgUri
-                            // width={116}
-                            // height={116}
-                            uri={img}
-                        />
-                        <Text
+                        {/* qr code */}
+                        <View
                             style={[
-                                styles.fs18,
-                                styles.fw700,
-                                styles.lh24,
-                                styles.mt15,
-                                styles.textItalic,
-                                styles.textCenter,
+                                styles.bgWhite,
+                                styles.flexColumn,
+                                styles.itemsCenter,
+                                styles.justifyCenter,
+                                styles.p15,
                                 { maxWidth: width * 0.95 },
                             ]}
                         >
-                            A2B - App đặt chuyến mọi lúc, mọi nơi
-                        </Text>
-                    </View>
-
-                    {/* content */}
-                    <View style={[styles.mt24, styles.px15, styles.pb50]}>
-                        {/* item */}
-                        <View style={[styles.mb20]}>
+                            <SvgUri
+                                // width={116}
+                                // height={116}
+                                uri={img + userProfile?.user_id}
+                            />
                             <Text
-                                style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
-                            >
-                                Ngân hàng
-                            </Text>
-                            <View
                                 style={[
-                                    styles.flexBetween,
-                                    styles.bg161e,
-                                    styles.py5,
-                                    styles.pl15,
-                                    styles.pr10,
-                                    styles.mb5,
+                                    styles.fs18,
+                                    styles.fw700,
+                                    styles.lh24,
+                                    styles.mt15,
+                                    styles.textItalic,
+                                    styles.textCenter,
+                                    { maxWidth: width * 0.95 },
                                 ]}
                             >
-                                <Text
-                                    style={[
-                                        styles.fs15,
-                                        styles.flexFull,
-                                        styles.textWhite,
-                                        styles.fw400,
-                                    ]}
-                                >
-                                    {bank}
-                                </Text>
-                                <TouchableOpacity style={[styles.p5]} onPress={copyBankToClipboard}>
-                                    <Square2StackIcon size={20} color={'#fff'} />
-                                </TouchableOpacity>
-                            </View>
+                                A2B - App đặt chuyến mọi lúc, mọi nơi
+                            </Text>
                         </View>
 
-                        <View style={[styles.mb20]}>
-                            <Text
-                                style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
-                            >
-                                Số tài khoản
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexBetween,
-                                    styles.bg161e,
-                                    styles.py5,
-                                    styles.pl15,
-                                    styles.pr10,
-                                    styles.mb5,
-                                ]}
-                            >
+                        {/* content */}
+                        <View style={[styles.mt24, styles.px15, styles.pb50]}>
+                            {/* item */}
+                            <View style={[styles.mb20]}>
                                 <Text
+                                    style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
+                                >
+                                    Ngân hàng
+                                </Text>
+                                <View
                                     style={[
-                                        styles.fs15,
-                                        styles.flexFull,
-                                        styles.textWhite,
-                                        styles.fw400,
+                                        styles.flexBetween,
+                                        styles.bg161e,
+                                        styles.py5,
+                                        styles.pl15,
+                                        styles.pr10,
+                                        styles.mb5,
                                     ]}
                                 >
-                                    {bankNumber}
-                                </Text>
-                                <TouchableOpacity style={[styles.p5]} onPress={copyBankNumberToClipboard}>
-                                    <Square2StackIcon size={20} color={'#fff'} />
-                                </TouchableOpacity>
+                                    <Text
+                                        style={[
+                                            styles.fs15,
+                                            styles.flexFull,
+                                            styles.textWhite,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        {bank}
+                                    </Text>
+                                    <TouchableOpacity style={[styles.p5]} onPress={copyBankToClipboard}>
+                                        <Square2StackIcon size={20} color={'#fff'} />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
 
-                        <View style={[styles.mb20]}>
-                            <Text
-                                style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
-                            >
-                                Người thụ hưởng
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexBetween,
-                                    styles.bg161e,
-                                    styles.py5,
-                                    styles.pl15,
-                                    styles.pr10,
-                                    styles.mb5,
-                                ]}
-                            >
+                            <View style={[styles.mb20]}>
                                 <Text
+                                    style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
+                                >
+                                    Số tài khoản
+                                </Text>
+                                <View
                                     style={[
-                                        styles.fs15,
-                                        styles.flexFull,
-                                        styles.textWhite,
-                                        styles.fw400,
+                                        styles.flexBetween,
+                                        styles.bg161e,
+                                        styles.py5,
+                                        styles.pl15,
+                                        styles.pr10,
+                                        styles.mb5,
                                     ]}
                                 >
-                                    {bankName}
-                                </Text>
-                                <TouchableOpacity style={[styles.p5]} onPress={copyBankNameToClipboard}>
-                                    <Square2StackIcon size={20} color={'#fff'} />
-                                </TouchableOpacity>
+                                    <Text
+                                        style={[
+                                            styles.fs15,
+                                            styles.flexFull,
+                                            styles.textWhite,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        {bankNumber}
+                                    </Text>
+                                    <TouchableOpacity style={[styles.p5]} onPress={copyBankNumberToClipboard}>
+                                        <Square2StackIcon size={20} color={'#fff'} />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
 
-                        <View style={[styles.mb20]}>
-                            <Text
-                                style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
-                            >
-                                Nội dung
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexBetween,
-                                    styles.bg161e,
-                                    styles.py5,
-                                    styles.pl15,
-                                    styles.pr10,
-                                    styles.mb5,
-                                ]}
-                            >
+                            <View style={[styles.mb20]}>
                                 <Text
+                                    style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
+                                >
+                                    Người thụ hưởng
+                                </Text>
+                                <View
                                     style={[
-                                        styles.fs15,
-                                        styles.flexFull,
-                                        styles.textWhite,
-                                        styles.fw400,
+                                        styles.flexBetween,
+                                        styles.bg161e,
+                                        styles.py5,
+                                        styles.pl15,
+                                        styles.pr10,
+                                        styles.mb5,
                                     ]}
                                 >
-                                    {content}
+                                    <Text
+                                        style={[
+                                            styles.fs15,
+                                            styles.flexFull,
+                                            styles.textWhite,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        {bankName}
+                                    </Text>
+                                    <TouchableOpacity style={[styles.p5]} onPress={copyBankNameToClipboard}>
+                                        <Square2StackIcon size={20} color={'#fff'} />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            <View style={[styles.mb20]}>
+                                <Text
+                                    style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
+                                >
+                                    Nội dung
                                 </Text>
-                                <TouchableOpacity style={[styles.p5]} onPress={copyContentToClipboard}>
-                                    <Square2StackIcon size={20} color={'#fff'} />
-                                </TouchableOpacity>
+                                <View
+                                    style={[
+                                        styles.flexBetween,
+                                        styles.bg161e,
+                                        styles.py5,
+                                        styles.pl15,
+                                        styles.pr10,
+                                        styles.mb5,
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.fs15,
+                                            styles.flexFull,
+                                            styles.textWhite,
+                                            styles.fw400,
+                                        ]}
+                                    >
+                                        {content + userProfile?.user_id}
+                                    </Text>
+                                    <TouchableOpacity style={[styles.p5]} onPress={copyContentToClipboard}>
+                                        <Square2StackIcon size={20} color={'#fff'} />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            <View style={[styles.mb20]}>
+                                <Text
+                                    style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
+                                >
+                                    Chú ý: Cần nhập chính xác nội dung chuyển khoản.
+                                </Text>
+                                <Text style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}>
+                                    Sau khi chuyển khoản, vui lòng chờ khoảng 1 phút để hệ thống ngân hàng xác thực tự động với A2B
+                                </Text>
                             </View>
                         </View>
-
-                        <View style={[styles.mb20]}>
-                            <Text
-                                style={[styles.fs15, styles.textWhite, styles.fw400, styles.mb15]}
-                            >
-                                Sau khi chuyển khoản, vui lòng chờ khoảng 1 phút để hệ thống ngân hàng xác thực tự động với A2B
-                            </Text>
-                              </View>
-                    </View>
-                </ScrollView>
+                    </ScrollView>
+                )}
 
                 {/* buttom  huy chuyen */}
                 <View style={[styles.flexRow]}>

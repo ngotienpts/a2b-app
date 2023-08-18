@@ -7,6 +7,7 @@ import styles from '../../styles';
 import Header from '../header/Header';
 import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { fallbackImage, fetchListMyCar, fetchGetOneCategoryVehicle, fetchListCategoryVehicle, fetchUpdateWifi } from '../../api/DataFetching';
+import { TokenContext } from '../../redux/tokenContext';
 import * as Notifications from 'expo-notifications';
 
 
@@ -62,6 +63,7 @@ const Wifi = () => {
   const [wifiName, setWifiName] = useState(null);
   const [wifiPass, setWifiPass] = useState(null);
   const [loading, setloading] = useState(true);
+  const contextToken = useContext(TokenContext);
 
   const HandleWifiNameChange = useCallback((newValue) => {
     setWifiName(newValue);
@@ -97,7 +99,8 @@ const Wifi = () => {
   // console.log(Notifications.getNotificationChannelAsync('123'));
 
   const showMyCar = () => {
-    fetchListMyCar('79ee7846612b106c445826c19')
+    // fetchListMyCar('79ee7846612b106c445826c19')
+    fetchListMyCar(contextToken.token)
       .then((data) => {
         if (data.res == 'success') {
           setListMyCar(data.result)
@@ -110,7 +113,8 @@ const Wifi = () => {
     fetchUpdateWifi({
       name: wifiName ? wifiName : '',
       pass: wifiPass ? wifiPass : '',
-    }, '79ee7846612b106c445826c19')
+    // }, '79ee7846612b106c445826c19')
+  }, contextToken.token)
       .then((data) => {
         if (data.res === 'success') {
           console.log(data);
