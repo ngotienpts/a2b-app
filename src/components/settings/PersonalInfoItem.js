@@ -127,7 +127,7 @@ const PersonalInfoItem = ({
                 );
             default:
                 return (
-                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
+                    <Text style={[styles.flexFull,styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
                         {value}
                     </Text>
                 );

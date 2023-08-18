@@ -7,6 +7,51 @@ import styles from '../../styles';
 import Header from '../header/Header';
 import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { fallbackImage, fetchListMyCar, fetchGetOneCategoryVehicle, fetchListCategoryVehicle, fetchUpdateWifi } from '../../api/DataFetching';
+import * as Notifications from 'expo-notifications';
+
+
+// const sendNotificationToUser = async (userId, title, body) => {
+//   try {
+//     // Schedule a notification
+//     await Notifications.scheduleNotificationAsync({
+//       content: {
+//         title: title,
+//         body: body,
+//       },
+//       trigger: null, // Gửi ngay lập tức, hoặc bạn có thể cấu hình trigger theo mong muốn
+//       identifier: "456", // Đặt một thuộc tính tùy chỉnh để xác định người nhận
+//     });
+//   } catch (error) {
+//     console.error('Lỗi khi gửi thông báo:', error);
+//   }
+// };
+
+// const registerForPushNotificationsAsync = async () => {
+//   let token;
+
+//   if (Platform.OS === 'android') {
+//     await Notifications.setNotificationChannelAsync('default', {
+//       name: 'default',
+//       importance: Notifications.AndroidImportance.MAX,
+//       vibrationPattern: [0, 250, 250, 250],
+//       lightColor: '#FF231F7C',
+//     });
+//   }
+//   const { status: existingStatus } = await Notifications.getPermissionsAsync();
+//   let finalStatus = existingStatus;
+//   if (existingStatus !== 'granted') {
+//     const { status } = await Notifications.requestPermissionsAsync();
+//     finalStatus = status;
+//   }
+//   if (finalStatus !== 'granted') {
+//     alert('Failed to get push token for push notification!');
+//     return;
+//   }
+//   token = (await Notifications.getExpoPushTokenAsync()).data;
+//   console.log('token: ', token);
+
+//   return token;
+// }
 
 const Wifi = () => {
 
@@ -27,12 +72,29 @@ const Wifi = () => {
 
   useEffect(() => {
     showMyCar();
+    // sendNotificationToUser('123', 'Tiêu đề thông báo', 'Nội dung thông báo');
+    // registerForPushNotificationsAsync()
   }, []);
 
   useEffect(() => {
     setWifiName(ListMyCar?.name_wifi)
     setWifiPass(ListMyCar?.pass_wifi);
   }, [ListMyCar])
+
+  // Notifications.setNotificationHandler({
+  //   handleNotification: async () => ({
+  //     shouldShowAlert: true,
+  //     shouldPlaySound: true,
+  //     shouldSetBadge: true,
+  //   }),
+  // });
+
+  // Notifications.setNotificationChannelAsync('123', {
+  //   title: '123',
+  //   body: '456'
+  // })
+
+  // console.log(Notifications.getNotificationChannelAsync('123'));
 
   const showMyCar = () => {
     fetchListMyCar('79ee7846612b106c445826c19')
@@ -46,8 +108,8 @@ const Wifi = () => {
 
   const updateWifi = () => {
     fetchUpdateWifi({
-      name: wifiName  ? wifiName : '',
-      pass: wifiPass  ? wifiPass : '',
+      name: wifiName ? wifiName : '',
+      pass: wifiPass ? wifiPass : '',
     }, '79ee7846612b106c445826c19')
       .then((data) => {
         if (data.res === 'success') {
@@ -105,7 +167,7 @@ const Wifi = () => {
             styles.border4,
             styles.mx15,
           ]}
-        onPress={updateWifi}
+          onPress={updateWifi}
         >
           <Text style={[styles.fs16, styles.textWhite]}>Cập nhật</Text>
         </TouchableOpacity>

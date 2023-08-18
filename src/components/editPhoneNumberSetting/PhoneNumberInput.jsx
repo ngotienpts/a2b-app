@@ -41,7 +41,7 @@ const PhoneNumberInput = ({ label, value, onValueChange }) => {
     };
 
     return (
-        <View>
+        <View style={[styles.flexFull]}>
             {isEditing ? (
                 <TextInput
                     ref={textInputRef}
@@ -50,13 +50,13 @@ const PhoneNumberInput = ({ label, value, onValueChange }) => {
                     onChangeText={(newText) => setText(newText)}
                     onBlur={handleSave}
                     autoFocus
-                    style={[styles.textWhite, styles.fs16, styles.lh24]}
+                    style={[styles.textWhite, styles.fs16, styles.lh24, styles.textRight]}
                     keyboardType="numeric"
                 />
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
-                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
-                        {text}
+                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400, styles.textRight]}>
+                        {text ? text : '...'}
                     </Text>
                 </TouchableOpacity>
             )}

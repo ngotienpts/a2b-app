@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View, Platform } from 'react-native';
 import React, {useEffect, useContext } from 'react';
-import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Google from 'expo-auth-session/providers/google';
 import styles from '../../styles';
 import { useNavigation } from '@react-navigation/native';
