@@ -8,14 +8,13 @@ import { Linking } from "react-native";
 
 
 const Contact = ({item}) => {
-
     const handleMakeCall = () => {
-        if(item?.phone !== '' || item?.phone !== undefined){
+        if(item?.phone !== '' && item?.phone !== undefined){
             Linking.openURL(`tel:${item?.phone}`);
         }else{
             Alert.alert(
                 'Thông báo',
-                'Tài xế này chưa cập nhật số điện thoại',[
+                'Người này chưa cập nhật số điện thoại',[
                     { text: 'Đồng ý' }
                 ],
                 { cancelable: false }
@@ -24,12 +23,12 @@ const Contact = ({item}) => {
     }
 
     const handleMakeCallZalo = () => {
-        if(item?.phone !== '' || item?.phone !== undefined){
+        if(item?.phone !== '' && item?.phone !== undefined){
             Linking.openURL(`https://zalo.me/${item?.phone}`);
         }else{
             Alert.alert(
                 'Thông báo',
-                'Tài xế này chưa cập nhật số điện thoại',[
+                'Người này chưa cập nhật số điện thoại',[
                     { text: 'Đồng ý' }
                 ],
                 { cancelable: false }

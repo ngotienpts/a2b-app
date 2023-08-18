@@ -8,7 +8,7 @@ import { CurrencyDollarIcon, ShieldCheckIcon } from 'react-native-heroicons/outl
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchDetailDriver, fetchListReviewDriver, fetchReviewListEndpoint } from '../../api/DataFetching';
+import { fallbackImage, fetchDetailDriver, fetchListReviewDriver } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
 import MomentComponent from '../moment';

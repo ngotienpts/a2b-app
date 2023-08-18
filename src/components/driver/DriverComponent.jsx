@@ -71,7 +71,6 @@ const DriverComponent = () => {
     const infomationDriver = async () => {
         await fetchListMyCar(contextToken.token)
         .then((data) => {
-            // console.log(data);
             if(data.res === 'success'){
                 setDriver(data.result);
                 setTimeRange(data.result.distane_to_customer)
@@ -87,6 +86,9 @@ const DriverComponent = () => {
                         }
                     })
                 }
+                if(data.result.is_confirmed != 1){
+                    navigationScreenBackOrError('MyCarScreen');
+                }
             }
         })
         .catch((err) => {
@@ -97,32 +99,24 @@ const DriverComponent = () => {
         })
     }
 
-    const findCustomer = () => {
+    const navigationScreenBackOrError = (name = '', item = '') => {
+        contextMap.setMap({
+            start: '',
+            end: ''
+        });
+        navigation.navigate(name,item);
+    }
+
+    const findCustomer =  async () => {
         const item = {
             radius: timeRange,
             price: priceRange,
             isEnabled: isEnabled,
             currentPosition: currentPosition,
         }
-        // updateStatusPrice(!isEnabled ? 0 : 1, priceRange)
-        // updateRoadDriver(timeRange,contextMap.map.end)
-        if(contextMap.map.end || driver?.end_location){
-            // becomeDriver();
-            const nameEnd = driver?.end_location.substring(0,driver?.end_location.indexOf(','));
-            const addressEnd = driver?.end_location.replace(nameEnd + ',','').trim();
-            contextMap.setMap({
-                ...contextMap.map,
-                end: {
-                    coordinates: {
-                        lat: driver?.end_lat,
-                        lng: driver?.end_lng
-                    },
-                    name: nameEnd,
-                    address: addressEnd
-                }
-            })
-            navigation.navigate('DriverFindScreen', item)
-        }else{
+        
+        if(!contextMap.map.end && !driver?.end_location){
+            
             Alert.alert(
                 'Thông báo',
                 'Yêu cầu bạn hãy chọn điểm kết thúc để bắt đầu tìm khách!',
@@ -131,7 +125,35 @@ const DriverComponent = () => {
                 ],
                 { cancelable: false }
             )
-        }
+        }else{
+            if(driver?.end_location && !contextMap.map.end){
+                const nameEnd = driver?.end_location.substring(0,driver?.end_location.indexOf(','));
+                const addressEnd = driver?.end_location.replace(nameEnd + ',','').trim();
+                contextMap.setMap({
+                    ...contextMap.map,
+                    end: {
+                        coordinates: {
+                            lat: driver?.end_lat,
+                            lng: driver?.end_lng
+                        },
+                        name: nameEnd,
+                        address: addressEnd
+                    },
+                    start: {
+                        coordinates: {
+                            lat: await AsyncStorage.getItem('lat'),
+                            lng: await AsyncStorage.getItem('lng'),
+                        },
+                        name: currentPosition.title,
+                        address: currentPosition.address
+                    }
+                })
+            }
+            // becomeDriver();
+            // updateStatusPrice(!isEnabled ? 0 : 1, priceRange)
+            // updateRoadDriver(timeRange,contextMap.map.end)
+            navigation.navigate('DriverFindScreen', item)
+        } 
     }
 
     const updateStatusPrice = async (statusPrice, price) => {
@@ -356,7 +378,7 @@ const DriverComponent = () => {
                         styles.itemsCenter,
                         styles.justifyCenter,
                     ]}
-                    onPress={() => navigation.navigate('HomeScreen')}
+                    onPress={() => navigationScreenBackOrError('HomeScreen')}
                 >
                     <Text style={[styles.fs16, styles.textWhite]}>Trang chủ</Text>
                 </TouchableOpacity>

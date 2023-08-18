@@ -20,8 +20,7 @@ const Result = ({ results, navigation, style, paddingBottom, point }) => {
                 coordinates: item.coordinates
             }
         })
-        // navigation.navigate('Book', {point: 'end'});
-        navigation.goBack();
+        navigation.navigate('Book');
     }
     return (
         <View style={style}>

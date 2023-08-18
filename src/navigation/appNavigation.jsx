@@ -38,6 +38,7 @@ import CancelBookDriverScreen from '../screens/CancelBookDriverScreen';
 import MapScreenStart from '../screens/MapScreenStart';
 import MapProvider from '../redux/mapContext';
 import WifiScreen from '../screens/WifiScreen';
+import CustomerFormProvider from '../redux/customerFormContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -95,57 +96,67 @@ const AppNavigation = () => {
       <MapProvider>
         <NotificationProvider>
           <DetailTripProvider>
-            <BookingFormProvider>
-              <NavigationContainer>
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="WifiScreen" component={WifiScreen} />
-                  <Stack.Screen name="UserScreen" component={UserScreen} />
-                  <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="DriverPickScreen" component={DriverPickScreen} />
-                  <Stack.Screen name="Home" component={HomeStackNavigation} />
-                  <Stack.Screen name="Book" component={BookScreen} />
-                  <Stack.Screen name="DriverScreen" component={DriverScreen} />
-                  <Stack.Screen name="MapScreen" component={MapScreen} />
-                  <Stack.Screen name="MapScreenStart" component={MapScreenStart} />
-                  <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
-                  <Stack.Screen name="FindScreen" component={FindSreen} />
-                  <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
-                  <Stack.Screen name="ConfirmScreen" component={ConfirmScreen} />
-                  <Stack.Screen name="PickScreen" component={PickScreen} />
-                  <Stack.Screen name="MovingScreen" component={MovingScreen} />
-                  <Stack.Screen name="CompleteScreen" component={CompleteScreen} />
-                  <Stack.Screen name="LoadPointsScreen" component={LoadPointsScreen} />
-                  <Stack.Screen name="MyCarScreen" component={MyCarScreen} />
-                  <Stack.Screen
-                    name="VerificationScreen"
-                    component={VerificationScreen}
-                  />
-                  <Stack.Screen name="ShareScreen" component={ShareScreen} />
-                  <Stack.Screen name="AddCoinScreen" component={AddCoinScreen} />
-                  <Stack.Screen name="DriverFindScreen" component={DriverFindScreen} />
-                  <Stack.Screen
-                    name="DriverFindDetailScreen"
-                    component={DriverFindDetailComponent}
-                  />
-                  <Stack.Screen
-                    name="DriverMovingScreen"
-                    component={DriverMovingScreen}
-                  />
-                  <Stack.Screen
-                    name="DriverCompleteScreen"
-                    component={DriverCompleteScreen}
-                  />
-                  <Stack.Screen
-                    name="CancelBookClientScreen"
-                    component={CancelBookClientScreen}
-                  />
-                  <Stack.Screen
-                    name="CancelBookDriverScreen"
-                    component={CancelBookDriverScreen}
-                  />
-                </Stack.Navigator>
-              </NavigationContainer>
-            </BookingFormProvider>
+            <CustomerFormProvider>
+              <BookingFormProvider>
+                <NavigationContainer>
+                  <Stack.Navigator screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="Login" component={LoginScreen} />
+                      <Stack.Screen name="Home" component={HomeStackNavigation} />
+                      <Stack.Screen name="Book" component={BookScreen} />
+                      <Stack.Screen name="DriverScreen" component={DriverScreen} />
+                      <Stack.Screen name="UserScreen" component={UserScreen} />
+                      <Stack.Screen name="WifiScreen" component={WifiScreen} />
+                      <Stack.Screen name="MapScreen" component={MapScreen} />
+                      <Stack.Screen name="MapScreenStart" component={MapScreenStart} />
+                      <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
+                      <Stack.Screen name="FindScreen" component={FindSreen} />
+                      <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
+                      <Stack.Screen name="ConfirmScreen" component={ConfirmScreen} />
+                      <Stack.Screen name="PickScreen" component={PickScreen} />
+                      <Stack.Screen name="MovingScreen" component={MovingScreen} />
+                      <Stack.Screen name="CompleteScreen" component={CompleteScreen} />
+                      <Stack.Screen name="LoadPointsScreen" component={LoadPointsScreen} />
+                      <Stack.Screen name="MyCarScreen" component={MyCarScreen} />
+                      <Stack.Screen name="AddCoinScreen" component={AddCoinScreen} />
+                      <Stack.Screen
+                        name="VerificationScreen"
+                        component={VerificationScreen}
+                      />
+                      <Stack.Screen name="ShareScreen" component={ShareScreen} />
+                      <Stack.Screen name="DriverFindScreen" component={DriverFindScreen} />
+                      <Stack.Screen
+                        name="DriverFindDetailScreen"
+                        component={DriverFindDetailComponent}
+                      />
+                      <Stack.Screen name="DriverPickScreen" component={DriverPickScreen} />
+                      <Stack.Screen
+                        name="DriverMovingScreen"
+                        component={DriverMovingScreen}
+                      />
+                      <Stack.Screen
+                        name="DriverCompleteScreen"
+                        component={DriverCompleteScreen}
+                      />
+                      <Stack.Screen
+                        name="CancelBookClientScreen"
+                        component={CancelBookClientScreen}
+                      />
+                      <Stack.Screen
+                        name="CancelBookDriverScreen"
+                        component={CancelBookDriverScreen}
+                      />
+                      <Stack.Screen
+                        name="CancelClientConfirmScreen"
+                        component={CancelClientConfirmScreen}
+                      />
+                      <Stack.Screen
+                        name="CancelDriverConfirmScreen"
+                        component={CancelDriverConfirmScreen}
+                      />
+                  </Stack.Navigator>
+                </NavigationContainer>
+              </BookingFormProvider>
+            </CustomerFormProvider>
           </DetailTripProvider>
         </NotificationProvider>
       </MapProvider>

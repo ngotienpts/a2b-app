@@ -101,12 +101,12 @@ const BookSelects = ({ context }) => {
     };
     
     useEffect(() => {
-    const fetchData = async () => {
-        const result = await listCateVehicle();
-        setCategoryVehicleList(result);
-    };
-    
-    fetchData();
+        const fetchData = async () => {
+            const result = await listCateVehicle();
+            setCategoryVehicleList(result);
+        };
+        
+        fetchData();
     }, []);
 
     useEffect(() => {

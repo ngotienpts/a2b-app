@@ -17,6 +17,7 @@ import Animated, {
 import { useState } from 'react';
 import { Dimensions } from 'react-native';
 import { ChevronDoubleRightIcon } from 'react-native-heroicons/solid';
+import styles from '../../styles';
 const { width } = Dimensions.get('window');
 const BUTTON_WIDTH = width;
 const BUTTON_HEIGHT = 48;
@@ -32,7 +33,7 @@ class AnimatedChevronDoubleRightIcon extends React.Component {
     }
 }
 
-const ToggleSwipeable = ({ onToggle, primaryColor, secondaryColor, tertiaryColor, title }) => {
+const ToggleSwipeable = ({ onToggle, primaryColor, secondaryColor, tertiaryColor, title, style }) => {
     // Animated value for X translation
     const X = useSharedValue(0);
     // Toggled State
@@ -55,7 +56,7 @@ const ToggleSwipeable = ({ onToggle, primaryColor, secondaryColor, tertiaryColor
             if (ctx.completed) {
                 newValue = H_SWIPE_RANGE + e.translationX;
             } else {
-                newValue = e.translationX;
+                newValue = e.translationX - 80;
             }
 
             if (newValue >= 0 && newValue <= H_SWIPE_RANGE) {
@@ -66,8 +67,9 @@ const ToggleSwipeable = ({ onToggle, primaryColor, secondaryColor, tertiaryColor
             if (X.value < BUTTON_WIDTH / 2 - SWIPEABLE_DIMENSIONS / 2) {
                 X.value = withSpring(0);
                 runOnJS(handleComplete)(false);
+
             } else {
-                X.value = withSpring(H_SWIPE_RANGE);
+                X.value = withSpring(H_SWIPE_RANGE - 80);
                 runOnJS(handleComplete)(true);
             }
         },
@@ -122,32 +124,32 @@ const ToggleSwipeable = ({ onToggle, primaryColor, secondaryColor, tertiaryColor
 
     return (
         <GestureHandlerRootView>
-            <Animated.View style={[styles.swipeCont, AnimatedStyles.swipeCont]}>
+            <Animated.View style={[stylesSwitch.swipeCont, AnimatedStyles.swipeCont, style]}>
                 <AnimatedLinearGradient
-                    style={[AnimatedStyles.colorWave, styles.colorWave]}
+                    style={[AnimatedStyles.colorWave, stylesSwitch.colorWave]}
                     colors={[primaryColor, secondaryColor]}
                     start={{ x: 0.0, y: 0.5 }}
                     end={{ x: 1, y: 0.5 }}
                 />
                 <PanGestureHandler onGestureEvent={animatedGestureHandler}>
-                    <Animated.View style={[styles.swipeable, AnimatedStyles.swipeable]} />
+                    <Animated.View style={[stylesSwitch.swipeable, AnimatedStyles.swipeable]} />
                 </PanGestureHandler>
-                <Animated.View style={[styles.chevronIcon, AnimatedStyles.chevronIcon]}>
+                <Animated.View style={[stylesSwitch.chevronIcon, AnimatedStyles.chevronIcon]}>
                     <AnimatedChevronDoubleRightIcon size={20} color={'gray'} />
                 </Animated.View>
-                <Animated.Text style={[styles.swipeText, AnimatedStyles.swipeText]}>
+                <Animated.Text style={[stylesSwitch.swipeText, AnimatedStyles.swipeText]}>
                     {title}
                 </Animated.Text>
             </Animated.View>
         </GestureHandlerRootView>
     );
 };
-const styles = StyleSheet.create({
+const stylesSwitch = StyleSheet.create({
     swipeCont: {
         height: BUTTON_HEIGHT,
-        width: BUTTON_WIDTH,
+        width: BUTTON_WIDTH - 80,
         backgroundColor: '#161E28',
-        // borderRadius: BUTTON_HEIGHT,
+        borderRadius: BUTTON_HEIGHT,
         padding: BUTTON_PADDING,
         display: 'flex',
         justifyContent: 'center',
@@ -158,7 +160,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         height: BUTTON_HEIGHT,
-        // borderRadius: BUTTON_HEIGHT,
+        borderRadius: BUTTON_HEIGHT,
     },
     swipeable: {
         position: 'absolute',

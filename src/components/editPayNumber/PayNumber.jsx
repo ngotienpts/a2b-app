@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 
-const PayNumber = ({ maxLength, value, label, onChange, style }) => {
+const PayNumber = ({ maxLength, value, label, onChange, style, editable }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [number, setNumber] = useState(value.toString());
     const textInputRef = useRef(null);
@@ -43,6 +43,7 @@ const PayNumber = ({ maxLength, value, label, onChange, style }) => {
                     autoFocus
                     style={style}
                     keyboardType="numeric"
+                    editable={editable}
                 />
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>

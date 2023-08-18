@@ -7,10 +7,9 @@ import Collapsible from 'react-native-collapsible';
 import styles from '../../styles';
 import { format } from 'date-fns';
 
-const FormCustomer = ({ title, tripId, detail, cateVehicle}) => {
+const FormCustomer = ({ title, context}) => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const rotationValue = useState(new Animated.Value(0))[0];
-
     useEffect(() => {
         Animated.timing(rotationValue, {
             toValue: isDropdownVisible ? 1 : 0,
@@ -30,7 +29,7 @@ const FormCustomer = ({ title, tripId, detail, cateVehicle}) => {
                     {title}
                 </Text>
                 <Text style={[styles.fs14, styles.textGray77]}>
-                #{tripId}
+                #{context.customerForm.tripId}
                 </Text>
             </View>
             <View style={[styles.px15]}>
@@ -39,10 +38,10 @@ const FormCustomer = ({ title, tripId, detail, cateVehicle}) => {
                     <StopCircleIcon size={20} color={'white'} style={{ marginTop: 2 }} />
                     <View style={[styles.ml5, styles.flexFull]}>
                         <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                            Vị trí hiện tại: {detail?.start_name}
+                            Vị trí hiện tại: {context?.customerForm.startPoint.start_name}
                         </Text>
                         <Text style={[styles.textGray77, styles.fs15]}>
-                            {detail?.start_location}
+                            {context?.customerForm.startPoint.start}
                         </Text>
                     </View>
                 </View>
@@ -51,10 +50,10 @@ const FormCustomer = ({ title, tripId, detail, cateVehicle}) => {
                     <MapPinIcon size={22} color={'white'} style={{ marginTop: 2 }} />
                     <View style={[styles.ml5, styles.flexFull]}>
                         <Text style={[styles.fs16, styles.fw700, styles.textWhite, styles.mb5]}>
-                           {detail?.end_name}
+                           {context?.customerForm.endPoint.end_name}
                         </Text>
                         <Text style={[styles.textGray77, styles.fs15]}>
-                            {detail?.end_location}   
+                            {context?.customerForm.endPoint.end}   
                         </Text>
                     </View>
                 </View>
@@ -67,9 +66,7 @@ const FormCustomer = ({ title, tripId, detail, cateVehicle}) => {
                                 Loại hình xe
                             </Text>
                             <Text style={[styles.textGray77, styles.fs15]}>
-                                {cateVehicle.map((cate) => (
-                                    cate?.vehicle_category_id == detail?.vehicle_category_id && cate?.category_name
-                                ))}
+                                {context?.customerForm.nameCar}
                             </Text>
                         </View>
                     </View>
@@ -82,31 +79,31 @@ const FormCustomer = ({ title, tripId, detail, cateVehicle}) => {
                                 Thời gian khởi hành
                             </Text>
                             <Text style={[styles.textGray77, styles.fs15]}>
-                                {format(new Date(detail?.start_time), 'dd-MM-yyyy HH:mm')}
+                                {format(new Date(context?.customerForm.startTime), 'dd-MM-yyyy HH:mm')}
                             </Text>
                         </View>
                     </View>
 
                     {/* note */}
                     
-                        <View style={[styles.flexRow, styles.mb24]}>
-                            <PencilIcon size={22} color={'white'} style={{ marginTop: 2 }} />
-                            <View style={[styles.ml5, styles.flexFull]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.textWhite,
-                                        styles.mb5,
-                                    ]}
-                                >
-                                    Ghi chú
-                                </Text>
-                                <Text style={[styles.textGray77, styles.fs15]}>
-                                    {detail?.comment ? detail?.comment : 'Không có'}
-                                </Text>
-                            </View>
+                    <View style={[styles.flexRow, styles.mb24]}>
+                        <PencilIcon size={22} color={'white'} style={{ marginTop: 2 }} />
+                        <View style={[styles.ml5, styles.flexFull]}>
+                            <Text
+                                style={[
+                                    styles.fs16,
+                                    styles.fw700,
+                                    styles.textWhite,
+                                    styles.mb5,
+                                ]}
+                            >
+                                Ghi chú
+                            </Text>
+                            <Text style={[styles.textGray77, styles.fs15]}>
+                                {context?.customerForm.comment ? context?.customerForm.comment : 'Không có'}
+                            </Text>
                         </View>
+                    </View>
 
                 </Collapsible>
 
