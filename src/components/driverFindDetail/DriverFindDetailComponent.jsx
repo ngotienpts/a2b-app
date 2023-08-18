@@ -13,7 +13,7 @@ import {
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchCancelReport, fetchCheckReport, fetchDetailCustomer, fetchDetailTrip, fetchGetOneCategoryVehicle, fetchSendReport } from '../../api/DataFetching';
+import { fallbackImage, fetchCancelReport, fetchCheckReport, fetchDetailCustomer, fetchDetailTrip, fetchGetOneCategoryVehicle, fetchPickUpCustomer, fetchSendReport } from '../../api/DataFetching';
 import PayNumber from '../editPayNumber';
 import { MapContext } from '../../redux/mapContext';
 import FormCustomer from '../formCustomer';
@@ -28,9 +28,7 @@ const DriverFindDetailComponent = () => {
     const { params: item } = useRoute();
     const navigation = useNavigation();
     const [price, setPrice] = useState(0);
-    const [detail, setDetail] = useState(null);
     const [customer, setCustomer] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [isLoadingCustomer, setIsLoadingCustomer] = useState(false);
     const [coords, setCoords] = useState(null);
     const [status, setStatus] = useState(null);
@@ -49,27 +47,10 @@ const DriverFindDetailComponent = () => {
             if(data.res === 'success'){
                 oneCateVehicle(data);
                 detailCustomer(data?.result.user_id)
-                const coordStart = data.result.coordinates_start.split(',');
-                const coordEnd = data.result.coordinates_end.split(',');
-                setCoords({
-                    latStart: coordStart[0],
-                    lngStart: coordStart[1],
-                    latEnd: coordEnd[0],
-                    lngEnd: coordEnd[1]
-                })
-                if(data.result.status_report == 1){
-                    setPrice(parseFloat(data.result.price_report));
-                }else{
-                    setPrice(parseFloat(data.result.price_per_km) * parseFloat(data.result.distance_price))
-                }
-            
             }
         })
         .catch((err) => {
             console.log(err);
-        })
-        .finally(() => {
-            setIsLoading(true);
         })
     }
 
@@ -106,6 +87,19 @@ const DriverFindDetailComponent = () => {
         .then((res) => {
             if(res.res === 'success'){
                 createContext(data,res.result.category_name)
+                const coordStart = data.result.coordinates_start.split(',');
+                const coordEnd = data.result.coordinates_end.split(',');
+                setCoords({
+                    latStart: coordStart[0],
+                    lngStart: coordStart[1],
+                    latEnd: coordEnd[0],
+                    lngEnd: coordEnd[1]
+                })
+                if(data.result.status_report == 1){
+                    setPrice(parseFloat(data.result.price_report));
+                }else{
+                    setPrice(parseFloat(data.result.price_per_km) * parseFloat(data.result.distance_price))
+                }
             }
         })
         .catch((err) => {
@@ -150,7 +144,6 @@ const DriverFindDetailComponent = () => {
             }
             await fetchCancelReport(data, contextToken.token)
             .then((data) => {
-                console.log(data);
                 if(data.res == 'success'){
                     setPrice(0);
                     setStatus(false)
@@ -200,6 +193,19 @@ const DriverFindDetailComponent = () => {
         }
     }
 
+    const handlePickUpCustomer = async () => {
+        navigation.navigate('DriverPickScreen', customer)
+        // fetchPickUpCustomer({
+        //     trip_id: item?.id,
+        //     user_id: customer?.user_id
+        // },contextToken.token)
+        // .then((data) => {
+        //     if(data.res === 'success'){
+        //         navigation.navigate('DriverPickScreen', customer)
+        //     }
+        // })
+    }
+
     useEffect(() => {
         detailTrip();
         checkReport();
@@ -221,7 +227,7 @@ const DriverFindDetailComponent = () => {
                         <FormCustomer context={context} title="Thông tin chuyến đi" />
                     )}
                     {/* khoang cach & thoi gian */}
-                    {isLoading && (
+                    {isLoadingCustomer && (
                         <DistanceInfomation context={context}/>
                     )}
 
@@ -245,7 +251,7 @@ const DriverFindDetailComponent = () => {
                             <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{context?.customerForm.distance} km</Text>
                         </View>
                         {/* bao gia */}
-                        {isLoading && (
+                        {isLoadingCustomer && (
                             <View style={[styles.borderBot5, styles.py10]}>
                                 <View style={[styles.flexBetween, styles.mb15]}>
                                     <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
@@ -397,7 +403,7 @@ const DriverFindDetailComponent = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.navigate('CancelBookDriverScreen')}
+                        onPress={() => navigation.navigate('CancelBookDriverScreen', customer)}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>
@@ -409,7 +415,7 @@ const DriverFindDetailComponent = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.navigate('DriverPickScreen', customer)}
+                        onPress={handlePickUpCustomer}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Đón khách</Text>
                     </TouchableOpacity>

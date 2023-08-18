@@ -55,9 +55,8 @@ const Complete = () => {
     },[])
 
     useEffect(() => {
-        
         const params = {
-            trip_id: 44
+            trip_id: context.bookingForm.eniqueId
         }
         fetchGetOneRate(params,contextToken.token)
         .then((data) => {
@@ -142,9 +141,9 @@ const Complete = () => {
             eniqueId: '',
             startPoint: '',
             endPoint: '',
-            typeCar: '' || 1,
-            nameCar: '' || 'Xe Sedan',
-            departureTime: '' || format(new Date(), 'yyyy-MM-dd HH:mm'),
+            typeCar: '' ,
+            nameCar: '' ,
+            departureTime: '',
             note: '',
             isPunish: 0
         }

@@ -5,7 +5,7 @@ import { MapPinIcon } from 'react-native-heroicons/outline';
 import styles from '../../styles';
 import { MapContext } from '../../redux/mapContext';
 
-const Result = ({ results, navigation, style, paddingBottom, point }) => {
+const Result = ({ results, navigation, style, paddingBottom }) => {
     const handleScroll = () => {
         Keyboard.dismiss();
     };
@@ -20,7 +20,7 @@ const Result = ({ results, navigation, style, paddingBottom, point }) => {
                 coordinates: item.coordinates
             }
         })
-        navigation.navigate('Book');
+        navigation.navigate('Book', item);
     }
     return (
         <View style={style}>

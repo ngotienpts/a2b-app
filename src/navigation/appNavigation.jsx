@@ -35,6 +35,8 @@ import LoadPointsScreen from '../screens/LoadPointsScreen';
 import CancelBookClientScreen from '../screens/CancelBookClientScreen';
 import CancelBookDriverScreen from '../screens/CancelBookDriverScreen';
 import MapScreenStart from '../screens/MapScreenStart';
+import CancelClientConfirmScreen from '../screens/CancelClientConfirmScreen';
+import CancelDriverConfirmScreen from '../screens/CancelDriverConfirmScreen';
 import MapProvider from '../redux/mapContext';
 import CustomerFormProvider from '../redux/customerFormContext';
 
@@ -140,6 +142,14 @@ const AppNavigation = () => {
                     <Stack.Screen
                       name="CancelBookDriverScreen"
                       component={CancelBookDriverScreen}
+                    />
+                    <Stack.Screen
+                      name="CancelClientConfirmScreen"
+                      component={CancelClientConfirmScreen}
+                    />
+                    <Stack.Screen
+                      name="CancelDriverConfirmScreen"
+                      component={CancelDriverConfirmScreen}
                     />
                   </Stack.Navigator>
                 </NavigationContainer>

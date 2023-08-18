@@ -13,7 +13,7 @@ import {
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchReviewListEndpoint } from '../../api/DataFetching';
+import { fallbackImage, fetchReviewListEndpoint, fetchSuccessTrip } from '../../api/DataFetching';
 import MomentComponent from '../moment';
 import ToggleSwipeable from '../toggleSwiperable';
 import FormCustomer from '../formCustomer';
@@ -22,9 +22,11 @@ import Contact from '../contact';
 import SpreadSheet from '../spreadSheet';
 import DistanceInfomation from '../distanceInfomation/DistanceInfomation';
 import ReviewCustomer from '../reviewCustomer';
+import { TokenContext } from '../../redux/tokenContext';
 
 const DriverMovingComponent = () => {
     const context = useContext(CustomerFormContext);
+    const contextToken = useContext(TokenContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
     const [toggleStateBtn, setToggleStateBtn] = useState(false);
@@ -34,7 +36,14 @@ const DriverMovingComponent = () => {
 
     useEffect(() => {
         if (toggleStateBtn) {
-            navigation.navigate('DriverCompleteScreen', item);
+            fetchSuccessTrip({
+                trip_id: context.customeForm.tripId
+            },contextToken.token)
+            .then((data) => {
+                if(data.res === 'success'){
+                    navigation.navigate('DriverCompleteScreen', item);
+                }
+            })
         }
     }, [toggleStateBtn, navigation]);
 

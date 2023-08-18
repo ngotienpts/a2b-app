@@ -12,22 +12,12 @@ import NextPageSetting from './NextPageSetting';
 import { dataGender } from '../../constants';
 import ChoseImage from './ChoseImage';
 import { TokenContext } from '../../redux/tokenContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Setting = () => {
     const navigation = useNavigation();
-    const apiName = 'Nguyen Van A';
-    const apiBirthday = '2023-05-12';
-    const apiPhoneNumber = '0912345678';
-    const apiLinkFb = 'mr.otthanh';
-    const apiMyCar = 'Volvo S90';
-    const apiBankAccount = '1111222233334444';
-    const apiBankName = 'Techcombank';
-    const apiNameBankAccount = 'NGUYEN VAN A';
-    const img = 'https://media.a2b.vn/user/2023/05/12/khanhhoang-093520.jpg';
     const regex = /\d/;
     const base64Regex = /^data:image\/jpeg;base64/;
-
-    const [settingData, setSettingData] = useState([]);
     const [avatar, setAvatar] = useState('');
     const [name, setName] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState(null);
@@ -140,10 +130,13 @@ const Setting = () => {
             }
         })
         .finally(() => setloading(false))
-        // console.log(base64Regex.test(avatar));
-        // console.log(avatar);
     }
-    // console.log(bankAccount);
+
+    const handleLogout = async () => {
+        contextToken.setToken({});
+        navigation.navigate('Login');
+    }
+
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
@@ -378,7 +371,7 @@ const Setting = () => {
                 </TouchableOpacity>
             </View>
                     {/* log out */}
-                    <TouchableOpacity style={[styles.flexCenter, styles.mb24]}>
+                    <TouchableOpacity onPress={handleLogout} style={[styles.flexCenter, styles.mb24]}>
                         <View style={[styles.my24]}>
                             <Text style={[styles.fs16, styles.textCenter, styles.textRedE8]}>
                                 Đăng xuất
