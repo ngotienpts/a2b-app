@@ -98,6 +98,15 @@ const AppNavigation = () => {
             <BookingFormProvider>
               <NavigationContainer>
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="AddCoinScreen" component={AddCoinScreen} />
+                  <Stack.Screen
+                    name="CancelBookDriverScreen"
+                    component={CancelBookDriverScreen}
+                  />
+                  <Stack.Screen
+                    name="CancelBookClientScreen"
+                    component={CancelBookClientScreen}
+                  />
                   <Stack.Screen name="WifiScreen" component={WifiScreen} />
                   <Stack.Screen name="UserScreen" component={UserScreen} />
                   <Stack.Screen name="Login" component={LoginScreen} />
@@ -121,7 +130,6 @@ const AppNavigation = () => {
                     component={VerificationScreen}
                   />
                   <Stack.Screen name="ShareScreen" component={ShareScreen} />
-                  <Stack.Screen name="AddCoinScreen" component={AddCoinScreen} />
                   <Stack.Screen name="DriverFindScreen" component={DriverFindScreen} />
                   <Stack.Screen
                     name="DriverFindDetailScreen"
@@ -134,14 +142,6 @@ const AppNavigation = () => {
                   <Stack.Screen
                     name="DriverCompleteScreen"
                     component={DriverCompleteScreen}
-                  />
-                  <Stack.Screen
-                    name="CancelBookClientScreen"
-                    component={CancelBookClientScreen}
-                  />
-                  <Stack.Screen
-                    name="CancelBookDriverScreen"
-                    component={CancelBookDriverScreen}
                   />
                 </Stack.Navigator>
               </NavigationContainer>
