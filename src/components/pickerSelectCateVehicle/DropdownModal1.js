@@ -10,10 +10,6 @@ const DropdownModal1 = ({ style, data, selectedName, onChangeDropdown }) => {
     const [selectedItem, setSelectedItem] = useState(
         () => selectedName.length > 0 ? selectedName : (data.length > 0 ? data[0].category_name : '')
     );
-    // console.log('123', data.map((item, index) => (item.category_name))[0]);
-    // useEffect(() => {
-        // console.log('name: ',data.length);
-    // },[]);
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -30,10 +26,10 @@ const DropdownModal1 = ({ style, data, selectedName, onChangeDropdown }) => {
     const maxHeight = Dimensions.get('window').height * 0.7;
 
     return (
-        <View>
+        <View style={[styles.flexFull]}>
             {/* Button to open the modal */}
             <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Text style={style}>{selectedItem}</Text>
+                <Text style={[styles.flexFull,styles.textWhite, styles.fs16, styles.lh24,styles.textRight]}>{selectedItem}</Text>
             </TouchableOpacity>
 
             {/* Modal */}

@@ -194,16 +194,16 @@ const DriverFindDetailComponent = () => {
     }
 
     const handlePickUpCustomer = async () => {
-        navigation.navigate('DriverPickScreen', customer)
-        // fetchPickUpCustomer({
-        //     trip_id: item?.id,
-        //     user_id: customer?.user_id
-        // },contextToken.token)
-        // .then((data) => {
-        //     if(data.res === 'success'){
-        //         navigation.navigate('DriverPickScreen', customer)
-        //     }
-        // })
+        // navigation.navigate('DriverPickScreen', customer)
+        fetchPickUpCustomer({
+            trip_id: item?.id,
+            user_id: customer?.user_id
+        },contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                navigation.navigate('DriverPickScreen', customer)
+            }
+        })
     }
 
     useEffect(() => {

@@ -27,7 +27,7 @@ const NumberSetting = ({ maxLength, value, label, suffixes, pay, onChangeText })
     };
 
     return (
-        <View>
+        <View style={[styles.flexFull]}>
             {isEditing ? (
                 <TextInput
                     ref={textInputRef}
@@ -36,13 +36,13 @@ const NumberSetting = ({ maxLength, value, label, suffixes, pay, onChangeText })
                     onChangeText={onChangeText}
                     onBlur={handleSave}
                     autoFocus
-                    style={[styles.textWhite, styles.fs16, styles.lh24]}
+                    style={[styles.textWhite, styles.fs16, styles.lh24,styles.textRight]}
                     keyboardType="numeric"
                 />
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
-                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
-                        {text} {suffixes}
+                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400,styles.textRight]}>
+                        {text ? text : '...'} {suffixes}
                     </Text>
                 </TouchableOpacity>
             )}

@@ -1,13 +1,17 @@
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import styles from '../../styles';
 
 const BankNumberSetting = ({ label, maxLength, value, onChangeText }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [bankAccount, setBankAccount] = useState(value ? value : '');
+    const [bankAccount, setBankAccount] = useState('');
     const textInputRef = useRef(null);
     const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        setBankAccount(value ? value : '');
+    }, [value]);
 
     const formatStringWithDash = (inputString) => {
         const numbersOnly = inputString.replace(/[^0-9]/g, '');
@@ -33,7 +37,7 @@ const BankNumberSetting = ({ label, maxLength, value, onChangeText }) => {
     };
 
     return (
-        <View>
+        <View style={[styles.flexFull]}>
             {isEditing || isFirstRender.current ? (
                 <TextInput
                     ref={textInputRef}
@@ -42,12 +46,12 @@ const BankNumberSetting = ({ label, maxLength, value, onChangeText }) => {
                     keyboardType="numeric"
                     maxLength={maxLength}
                     onBlur={handleBlur} // Thêm hàm xử lý khi TextInput mất focus
-                    style={[styles.textWhite, styles.fs16, styles.lh24]}
+                    style={[styles.textWhite, styles.fs16, styles.lh24, styles.textRight]}
                 />
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
-                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
-                        {formatStringWithDash(bankAccount)}
+                    <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400, styles.textRight]}>
+                        {bankAccount ? formatStringWithDash(bankAccount) : '...'}
                     </Text>
                 </TouchableOpacity>
             )}

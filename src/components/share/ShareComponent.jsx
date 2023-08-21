@@ -19,7 +19,7 @@ const ShareComponent = () => {
             <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
-                <Header navigation={navigation} title="Nạp điểm" />
+                <Header navigation={navigation} title="Chia sẻ" />
 
                 {/* body */}
                 <ScrollView

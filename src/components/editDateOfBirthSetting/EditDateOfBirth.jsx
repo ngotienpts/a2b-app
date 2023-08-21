@@ -28,7 +28,7 @@ const EditDateOfBirth = ({ label, initialValue, onDateChange }) => {
     };
 
     return (
-        <View>
+        <View style={[styles.flexFull]}>
             {isEditing ? (
                 <DateTimePicker
                     value={date !== '' ? date : undefined}
@@ -39,7 +39,7 @@ const EditDateOfBirth = ({ label, initialValue, onDateChange }) => {
             ) : (
                 <TouchableOpacity onPress={handleToggleEdit}>
                     {date !== '' && (
-                        <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400]}>
+                        <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.fw400,styles.textRight]}>
                             {format(date, 'dd/MM/yyyy')}
                         </Text>
                     )}
