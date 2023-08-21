@@ -8,7 +8,7 @@ import { CurrencyDollarIcon, ShieldCheckIcon } from 'react-native-heroicons/outl
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchDetailDriver, fetchListReviewDriver, fetchReviewListEndpoint } from '../../api/DataFetching';
+import { fallbackImage, fetchBookACar, fetchDetailDriver, fetchListReviewDriver } from '../../api/DataFetching';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import SentFormBooking from '../sentFormBooking';
 import MomentComponent from '../moment';
@@ -17,6 +17,7 @@ import { DetailTripContext } from '../../redux/detailTripContext';
 import { MapContext } from '../../redux/mapContext';
 import { filterReview } from '../../constants';
 import { Dimensions } from 'react-native';
+import { Alert } from 'react-native';
 
 const FindDetail = () => {
     const context = useContext(BookingFormContext);
@@ -28,7 +29,6 @@ const FindDetail = () => {
     const [reviewDriver, setReviewDriver] = useState([]);
     const [detailDriver, setDetailDriver] = useState([]);
     const [rateCount, setRateCount] = useState(0);
-    const [filter, setFilter] = useState('rate_id');
     const [loading, setLoading] = useState(false);
     const [loadingReview, setLoadingReview] = useState(false);
     const isFocused = useIsFocused();
@@ -99,6 +99,28 @@ const FindDetail = () => {
         setSelectItem(title);
         setModalVisible(false);
         getReviewList(item?.driver_id,name,filter)
+    }
+
+    const handleBookACar = async () => {
+        const data = {
+            trip_id: context?.bookingForm.eniqueId,
+            driver_id: item?.driver_id
+        }
+        await fetchBookACar(data,contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                navigation.navigate('ConfirmScreen', detailDriver)
+            }else{
+                Alert.alert(
+                    'Thông báo',
+                    data.status,
+                    [
+                        { text: 'Đồng ý' }
+                    ],
+                    { cancelable: false }
+                )
+            }
+        })
     }
     
     useEffect(() => {
@@ -438,7 +460,7 @@ const FindDetail = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.navigate('ConfirmScreen', detailDriver)}
+                        onPress={handleBookACar}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Đặt chuyến</Text>
                     </TouchableOpacity>

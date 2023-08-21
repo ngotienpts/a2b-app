@@ -7,6 +7,7 @@ import styles from '../../styles';
 import Header from '../header/Header';
 import { fallbackImage, fetchGetUserProfile, fetchUpdateImageIdentify } from '../../api/DataFetching';
 import ChoseImage from '../settings/ChoseImage';
+import { TokenContext } from '../../redux/tokenContext';
 
 const VerificationComponent = () => {
     const img = 'https://media.a2b.vn/user/2023/05/12/khanhhoang-093520.jpg';
@@ -18,6 +19,7 @@ const VerificationComponent = () => {
     const [profileData, setProfileData] = useState([]);
     const [loading, setloading] = useState(true);
     const base64Regex = /^data:image\/jpeg;base64/;
+    const contextToken = useContext(TokenContext);
 
     const handleImageChange1 = useCallback((newValue) => {
         setImage1(newValue);
@@ -29,15 +31,23 @@ const VerificationComponent = () => {
 
     useEffect(() => {
         getProfileData();
-    },[])
+    }, [])
 
     useEffect(() => {
         setImage1(profileData?.cccd_image);
         setImage2(profileData?.cccd_image2);
-    },[profileData])
+    }, [profileData])
 
     const getProfileData = () => {
-        fetchGetUserProfile('79ee7846612b106c445826c19')
+        // fetchGetUserProfile('79ee7846612b106c445826c19')
+        //     .then((data) => {
+        //         if (data.res == 'success') {
+        //             setProfileData(data.result);
+        //         }
+        //     })
+        //     .finally(() => setloading(false))
+
+        fetchGetUserProfile(contextToken.token)
             .then((data) => {
                 if (data.res == 'success') {
                     setProfileData(data.result);
@@ -50,18 +60,30 @@ const VerificationComponent = () => {
         fetchUpdateImageIdentify({
             front_image: base64Regex.test(image1) ? image1 : '',
             behind_image: base64Regex.test(image2) ? image2 : ''
-        },'79ee7846612b106c445826c19')
-        .then((data) => {
-            console.log(data);
-            if(data.res === 'success'){
+            // }, '79ee7846612b106c445826c19')
+            //     .then((data) => {
+            //         console.log(data);
+            //         if (data.res === 'success') {
+            //             console.log(data);
+            //             Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK', onPress: navigation.navigate('UserScreen') }])
+            //             // navigation.navigate('MyCarScreen');
+            //         } else {
+            //             Alert.alert('Thất bại', 'Ảnh đã được cập nhật trước đó', [{ text: 'OK' }])
+            //         }
+            //     })
+            //     .finally(() => setloading(false))
+        }, contextToken.token)
+            .then((data) => {
                 console.log(data);
-                Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK', onPress: navigation.navigate('UserScreen')}])
-                // navigation.navigate('MyCarScreen');
-            }else{
-                Alert.alert('Thất bại', 'Ảnh đã được cập nhật trước đó', [{ text: 'OK' }])
-            }
-        })
-        .finally(() => setloading(false))
+                if (data.res === 'success') {
+                    console.log(data);
+                    Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK', onPress: navigation.navigate('UserScreen') }])
+                    // navigation.navigate('MyCarScreen');
+                } else {
+                    Alert.alert('Thất bại', 'Ảnh đã được cập nhật trước đó', [{ text: 'OK' }])
+                }
+            })
+            .finally(() => setloading(false))
     }
 
     return (

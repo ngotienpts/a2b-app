@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, SectionList } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { MapPinIcon } from 'react-native-heroicons/outline';
-import { StopCircleIcon } from 'react-native-heroicons/solid';
+import { StopCircleIcon, CheckCircleIcon } from 'react-native-heroicons/solid';
 
 import styles from '../../styles';
 import { fetchListHistoryPassenger } from '../../api/DataFetching';
@@ -23,7 +23,6 @@ const PassengerTab = () => {
         fetchListHistoryPassenger(contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
-                // console.log(data.result);
                 // setPassengers(data.result);
                 setHistoryPassengers(data.result);
             }
@@ -104,11 +103,32 @@ const PassengerTab = () => {
                                             <TouchableOpacity
                                                 key={item?.trip_id}
                                             >
-                                                <View style={[styles.flexRow, styles.mb5]}>
+                                                <View style={[styles.flexStart, styles.mb5]}>
+                                                    <CheckCircleIcon 
+                                                        size={20}
+                                                        color={
+                                                            item?.color_status === 'status--danger' ? '#E8424A' : (item?.color_status === 'status--success' ? '#2F9881' : '#FFB848')
+                                                        }
+                                                        
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            styles.fs16,
+                                                            styles.fw700,
+                                                            item?.color_status === 'status--danger' ? styles.textRedE8 : 
+                                                            (item?.color_status === 'status--success' ? styles.textCyan2F : styles.textYellow),
+                                                            styles.mb5,
+                                                            styles.ml5,
+                                                            styles.flexFull,
+                                                        ]}
+                                                    >
+                                                        {item?.status}
+                                                    </Text>
+                                                </View>
+                                                <View style={[styles.flexStart, styles.mb5]}>
                                                     <StopCircleIcon
                                                         size={20}
                                                         color={'white'}
-                                                        style={{ marginTop: 2 }}
                                                     />
                                                     <Text
                                                         style={[
@@ -123,8 +143,8 @@ const PassengerTab = () => {
                                                         {item?.start_location}
                                                     </Text>
                                                 </View>
-                                                <View style={[styles.flexRow]}>
-                                                    <MapPinIcon size={22} color={'white'} style={{ marginTop: 2 }} />
+                                                <View style={[styles.flexStart]}>
+                                                    <MapPinIcon size={22} color={'white'} style={{marginTop: -2}} />
                                                     <Text
                                                         style={[
                                                             styles.fs16,

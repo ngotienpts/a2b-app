@@ -13,6 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import styles from '../../styles';
 import { fetchListCategoryVehicle } from '../../api/DataFetching';
+import { debounce } from 'lodash';
 
 const BookSelects = ({ context }) => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -101,12 +102,12 @@ const BookSelects = ({ context }) => {
     };
     
     useEffect(() => {
-    const fetchData = async () => {
-        const result = await listCateVehicle();
-        setCategoryVehicleList(result);
-    };
-    
-    fetchData();
+        const fetchData = async () => {
+            const result = await listCateVehicle();
+            setCategoryVehicleList(result);
+        };
+        
+        fetchData();
     }, []);
 
     useEffect(() => {
@@ -170,6 +171,10 @@ const BookSelects = ({ context }) => {
     const showTimePicker = () => {
         setShowPickerTime(true);
     };
+
+    const handleChangeValue = useCallback(debounce((newVal) => {
+        setTimeRange(newVal);
+    },100), [])
 
     useEffect(() => {
         context.setBookingForm({
@@ -323,9 +328,7 @@ const BookSelects = ({ context }) => {
                                     minimumValue={10}
                                     maximumValue={120}
                                     step={10}
-                                    onValueChange={(newValue) => {
-                                        setTimeRange(newValue);
-                                    }}
+                                    onValueChange={handleChangeValue}
                                     value={timeRange}
                                     minimumTrackTintColor="#FFFFFF"
                                     maximumTrackTintColor="rgba(255, 255, 255, 0.50)"

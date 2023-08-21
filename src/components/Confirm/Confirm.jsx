@@ -249,7 +249,7 @@ const Confirm = () => {
                             styles.border4,
                             styles.mx15,
                         ]}
-                        onPress={() => navigation.navigate('CancelBookClientScreen')}
+                        onPress={() => navigation.navigate('CancelBookClientScreen', item)}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>

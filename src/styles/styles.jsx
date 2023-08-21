@@ -25,6 +25,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-end',
     },
+    flexStart: {
+        flexDirection: 'row',
+        alignItems: 'flex-start'
+    },
+    flexStart2: {
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
     flexBaseLine: {
         flexDirection: 'row',
         alignItems: 'baseline',
@@ -607,6 +617,50 @@ const styles = StyleSheet.create({
     },
     mr24: {
         marginRight: 24,
+    },
+    /*-------------------------------------------------------------------------- */
+    p30: {
+        padding: 30,
+    },
+    px30: {
+        paddingHorizontal: 30,
+    },
+    py30: {
+        paddingVertical: 30,
+    },
+    pt30: {
+        paddingTop: 30,
+    },
+    pb30: {
+        paddingBottom: 30,
+    },
+    pl30: {
+        paddingLeft: 30,
+    },
+    pr30: {
+        paddingRight: 30,
+    },
+
+    m30: {
+        margin: 30,
+    },
+    mx30: {
+        marginHorizontal: 30,
+    },
+    my30: {
+        marginVertical: 30,
+    },
+    mt30: {
+        marginTop: 30,
+    },
+    mb30: {
+        marginBottom: 30,
+    },
+    ml30: {
+        marginLeft: 30,
+    },
+    mr30: {
+        marginRight: 30,
     },
     /*-------------------------------------------------------------------------- */
     p50: {

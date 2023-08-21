@@ -13,53 +13,39 @@ import {
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchReviewListEndpoint } from '../../api/DataFetching';
-import { BookingFormContext } from '../../redux/bookingFormContext';
-import SentFormBooking from '../sentFormBooking';
+import { fallbackImage, fetchReviewListEndpoint, fetchSuccessTrip } from '../../api/DataFetching';
 import MomentComponent from '../moment';
 import ToggleSwipeable from '../toggleSwiperable';
+import FormCustomer from '../formCustomer';
+import { CustomerFormContext } from '../../redux/customerFormContext';
+import Contact from '../contact';
+import SpreadSheet from '../spreadSheet';
+import DistanceInfomation from '../distanceInfomation/DistanceInfomation';
+import ReviewCustomer from '../reviewCustomer';
+import { TokenContext } from '../../redux/tokenContext';
 
 const DriverMovingComponent = () => {
-    const context = useContext(BookingFormContext);
+    const context = useContext(CustomerFormContext);
+    const contextToken = useContext(TokenContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
-    const [reviewDriver, setReviewDriver] = useState([]);
     const [toggleStateBtn, setToggleStateBtn] = useState(false);
     const handleToggleBtn = (value, item) => {
         return setToggleStateBtn(value);
     };
 
-    const getReviewList = async (id) => {
-        const data = await fetchReviewListEndpoint(id);
-        if (data && data.result.list) setReviewDriver(data.result.list);
-    };
-
-    const StarsDisplay = ({ value }) => {
-        const starCount = 5;
-
-        return (
-            <View style={[styles.flexRow, styles.itemsCenter]}>
-                {[...Array(starCount)].map((_, index) => (
-                    <StarIcon
-                        key={index}
-                        size={12}
-                        color={index < value ? 'white' : undefined}
-                        stroke={index < value ? undefined : 'white'}
-                    />
-                ))}
-            </View>
-        );
-    };
-
     useEffect(() => {
         if (toggleStateBtn) {
-            navigation.navigate('DriverCompleteScreen', item);
+            fetchSuccessTrip({
+                trip_id: context.customeForm.tripId
+            },contextToken.token)
+            .then((data) => {
+                if(data.res === 'success'){
+                    navigation.navigate('DriverCompleteScreen', item);
+                }
+            })
         }
     }, [toggleStateBtn, navigation]);
-
-    useEffect(() => {
-        getReviewList(item.id);
-    }, [item]);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -73,176 +59,12 @@ const DriverMovingComponent = () => {
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                 >
-                    <SentFormBooking context={context} title="Thông tin chuyến đi" />
+                    <FormCustomer context={context} title="Thông tin chuyến đi"/>
                     {/* khoang cach & thoi gian */}
-                    <View
-                        style={[
-                            styles.mb24,
-                            styles.py15,
-                            styles.border1,
-                            styles.borderTop,
-                            styles.borderBot,
-                            styles.flexRow,
-                        ]}
-                    >
-                        <View
-                            style={[
-                                styles.flexFull,
-                                styles.justifyBetween,
-                                styles.itemsCenter,
-                                styles.borderRight,
-                                styles.borderSolid,
-                            ]}
-                        >
-                            <Text
-                                style={[
-                                    styles.fs16,
-                                    styles.textGray77,
-                                    styles.lh24,
-                                    styles.textCenter,
-                                ]}
-                            >
-                                Quãng đường
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexRow,
-                                    styles.justifyCenter,
-                                    styles.itemsCenter,
-                                    styles.pt20,
-                                ]}
-                            >
-                                <Text style={[styles.fs42, styles.textWhite, { lineHeight: 42 }]}>
-                                    30
-                                </Text>
-                                <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>km</Text>
-                            </View>
-                        </View>
-                        <View
-                            style={[
-                                styles.flexFull,
-                                styles.justifyBetween,
-                                styles.itemsCenter,
-                                styles.borderRight,
-                                styles.borderSolid,
-                            ]}
-                        >
-                            <Text
-                                style={[
-                                    styles.fs16,
-                                    styles.textGray77,
-                                    styles.lh24,
-                                    styles.textCenter,
-                                ]}
-                            >
-                                Thời gian
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexRow,
-                                    styles.justifyCenter,
-                                    styles.itemsCenter,
-                                    styles.pt20,
-                                ]}
-                            >
-                                <Text
-                                    style={[
-                                        styles.fs42,
-                                        styles.textWhite,
-                                        { lineHeight: 42, includeFontPadding: false },
-                                    ]}
-                                >
-                                    15
-                                </Text>
-                                <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
-                            </View>
-                        </View>
-                        <View style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
-                            <Text
-                                style={[
-                                    styles.fs16,
-                                    styles.textGray77,
-                                    styles.lh24,
-                                    styles.textCenter,
-                                ]}
-                            >
-                                Google map
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.bgGray161,
-                                    styles.mt20,
-                                    { width: 73, height: 42 },
-                                ]}
-                            >
-                                <ArrowUturnRightIcon size={25} color={'white'} />
-                            </View>
-                        </View>
-                    </View>
+                    <DistanceInfomation context={context}/>
 
                     {/* bang tinh */}
-                    <View style={[styles.bgWhite, styles.p15]}>
-                        <Text style={[styles.fs27, styles.lh32, styles.fw400, styles.mb15]}>
-                            Bảng tính
-                        </Text>
-                        {/* thoi gian du tinh */}
-                        <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                Thời gian dự tính
-                            </Text>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>45 phút</Text>
-                        </View>
-                        {/* khoang cach */}
-                        <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                Khoảng cách
-                            </Text>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>30 km</Text>
-                        </View>
-                        {/* bao gia */}
-                        <View style={[styles.borderBot5, styles.py10]}>
-                            <View style={[styles.flexBetween, styles.mb15]}>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                    Báo giá (VNĐ)
-                                </Text>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw700]}>21.000</Text>
-                            </View>
-                        </View>
-                        {/* so du diem */}
-                        <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
-                            <View style={[styles.flexRow, styles.itemsCenter]}>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                    Số dư điểm
-                                </Text>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px10,
-                                        styles.flexCenter,
-                                        styles.ml10,
-                                    ]}
-                                >
-                                    <Text style={[styles.textWhite, styles.fs12, styles.lh20]}>
-                                        Nạp
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>30K</Text>
-                        </View>
-                        {/* phi nen tang */}
-                        <View style={[styles.py10]}>
-                            <View style={[styles.flexBetween]}>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                    Phí nền tảng (3%)
-                                </Text>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>- 6K</Text>
-                            </View>
-                            <Text style={[styles.fs12, styles.fw400, styles.textGray77]}>
-                                (Trừ sau khi kết thúc chuyến đi)
-                            </Text>
-                        </View>
-                    </View>
+                    <SpreadSheet context={context}/>
 
                     {/* thông tin tài xế */}
                     <View
@@ -263,7 +85,7 @@ const DriverMovingComponent = () => {
                         <View style={[styles.flexColumn, styles.itemsCenter, styles.mb20]}>
                             {/* avatar */}
                             <Image
-                                source={{ uri: item?.image_driver || fallbackImage }}
+                                source={{ uri: item?.image || fallbackImage }}
                                 style={[
                                     styles.mb15,
                                     { width: 120, height: 120, borderRadius: 999 },
@@ -280,9 +102,9 @@ const DriverMovingComponent = () => {
                                         styles.lh24,
                                     ]}
                                 >
-                                    {item?.name_driver}
+                                    {item?.fullname}
                                 </Text>
-                                {item?.protected && (
+                                {item?.is_confirmed == 1 && (
                                     <View style={[styles.pl10]}>
                                         <ShieldCheckIcon size={16} color={'white'} />
                                     </View>
@@ -290,152 +112,26 @@ const DriverMovingComponent = () => {
                             </View>
 
                             {/* đánh sao*/}
-                            {item?.star && (
+                            {item?.average_rates.toString() && (
                                 <View style={[styles.flexRow, styles.itemsCenter]}>
                                     <StarIcon size={'16'} color={'white'} />
                                     <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
-                                        {item?.star}
+                                        {item?.average_rates.toString()}
                                     </Text>
                                 </View>
                             )}
                         </View>
 
                         {/* contact */}
-                        <View style={[styles.flexCenter, styles.mb24]}>
-                            {/* phone */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgCyan2F,
-                                    styles.borderLeftTop4,
-                                    styles.borderLeftBot4,
-                                ]}
-                            >
-                                <PhoneIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Gọi
-                                </Text>
-                            </View>
-                            {/* facebook */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgBlue237,
-                                ]}
-                            >
-                                <ChatBubbleOvalLeftIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Facebook
-                                </Text>
-                            </View>
-                            {/* zalo */}
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.px12,
-                                    styles.py5,
-                                    styles.bgBlue009,
-                                    styles.borderRightTop4,
-                                    styles.borderRightBot4,
-                                ]}
-                            >
-                                <PhoneIcon size={16} color={'white'} />
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.fw400,
-                                        styles.ml5,
-                                    ]}
-                                >
-                                    Zalo
-                                </Text>
-                            </View>
-                        </View>
+                        <Contact item={item}/>
 
                         {/* đánh giá */}
-                        <View style={[styles.px15, styles.pb60]}>
-                            {/* header */}
-                            <View style={[styles.flexBetween, styles.mb24]}>
-                                <Text
-                                    style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.lh24,
-                                    ]}
-                                >
-                                    Đánh giá (99)
-                                </Text>
-                                <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
-                                    Mới nhất
-                                </Text>
-                            </View>
-
-                            {/* many reviews */}
-                            {reviewDriver.map((item) => (
-                                <View key={item.rate_id} style={[styles.flexRow, styles.mb24]}>
-                                    <Image
-                                        source={{ uri: item?.image || fallbackImage }}
-                                        style={{ width: 52, height: 52, borderRadius: 999 }}
-                                        resizeMode="cover"
-                                    />
-                                    <View style={[styles.pl10, styles.flexFull]}>
-                                        <Text
-                                            style={[
-                                                styles.textWhite,
-                                                styles.fs16,
-                                                styles.lh24,
-                                                styles.fw400,
-                                            ]}
-                                        >
-                                            {item?.name}: {item?.comment}
-                                        </Text>
-                                        <View
-                                            style={[styles.flexRow, styles.itemsCenter, styles.mt5]}
-                                        >
-                                            <StarsDisplay value={item?.star} />
-                                            <MomentComponent
-                                                style={[
-                                                    styles.textGray77,
-                                                    styles.fs14,
-                                                    styles.lh24,
-                                                    styles.fw400,
-                                                    styles.ml15,
-                                                ]}
-                                                timeString={item?.created_at}
-                                            />
-                                        </View>
-                                    </View>
-                                </View>
-                            ))}
-                        </View>
+                        <ReviewCustomer />
                     </View>
                 </ScrollView>
 
                 {/* buttom  ket thuc chuyen di*/}
-                <View style={[styles.flexRow, styles.bgBlack]}>
+                <View style={[styles.flexRow, styles.bgBlack, styles.flexCenter]}>
                     <ToggleSwipeable
                         onToggle={handleToggleBtn}
                         title={'Kết thúc chuyến đi'}

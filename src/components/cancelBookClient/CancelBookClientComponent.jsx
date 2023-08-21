@@ -1,47 +1,76 @@
 import { View, Text, TouchableOpacity, StatusBar, FlatList } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { RadioButton } from 'react-native-paper';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import styles from '../../styles';
-import Header from '../header/Header';
 import { cancelBookClient } from '../../constants';
+import { fetchCancelTrip } from '../../api/DataFetching';
+import { BookingFormContext } from '../../redux/bookingFormContext';
+import { TokenContext } from '../../redux/tokenContext';
+import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
+import { format } from 'date-fns';
+
 
 const CancelBookClientComponent = () => {
     const navigation = useNavigation();
-    const [selectedId, setSelectedId] = useState(0);
-    const handleRadioChange = (id) => {
-        setSelectedId(id === selectedId ? -1 : id);
+    const {params: item} = useRoute();
+    const [selectedName, setSelectedName] = useState('Có việc bận đột xuất');
+    const context = useContext(BookingFormContext);
+    const contextToken = useContext(TokenContext);
+    const handleRadioChange = (val) => {
+        setSelectedName(val === selectedName ? '' : val);
     };
+    const handleCancelTrip = () => {
+        const reason = 'Khách hàng hủy vì lý do: '+selectedName+' (Thời gian hủy: '+format(new Date(), 'HH:mm dd/MM/yyyy')+')';
+        if(item !== undefined){
+            item.reason = reason;
+            navigation.navigate('CancelClientConfirmScreen', item);
+        }else{
+            navigation.navigate('CancelClientConfirmScreen', reason);
+        }
+        // fetchCancelTrip({
+        //     trip_id: 83,
+        //     reason: 'Khách hàng hủy vì lý do: '+selectedName,
+        //     is_driver: 0
+        // }, contextToken.token)
+        // .then((data) => {
+        //     if(data.res === 'success'){
+        //         if(item !== undefined){
+        //             item.reason = reason;
+        //             navigation.navigate('CancelClientConfirmScreen', item);
+        //         }else{
+        //             navigation.navigate('CancelClientConfirmScreen', reason);
+        //         }
+        //     }
+        // })
+    }
 
     const renderItem = (item) => {
         return (
-            <TouchableOpacity
-                onPress={() => handleRadioChange(item.id)}
-                style={[styles.flexRow, styles.mb24]}
+            <RadioButtonGroup
+                containerStyle={{flexDirection: 'row',  marginBottom: 24}}
+                selected={selectedName}
+                onSelected={(value) => handleRadioChange(value)}
+                radioBackground="white"
             >
-                <RadioButton
-                    value={item.id}
-                    status={selectedId === item.id ? 'checked' : 'unchecked'}
-                    onPress={() => handleRadioChange(item.id)}
-                    color="white"
-                />
-                <View style={[styles.ml5]}>
-                    <Text
-                        style={[
-                            styles.textWhite,
-                            styles.fs16,
-                            styles.fw700,
-                            styles.lh24,
-                            styles.mb5,
-                        ]}
-                    >
-                        {item.title}
-                    </Text>
-                    <Text style={[styles.textGray77, styles.fs15, styles.fw400]}>{item.des}</Text>
-                </View>
-            </TouchableOpacity>
+                <RadioButtonItem value={item.title} label={
+                    <View style={{marginLeft: 15}}>
+                        <Text
+                            style={[
+                                styles.textWhite,
+                                styles.fs16,
+                                styles.fw700,
+                                styles.lh24,
+                                styles.mb5,
+                            ]}
+                        >
+                            {item.title}
+                        </Text>
+                        <Text style={[styles.textGray77, styles.fs15, styles.fw400]}>{item.des}</Text>
+                    </View>
+                } />
+            </RadioButtonGroup>
         );
     };
 
@@ -93,7 +122,7 @@ const CancelBookClientComponent = () => {
                             styles.itemsCenter,
                             styles.justifyCenter,
                         ]}
-                        onPress={() => navigation.navigate('HomeScreen')}
+                        onPress={handleCancelTrip}
                     >
                         <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
                     </TouchableOpacity>

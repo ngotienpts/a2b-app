@@ -14,7 +14,7 @@ import {
     ViewfinderCircleIcon,
 } from 'react-native-heroicons/outline';
 import { Image } from 'react-native';
-import { fallbackImage, fetchFindCustomer } from '../../api/DataFetching';
+import { fallbackImage, fetchFindCustomer, fetchTurnOffDriver } from '../../api/DataFetching';
 import { CircleFade } from 'react-native-animated-spinkit';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import { MapContext } from '../../redux/mapContext';
@@ -25,7 +25,6 @@ import { format } from 'date-fns';
 const DriverFind = () => {
     const navigation = useNavigation();
     const {params: item} = useRoute();
-    const context = useContext(BookingFormContext);
     const contextToken = useContext(TokenContext);
     const contextMap = useContext(MapContext);
     const [customers, setCustomers] = useState(null);
@@ -35,14 +34,14 @@ const DriverFind = () => {
         findCustomer();
     },[])
 
-    // useInterval(() => {
-    //     findCustomer();
-    // },10000,true)
+    useInterval(() => {
+        findCustomer();
+    },60000,true)
 
     const findCustomer = async () => {
         await fetchFindCustomer(contextToken.token)
         .then((data) => {
-            console.log(data);
+            console.log('render');
             if(data.res === 'success'){
                 setCustomers(data.result)
             }
@@ -52,6 +51,15 @@ const DriverFind = () => {
         })
         .finally(() => {
             setIsLoading(true);
+        })
+    }
+
+    const handleTurnOffDriver = async () => {
+        fetchTurnOffDriver(contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                navigation.goBack();
+            }
         })
     }
 
@@ -328,6 +336,7 @@ const DriverFind = () => {
                         styles.itemsCenter,
                         styles.justifyCenter,
                     ]}
+                    onPress={handleTurnOffDriver}
                 >
                     <Text style={[styles.fs16, styles.textWhite]}>Tắt nhận chuyến</Text>
                 </TouchableOpacity>

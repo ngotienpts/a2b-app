@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions, Alert } from 'react-native';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
@@ -7,6 +7,7 @@ import styles from '../../styles';
 import Header from '../header/Header';
 import PersonalInfoItem from '../settings/PersonalInfoItem';
 import { fallbackImage, fetchListMyCar, fetchGetOneCategoryVehicle, fetchListCategoryVehicle, fetchUpdateWifi } from '../../api/DataFetching';
+import { TokenContext } from '../../redux/tokenContext';
 import * as Notifications from 'expo-notifications';
 
 
@@ -61,7 +62,8 @@ const Wifi = () => {
   const [ListMyCar, setListMyCar] = useState([]);
   const [wifiName, setWifiName] = useState(null);
   const [wifiPass, setWifiPass] = useState(null);
-  const [loading, setloading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const contextToken = useContext(TokenContext);
 
   const HandleWifiNameChange = useCallback((newValue) => {
     setWifiName(newValue);
@@ -97,27 +99,28 @@ const Wifi = () => {
   // console.log(Notifications.getNotificationChannelAsync('123'));
 
   const showMyCar = () => {
-    fetchListMyCar('79ee7846612b106c445826c19')
+    // fetchListMyCar('79ee7846612b106c445826c19')
+    fetchListMyCar(contextToken.token)
       .then((data) => {
         if (data.res == 'success') {
           setListMyCar(data.result)
         }
       })
-      .finally(() => setloading(false))
+      .finally(() => setLoading(false))
   }
 
   const updateWifi = () => {
     fetchUpdateWifi({
       name: wifiName ? wifiName : '',
       pass: wifiPass ? wifiPass : '',
-    }, '79ee7846612b106c445826c19')
+    // }, '79ee7846612b106c445826c19')
+  }, contextToken.token)
       .then((data) => {
         if (data.res === 'success') {
-          console.log(data);
-          Alert.alert('Thành công', 'Cập nhật Wifi thành công!', [{ text: 'OK' }])
+          Alert.alert('Thành công', 'Cập nhật Wifi thành công!', [{ text: 'Đồng ý' }])
         }
       })
-      .finally(() => setloading(false))
+      .finally(() => setLoading(false))
     // console.log(CarType == 0 ? ListMyCar?.vehicle_category_id : CarType);
   }
   // console.log('1'+ new Date('2023-05-12'));

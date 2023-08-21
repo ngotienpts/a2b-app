@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Alert } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -28,7 +28,7 @@ const Home = () => {
     showProfile();
     historySearch();
     listNotification();
-  }, []) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
+  }, [context.token]) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
 
   const listNotification = () => {
     let params = {}
@@ -75,24 +75,43 @@ const Home = () => {
       } else if (Platform.OS === 'ios') {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-          console.log('Bạn chưa bật GPS');
+          Alert.alert(
+            'Thông báo',
+            'Điện thoại này không hỗ trợ định vị!',
+            [
+              { text: 'Đồng ý' }
+            ],
+            { cancelable: false }
+          );
           return false;
         }
       }
 
       let { coords } = await Location.getCurrentPositionAsync({});
-      await AsyncStorage.setItem('lat', coords.latitude.toString());
-      await AsyncStorage.setItem('lng', coords.longitude.toString());
+      if(coords){
+        await AsyncStorage.setItem('lat', coords.latitude.toString());
+        await AsyncStorage.setItem('lng', coords.longitude.toString());
+      }
 
-    }
-    catch (error) {
-      console.error('Lỗi khi lấy vị trí:', error);
+    } catch (error) {
+      Alert.alert(
+        'Thông báo',
+        'Lỗi lấy vị trí!',
+        [
+          { text: 'Đồng ý' }
+        ],
+        { cancelable: false }
+      );
       return false;
     }
   };
 
   useEffect(() => {
-    requestLocationService();
+    // const interval = setInterval(requestLocationService, 120000);
+    requestLocationService()
+    // return () => {
+    //   clearInterval(interval);
+    // };
   }, []);
 
   const showProfile = () => {
