@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, useWindowDimensions, TouchableOpacity, Text, Animated, StatusBar } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styles from '../../styles';
 import Header from '../header';
 import TransactionTab from './TransactionTab';
@@ -64,8 +64,9 @@ const renderTabBar = (props) => {
 const DiaryComponent = () => {
     const layout = useWindowDimensions();
     const navigation = useNavigation();
+    const { params: item } = useRoute();
 
-    const [index, setIndex] = useState(1); // đặt tab đươc active mặc định ban đầu là 1
+    const [index, setIndex] = useState(item !== undefined ? item.data : 1); // đặt tab đươc active mặc định ban đầu là 1
     const [routes] = useState([
         { key: 'first', title: 'Hành khách' },
         { key: 'second', title: 'Tài xế' },

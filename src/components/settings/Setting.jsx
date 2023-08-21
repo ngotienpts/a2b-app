@@ -195,7 +195,7 @@ const Setting = () => {
                                         styles.h32,
                                         styles.flexCenter,
                                     ]}
-                                    onPress={() => navigation.navigate('DiaryScreen')}
+                                    onPress={() => navigation.navigate('DiaryScreen',{data:2})}
                                 >
                                     <Text
                                         style={[
