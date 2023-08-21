@@ -23,27 +23,28 @@ const CancelBookClientComponent = () => {
     };
     const handleCancelTrip = () => {
         const reason = 'Khách hàng hủy vì lý do: '+selectedName+' (Thời gian hủy: '+format(new Date(), 'HH:mm dd/MM/yyyy')+')';
-        if(item !== undefined){
-            item.reason = reason;
-            navigation.navigate('CancelClientConfirmScreen', item);
-        }else{
-            navigation.navigate('CancelClientConfirmScreen', reason);
-        }
-        // fetchCancelTrip({
-        //     trip_id: 83,
-        //     reason: 'Khách hàng hủy vì lý do: '+selectedName,
-        //     is_driver: 0
-        // }, contextToken.token)
-        // .then((data) => {
-        //     if(data.res === 'success'){
-        //         if(item !== undefined){
-        //             item.reason = reason;
-        //             navigation.navigate('CancelClientConfirmScreen', item);
-        //         }else{
-        //             navigation.navigate('CancelClientConfirmScreen', reason);
-        //         }
-        //     }
-        // })
+        // if(item !== undefined){
+        //     item.reason = reason;
+        //     navigation.navigate('CancelClientConfirmScreen', item);
+        // }else{
+        //     navigation.navigate('CancelClientConfirmScreen', reason);
+        // }
+        fetchCancelTrip({
+            trip_id: context.bookingForm.eniqueId,
+            reason: 'Khách hàng hủy vì lý do: '+selectedName,
+            is_driver: 0
+        }, contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                // console.log(data);
+                if(item !== undefined){
+                    item.reason = reason;
+                    navigation.navigate('CancelClientConfirmScreen', item);
+                }else{
+                    navigation.navigate('CancelClientConfirmScreen', reason);
+                }
+            }
+        })
     }
 
     const renderItem = (item) => {

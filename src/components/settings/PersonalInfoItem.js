@@ -99,14 +99,14 @@ const PersonalInfoItem = ({
                     <PhoneNumberInput label={label} value={value} onValueChange={onValueChange} />
                 );
             case 'Url_Fb':
-                return linkFb ? (
+                return (
                     <EditTextComponent
                         label={label}
                         value={value}
                         onChangeText={onChangeText}
                         maxLength={20}
                     />
-                ) : null;
+                );
             case 'myCar':
                 return (
                     <EditTextComponent

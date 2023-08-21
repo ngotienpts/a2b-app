@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, StatusBar, Alert } from 'react-native';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
