@@ -164,6 +164,12 @@ const Setting = () => {
         console.log(avatar);
     }
     // console.log(contextToken.token);
+
+    const handleLogout = async () => {
+        contextToken.setToken({});
+        navigation.navigate('Login');
+    }
+
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
@@ -400,7 +406,7 @@ const Setting = () => {
                             </TouchableOpacity>
                         </View>
                         {/* log out */}
-                        <TouchableOpacity style={[styles.flexCenter, styles.mb24]}>
+                        <TouchableOpacity onPress={handleLogout} style={[styles.flexCenter, styles.mb24]}>
                             <View style={[styles.my24]}>
                                 <Text style={[styles.fs16, styles.textCenter, styles.textRedE8]}>
                                     Đăng xuất
