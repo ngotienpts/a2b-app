@@ -4,7 +4,7 @@ import { ShieldCheckIcon, StarIcon, XMarkIcon } from "react-native-heroicons/sol
 import { fallbackImage } from "../../api/DataFetching";
 import styles from "../../styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { BookingFormContext } from "../../redux/bookingFormContext";
 import { MapContext } from "../../redux/mapContext";
 import SentFormBooking from "../sentFormBooking";
@@ -33,6 +33,12 @@ const CancelClientConfirmCompoment = () => {
             isPunish: 0
         })
     }
+
+    useEffect(() => {
+        if(item?.is_notify == 1){
+            
+        }
+    })
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>

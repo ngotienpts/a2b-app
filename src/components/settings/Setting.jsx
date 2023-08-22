@@ -12,6 +12,8 @@ import NextPageSetting from './NextPageSetting';
 import { dataGender } from '../../constants';
 import ChoseImage from './ChoseImage';
 import { TokenContext } from '../../redux/tokenContext';
+import Skenleton from '../skeleton/Skenleton';
+import { Dimensions } from 'react-native';
 
 const Setting = () => {
     const navigation = useNavigation();
@@ -43,6 +45,7 @@ const Setting = () => {
     const [userProfile, setUserProfile] = useState({});
     const [loading, setloading] = useState(true)
     const contextToken = useContext(TokenContext);
+    const cardWidth = Dimensions.get("window").width * 0.8;
 
     const handleAvaterChange = (newValue) => {
         setAvatar(newValue);
@@ -107,14 +110,6 @@ const Setting = () => {
             .finally(() => setloading(false))
     }
 
-    // const getUserProfile = () => {
-        // fetchGetUserProfile('79ee7846612b106c445826c19')
-        //     .then((data) => {
-        //         if (data.res == 'success') {
-        //             setUserProfile(data.result);
-        //         }
-        //     })
-        //     .finally(() => setloading(false))
     const getUserProfile = () => {
         fetchGetUserProfile(contextToken.token)
         .then((data) => {
@@ -136,18 +131,6 @@ const Setting = () => {
             bank_number: bankAccount.replace(/-/g, ''),
             bank_id: regex.test(bankName) ? bankName : '',
             bank_name: nameBankAccount,
-        // }, '79ee7846612b106c445826c19')
-        //     .then((data) => {
-        //         if (data.res === 'success') {
-        //             console.log(data);
-        //             Alert.alert('Thành công', 'Cập nhật thành công!', [{ text: 'OK' }])
-        //             // navigation.navigate('DriverScreen');
-        //         }
-        //         else {
-        //             alert(data.status.fullname || data.status.birthday || data.status.phone || data.status.bankId || data.status.bankName || data.status.bankNumber || data.status.image)
-        //         }
-        //     })
-        //     .finally(() => setloading(false))
         },contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
@@ -163,6 +146,11 @@ const Setting = () => {
         console.log(base64Regex.test(avatar));
         console.log(avatar);
     }
+
+    const handleLogout = async () => {
+        contextToken.setToken({});
+        navigation.navigate('Login');
+    }
     // console.log(contextToken.token);
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -170,7 +158,33 @@ const Setting = () => {
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Tài khoản" />
-                {loading ? (<Text>Đang lấy dữ liệu...</Text>) : (
+                {loading ? (
+                    <View style={{
+                        flex: 1,
+                        backgroundColor: "#000",
+                    }}>
+                        <Skenleton height={142} width={cardWidth + 80} style={{marginTop: 10, backgroundColor: '#0C1116',flex: 'flex-end'}} />
+                        <View style={{
+                          backgroundColor: "#000",
+                          alignItems: "center",
+                        }}>
+                          <Skenleton height={114} width={cardWidth - 217} 
+                            style={{
+                              marginTop: 30, 
+                              borderRadius: 100,
+                              backgroundColor: '#0C1116'
+                            }} 
+                          />
+                        </View>
+                        <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
+                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
+                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
+                        <Skenleton height={50} width={cardWidth + 80} style={{marginBottom: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
+                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
+                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
+                        <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
+                    </View>
+                ) : (
                     /* body */
                     <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
                         {/* top */}
@@ -195,7 +209,7 @@ const Setting = () => {
                                         styles.h32,
                                         styles.flexCenter,
                                     ]}
-                                    onPress={() => navigation.navigate('DiaryScreen')}
+                                    onPress={() => navigation.navigate('DiaryScreen',{data:2})}
                                 >
                                     <Text
                                         style={[
@@ -400,7 +414,7 @@ const Setting = () => {
                             </TouchableOpacity>
                         </View>
                         {/* log out */}
-                        <TouchableOpacity style={[styles.flexCenter, styles.mb24]}>
+                        <TouchableOpacity style={[styles.flexCenter, styles.mb24]} onPress={handleLogout}>
                             <View style={[styles.my24]}>
                                 <Text style={[styles.fs16, styles.textCenter, styles.textRedE8]}>
                                     Đăng xuất

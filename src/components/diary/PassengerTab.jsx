@@ -7,6 +7,9 @@ import styles from '../../styles';
 import { fetchListHistoryPassenger } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import moment from 'moment';
+import { waiting } from '../../constants';
+import { Dimensions } from 'react-native';
+import Skenleton from '../skeleton/Skenleton';
 
 const PassengerTab = () => {
     const today = moment().startOf('day');
@@ -18,6 +21,7 @@ const PassengerTab = () => {
     const [passengers, setPassengers] = useState({});
     const [loading, setLoading] = useState(false);
     const contextToken = useContext(TokenContext);
+    const cardWidth = Dimensions.get("window").width * 0.8;
 
     const listPassenger = () => {
         fetchListHistoryPassenger(contextToken.token)
@@ -89,9 +93,8 @@ const PassengerTab = () => {
     return (
         <View>
             {/* section */}
-            {loading && 
-            <View>
-                {/* {passengers.map((passenger, index) => ( */}
+            {loading ? (
+                <View>
                     <View style={[styles.pb50]}>
                         {passengers.length !== undefined && 
                             <SectionList
@@ -180,9 +183,39 @@ const PassengerTab = () => {
                             />
                         }
                     </View>
-                {/* ))} */}
-            </View>
-            }
+                </View>
+            ) : (
+                <View>
+                    {waiting.map((val) => (
+                        <View key={val.id} style={[styles.card, {width: cardWidth + 80, marginBottom: 10}]}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                            <CheckCircleIcon 
+                                size={20}
+                                color={'#777D92'}
+                                style={{marginTop: 5, marginRight: 10}}
+                            />
+                            <Skenleton height={16} width={cardWidth - 181} style={{marginTop: 10, alignItems: 'flex-end'}} />
+                            </View>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                            <StopCircleIcon 
+                                size={20}
+                                color={'#777D92'}
+                                style={{marginTop: 10, marginRight: 10}}
+                            />
+                            <Skenleton height={16} width={cardWidth - 30} style={{marginTop: 10, alignItems: 'flex-end'}} />
+                            </View>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginBottom: 5}}>
+                            <MapPinIcon 
+                                size={20}
+                                color={'#777D92'}
+                                style={{marginTop: 10, marginRight: 10}}
+                            />
+                            <Skenleton height={16} width={cardWidth - 30} s={{marginTop: 10, alignItems: 'flex-end'}} />
+                            </View>
+                        </View>
+                    ))}
+                </View>
+            )}
         </View>
     );
 };

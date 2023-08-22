@@ -22,7 +22,7 @@ const AddCoinComponent = () => {
     const [userProfile, setUserProfile] = useState([]);
     const [loading, setloading] = useState(true)
 
-    const context = useContext(BookingFormContext);
+    const contextToken = useContext(TokenContext);
     const navigation = useNavigation();
     const { width } = Dimensions.get('window');
     const img = 'https://api.beta-a2b.work/bank/970416/194433359.svg?c=A2B-UID';

@@ -8,6 +8,9 @@ import moment from 'moment';
 import { fetchListHistoryDriver } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import { SectionList } from 'react-native';
+import { Dimensions } from 'react-native';
+import { waiting } from '../../constants';
+import Skenleton from '../skeleton/Skenleton';
 
 const DriverTab = () => {
     const today = moment().startOf('day');
@@ -19,6 +22,7 @@ const DriverTab = () => {
     const [drivers, setDrivers] = useState({});
     const [loading, setLoading] = useState(false);
     const contextToken = useContext(TokenContext);
+    const cardWidth = Dimensions.get("window").width * 0.8;
 
     const listDrivers = () => {
         fetchListHistoryDriver(contextToken.token)
@@ -93,80 +97,97 @@ const DriverTab = () => {
     return (
         <View>
             {/* section */}
-            {loading && 
-            <View>
-                <View style={[styles.pb50]}>
-                    {drivers.length !== undefined ? 
-                        (
-                        <SectionList
-                            sections={drivers}
-                            keyExtractor={(item, index) => item.trip_id}
-                            renderItem={({item}) => (
-                                <View>    
-                                    <View style={[styles.bg161e, styles.p15, styles.mb15]}>
-                                        <TouchableOpacity
-                                            key={item?.trip_id}
-                                        >
-                                            <View style={[styles.flexStart, styles.mb5]}>
-                                                <CheckCircleIcon
-                                                    size={20}
-                                                    color={
-                                                        item?.color_status === 'status--danger' ? '#E8424A' : (item?.color_status === 'status--success' ? '#2F9881' : '#FFB848')
-                                                    }
-                                                    
-                                                />
-                                                <Text
-                                                    style={[
-                                                        styles.fs16,
-                                                        styles.fw700,
-                                                        item?.color_status === 'status--danger' ? styles.textRedE8 : 
-                                                        (item?.color_status === 'status--success' ? styles.textCyan2F : styles.textYellow),
-                                                        styles.mb5,
-                                                        styles.ml5,
-                                                        styles.flexFull,
-                                                    ]}
-                                                >
-                                                    {item?.status}
-                                                </Text>
-                                            </View>
-                                            <View style={[styles.flexStart, styles.mb5]}>
-                                                <StopCircleIcon
-                                                    size={20}
-                                                    color={'white'}
-                                                />
-                                                <Text
-                                                    style={[
-                                                        styles.fs16,
-                                                        styles.fw700,
-                                                        styles.textWhite,
-                                                        styles.mb5,
-                                                        styles.ml5,
-                                                        styles.flexFull,
-                                                    ]}
-                                                >
-                                                    {item?.start_location}
-                                                </Text>
-                                            </View>
-                                            <View style={[styles.flexRow]}>
-                                                <MapPinIcon size={22} color={'white'} style={{ marginTop: -2 }} />
-                                                <Text
-                                                    style={[
-                                                        styles.fs16,
-                                                        styles.fw700,
-                                                        styles.textWhite,
-                                                        styles.mb5,
-                                                        styles.ml5,
-                                                        styles.flexFull,
-                                                    ]}
-                                                >
-                                                    {item?.end_location}
-                                                </Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View> 
-                                </View>
-                            )}
-                            renderSectionHeader={({section: {title}}) => (
+            {loading ? (
+                <View>
+                    <View style={[styles.pb50]}>
+                        {drivers.length !== undefined ? 
+                            (
+                            <SectionList
+                                sections={drivers}
+                                keyExtractor={(item, index) => item.trip_id}
+                                renderItem={({item}) => (
+                                    <View>    
+                                        <View style={[styles.bg161e, styles.p15, styles.mb15]}>
+                                            <TouchableOpacity
+                                                key={item?.trip_id}
+                                            >
+                                                <View style={[styles.flexStart, styles.mb5]}>
+                                                    <CheckCircleIcon
+                                                        size={20}
+                                                        color={
+                                                            item?.color_status === 'status--danger' ? '#E8424A' : (item?.color_status === 'status--success' ? '#2F9881' : '#FFB848')
+                                                        }
+                                                        
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            styles.fs16,
+                                                            styles.fw700,
+                                                            item?.color_status === 'status--danger' ? styles.textRedE8 : 
+                                                            (item?.color_status === 'status--success' ? styles.textCyan2F : styles.textYellow),
+                                                            styles.mb5,
+                                                            styles.ml5,
+                                                            styles.flexFull,
+                                                        ]}
+                                                    >
+                                                        {item?.status}
+                                                    </Text>
+                                                </View>
+                                                <View style={[styles.flexStart, styles.mb5]}>
+                                                    <StopCircleIcon
+                                                        size={20}
+                                                        color={'white'}
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            styles.fs16,
+                                                            styles.fw700,
+                                                            styles.textWhite,
+                                                            styles.mb5,
+                                                            styles.ml5,
+                                                            styles.flexFull,
+                                                        ]}
+                                                    >
+                                                        {item?.start_location}
+                                                    </Text>
+                                                </View>
+                                                <View style={[styles.flexRow]}>
+                                                    <MapPinIcon size={22} color={'white'} style={{ marginTop: -2 }} />
+                                                    <Text
+                                                        style={[
+                                                            styles.fs16,
+                                                            styles.fw700,
+                                                            styles.textWhite,
+                                                            styles.mb5,
+                                                            styles.ml5,
+                                                            styles.flexFull,
+                                                        ]}
+                                                    >
+                                                        {item?.end_location}
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View> 
+                                    </View>
+                                )}
+                                renderSectionHeader={({section: {title}}) => (
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.fw400,
+                                            styles.lh24,
+                                            styles.px15,
+                                            styles.mb15,
+                                        ]}
+                                    >
+                                        {title}
+                                    </Text>
+                                )}
+                                stickySectionHeadersEnabled={false}
+                            />
+                            ) : (
+                            <View style={[styles.px10, styles.py10, styles.mb12]}>
                                 <Text
                                     style={[
                                         styles.textWhite,
@@ -177,31 +198,45 @@ const DriverTab = () => {
                                         styles.mb15,
                                     ]}
                                 >
-                                    {title}
+                                    Không có lịch sử nào
                                 </Text>
-                            )}
-                            stickySectionHeadersEnabled={false}
-                        />
-                        ) : (
-                        <View style={[styles.px10, styles.py10, styles.mb12]}>
-                            <Text
-                                style={[
-                                    styles.textWhite,
-                                    styles.fs16,
-                                    styles.fw400,
-                                    styles.lh24,
-                                    styles.px15,
-                                    styles.mb15,
-                                ]}
-                            >
-                                Không có lịch sử nào
-                            </Text>
-                        </View>
-                        )
-                    }
+                            </View>
+                            )
+                        }
+                    </View>
                 </View>
-            </View>
-            }
+            ) : (
+                <View>
+                    {waiting.map((val) => (
+                        <View key={val.id} style={[styles.card, {width: cardWidth + 80, marginBottom: 10}]}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                            <CheckCircleIcon 
+                                size={20}
+                                color={'#777D92'}
+                                style={{marginTop: 5, marginRight: 10}}
+                            />
+                            <Skenleton height={16} width={cardWidth - 181} style={{marginTop: 10, alignItems: 'flex-end'}} />
+                            </View>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                            <StopCircleIcon 
+                                size={20}
+                                color={'#777D92'}
+                                style={{marginTop: 10, marginRight: 10}}
+                            />
+                            <Skenleton height={16} width={cardWidth - 30} style={{marginTop: 10, alignItems: 'flex-end'}} />
+                            </View>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginBottom: 5}}>
+                            <MapPinIcon 
+                                size={20}
+                                color={'#777D92'}
+                                style={{marginTop: 10, marginRight: 10}}
+                            />
+                            <Skenleton height={16} width={cardWidth - 30} s={{marginTop: 10, alignItems: 'flex-end'}} />
+                            </View>
+                        </View>
+                    ))}
+                </View>
+            )}
         </View>
     );
 };

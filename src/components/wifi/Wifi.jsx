@@ -65,6 +65,7 @@ const Wifi = () => {
   const [loading, setLoading] = useState(true);
   const contextToken = useContext(TokenContext);
 
+
   const HandleWifiNameChange = useCallback((newValue) => {
     setWifiName(newValue);
   }, []);

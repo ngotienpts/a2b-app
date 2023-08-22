@@ -7,7 +7,7 @@ import Collapsible from 'react-native-collapsible';
 import styles from '../../styles';
 import { format } from 'date-fns';
 
-const FormCustomer = ({ title, context}) => {
+const FormCustomer = ({ title, context, tripId}) => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const rotationValue = useState(new Animated.Value(0))[0];
     useEffect(() => {
@@ -29,7 +29,7 @@ const FormCustomer = ({ title, context}) => {
                     {title}
                 </Text>
                 <Text style={[styles.fs14, styles.textGray77]}>
-                #{context.customerForm.tripId}
+                #{context.customerForm.tripId ? context.customerForm.tripId : tripId}
                 </Text>
             </View>
             <View style={[styles.px15]}>

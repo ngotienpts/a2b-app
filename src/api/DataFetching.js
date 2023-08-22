@@ -287,3 +287,8 @@ export const fetchCancelTrip = (data,token) => {
     const cancelTrip = `${baseUrl}/${token}/trip/cancel`;
     return postApi(cancelTrip,data);
 }
+//lay vi tri cua tai xe
+export const fetchGetLocationDriver = (params) => {
+    const getLocationDriver = `${baseUrl}/1/vehicle/location`;
+    return apiCall(getLocationDriver,params);
+}

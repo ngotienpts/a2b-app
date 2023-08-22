@@ -20,6 +20,8 @@ import SentFormBooking from '../sentFormBooking/SentFormBooking';
 import { DetailTripContext } from '../../redux/detailTripContext';
 import { TokenContext } from '../../redux/tokenContext';
 import { MapContext } from '../../redux/mapContext';
+import { Dimensions } from 'react-native';
+import { waiting } from '../../constants';
 
 
 const FindComponent = () => {
@@ -34,6 +36,8 @@ const FindComponent = () => {
     const [isUnmounted, setIsUnmounted] = useState(false);
     const isFocused = useIsFocused();
     const navigation = useNavigation();
+    const cardWidth = Dimensions.get("window").width * 0.8;
+
     const {params: item} = useRoute();
     const paramsTrip = {
         trip_id: item?.id
@@ -251,7 +255,7 @@ const FindComponent = () => {
                         </Text>
 
                         {/* list */}
-                        {loading && 
+                        {loading ? (
                             <View>
                                 {reports.length !== undefined && reports.map((item) => (
                                     <TouchableOpacity
@@ -365,7 +369,22 @@ const FindComponent = () => {
                                     </TouchableOpacity>
                                 ))}
                             </View>
-                        }
+                        ) : (
+                            <View>
+                                {waiting.map((val) => (
+                                    <View key={val?.id} style={[styles.card, {width: cardWidth + 80, marginBottom: 10}]}>
+                                        <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
+                                        <Skenleton height={75} width={cardWidth - 198} style={{marginRight: 10, alignItems: 'flex-end'}}/>
+                                        <View>
+                                            <Skenleton height={16} width={cardWidth - 145} style={{marginTop: 4, alignItems: 'flex-end'}} />
+                                            <Skenleton height={16} width={cardWidth - 145} style={{marginTop: 10, alignItems: 'flex-end'}} />
+                                            <Skenleton height={16} width={cardWidth - 145} style={{marginTop: 10, alignItems: 'flex-end'}} />
+                                        </View>
+                                        </View>
+                                    </View>
+                                ))}
+                            </View>
+                        )}
                     </View>
 
                     {/* tắt thông báo */}

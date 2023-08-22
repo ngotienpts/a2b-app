@@ -37,7 +37,7 @@ const DriverMovingComponent = () => {
     useEffect(() => {
         if (toggleStateBtn) {
             fetchSuccessTrip({
-                trip_id: context.customeForm.tripId
+                trip_id: context.customerForm.tripId
             },contextToken.token)
             .then((data) => {
                 if(data.res === 'success'){
