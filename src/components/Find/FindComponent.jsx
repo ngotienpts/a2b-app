@@ -58,20 +58,21 @@ const FindComponent = () => {
     // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
         if (!isUnmounted) {
             // Gọi API hoặc tác vụ khác...
-            detailTrip(paramsTrip)
+            detailTrip(paramsTrip,item?.isFlag)
             listReport(paramsTrip)
         }
     }, [isUnmounted]); 
     
     useEffect(() => {
         // Truyền giá trị từ context vào biến local
-        detailTrip(paramsTrip)
+        detailTrip(paramsTrip,item?.isFlag)
         listReport(paramsTrip)
         automaticQuote(paramsTrip);
     }, []);
 
     const automaticQuote = async (paramsTrip) => {
         await fetchAutomaticQuote(paramsTrip, contextToken.token)
+        // await fetchAutomaticQuote(paramsTrip, 'e1358385819f12b01db7990c1')
         .then((data) => {
             if(data.res === 'success'){
                 listReport(paramsTrip);
@@ -82,8 +83,9 @@ const FindComponent = () => {
         })
     }
 
-    const detailTrip = async (paramsTrip) => {
+    const detailTrip = async (paramsTrip, isFlag = 0) => {
         await fetchDetailTrip(paramsTrip,contextToken.token)
+        // await fetchDetailTrip(paramsTrip,'e1358385819f12b01db7990c1')
         .then((data) => {
             if(data.res === 'success'){
                 setDetail(data.result);
@@ -92,6 +94,34 @@ const FindComponent = () => {
                     duration: data.result.duration_all,
                     distance: data.result.distance_all
                 })
+
+                if(isFlag){
+                    context.setBookingForm({
+                        ...context.bookingForm,
+                        eniqueId: data?.result.trip_id,
+                        startPoint: {
+                            start_name: data?.result.start_name,
+                            start: data?.result.start_location,
+                            coordinates: {
+                                lat: data?.result.coordinates_start.split(',')[0],
+                                lng: data?.result.coordinates_start.split(',')[1],
+                            }
+                        },
+                        endPoint: {
+                            name: data?.result.end_name,
+                            address: data?.result.end_location,
+                            coordinates: {
+                                lat: data?.result.coordinates_end.split(',')[0],
+                                lng: data?.result.coordinates_end.split(',')[1],
+                            }
+                        },
+                        typeCar: data?.result.vehicle_category_id,
+                        nameCar: data?.result.name_category,
+                        departureTime: data?.result.start_time,
+                        note: data?.result.comment,
+                        isPunish: data?.result.is_punish
+                    })
+                }
             }
         })
         .catch((err) => {
@@ -104,6 +134,7 @@ const FindComponent = () => {
 
     const listReport = async (paramsTrip) => {
         await fetchListReport(paramsTrip,contextToken.token)
+        // await fetchListReport(paramsTrip,'e1358385819f12b01db7990c1')
         .then((data) => {
             if(data.res === 'success'){
                 setReports(data.result);

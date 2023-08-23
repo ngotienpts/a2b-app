@@ -13,7 +13,6 @@ import { Dimensions } from 'react-native';
 import { Square2StackIcon } from 'react-native-heroicons/outline';
 import { fetchGetUserProfile } from '../../api/DataFetching'
 import { TokenContext } from '../../redux/tokenContext';
-
 const AddCoinComponent = () => {
     useEffect(() => {
         getUserProfile();
@@ -74,6 +73,7 @@ const AddCoinComponent = () => {
     };
 
     const getUserProfile = () => {
+        // fetchGetUserProfile('79ee7846612b106c445826c19')
         fetchGetUserProfile(contextToken.token)
             .then((data) => {
                 if (data.res == 'success') {

@@ -4,14 +4,17 @@ import { MapPinIcon } from 'react-native-heroicons/outline';
 import { StopCircleIcon, CheckCircleIcon } from 'react-native-heroicons/solid';
 
 import styles from '../../styles';
-import { fetchListHistoryPassenger } from '../../api/DataFetching';
+import { fetchListHistoryPassenger, fetchDetailDriver } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import moment from 'moment';
 import { waiting } from '../../constants';
 import { Dimensions } from 'react-native';
 import Skenleton from '../skeleton/Skenleton';
+import { useNavigation } from '@react-navigation/native';
 
 const PassengerTab = () => {
+    const navigation = useNavigation();
+
     const today = moment().startOf('day');
     const yesterday = moment().subtract(1, 'days').startOf('day');
     const startOfWeek = moment().startOf('isoWeek');
@@ -83,11 +86,101 @@ const PassengerTab = () => {
         setPassengers(convertArr);
     }
 
-
+    const handleNavigation = async (item) => {
+        // console.log(item.driver_id);
+        if(item?.status_number == 0){
+            navigation.navigate('FindScreen', {id:item?.trip_id, isFlag:1})
+        }
+        else if(item?.status_number == 1){
+            const params = {
+                driver_id: item?.driver_id,
+            }
+            await fetchDetailDriver(params)
+            .then((data) => {
+                if(data.res === 'success'){
+                    let obj = data.result;
+                    obj.isFlag = 1;
+                    obj.id = item?.trip_id
+                    navigation.navigate('ConfirmScreen',obj);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+        else if(item?.status_number == 2){
+            const params = {
+                driver_id: item?.driver_id,
+            }
+            await fetchDetailDriver(params)
+            .then((data) => {
+                if(data.res === 'success'){
+                    let obj = data.result;
+                    obj.isFlag = 1;
+                    obj.id = item?.trip_id
+                    navigation.navigate('PickScreen',obj);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+        else if(item?.status_number == 3){
+            const params = {
+                driver_id: item?.driver_id,
+            }
+            await fetchDetailDriver(params)
+            .then((data) => {
+                if(data.res === 'success'){
+                    let obj = data.result;
+                    obj.isFlag = 1;
+                    obj.id = item?.trip_id
+                    navigation.navigate('MovingScreen',obj);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }else if(item?.status_number == 4){
+            const params = {
+                driver_id: item?.driver_id,
+            }
+            await fetchDetailDriver(params)
+            .then((data) => {
+                if(data.res === 'success'){
+                    let obj = data.result;
+                    obj.isFlag = 1;
+                    obj.id = item?.trip_id
+                    navigation.navigate('CompleteScreen',obj);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+        else{
+            const params = {
+                driver_id: item?.driver_id,
+            }
+            await fetchDetailDriver(params)
+            .then((data) => {
+                if(data.res === 'success'){
+                    let obj = data.result;
+                    obj.isFlag = 1;
+                    obj.id = item?.trip_id
+                    navigation.navigate('CancelBookClientScreen',obj);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+    }
 
     useEffect(() => {
         listPassenger();
-        // console.log(passengers);
+        // console.log(passengers)
+
     },[loading])
 
     return (
@@ -105,6 +198,7 @@ const PassengerTab = () => {
                                         <View style={[styles.bg161e, styles.p15, styles.mb15]}>
                                             <TouchableOpacity
                                                 key={item?.trip_id}
+                                                onPress={() => handleNavigation(item)}
                                             >
                                                 <View style={[styles.flexStart, styles.mb5]}>
                                                     <CheckCircleIcon 
