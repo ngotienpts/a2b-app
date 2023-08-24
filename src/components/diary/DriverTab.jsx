@@ -20,18 +20,27 @@ const DriverTab = () => {
     const startOfMonth = moment().startOf('month');
     const startOfLastMonth = moment().subtract(1, 'months').startOf('month');
     const [drivers, setDrivers] = useState({});
+    const [driversSectionList, setDriversSectionList] = useState({});
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(2);
     const contextToken = useContext(TokenContext);
     const cardWidth = Dimensions.get("window").width * 0.8;
 
-    const listDrivers = () => {
+    const listDrivers = (isLoading = 0) => {
+        const params = {
+            page: page,
+        }
         fetchListHistoryDriver(contextToken.token)
         .then((data) => {
-            // console.log('data',data);
+            setDrivers(data.result);
             if(data.res === 'success'){
-                // console.log(data.result);
-                // // setDrivers(data.result);
-                setHistoryDriver(data.result);
+                if(isLoading){
+                    setHistoryPassengers([...drivers, ...data.result]);
+                    setPage(page + 1);
+                    setLoading(false);
+                }else{
+                    setHistoryDriver(data.result);
+                }
             }
         })
         .catch((err) => {
@@ -84,10 +93,14 @@ const DriverTab = () => {
             return result;
         }, []);
 
-        setDrivers(convertArr);
+        setDriversSectionList(convertArr);
     }
 
-
+    const handleScroll = ({distanceFromEnd}) => {
+        if (distanceFromEnd > 150) {
+            listPassenger(1);
+        }
+    };
 
     useEffect(() => {
         listDrivers();
@@ -103,8 +116,10 @@ const DriverTab = () => {
                         {drivers.length !== undefined ? 
                             (
                             <SectionList
-                                sections={drivers}
-                                keyExtractor={(item, index) => item.trip_id}
+                                sections={driversSectionList}
+                                keyExtractor={(item, index) => index.toString()}
+                                onEndReached={handleScroll}
+                                onEndReachedThreshold={0.5}
                                 renderItem={({item}) => (
                                     <View>    
                                         <View style={[styles.bg161e, styles.p15, styles.mb15]}>

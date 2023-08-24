@@ -35,7 +35,6 @@ const PassengerTab = () => {
         const params = {
             page: page,
         }
-        // setPage(page - 1)
         fetchListHistoryPassenger(isLoading ? params : {}, contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
@@ -166,13 +165,10 @@ const PassengerTab = () => {
                     <View style={[styles.pb50]}>
                         {passengersSectionList.length !== undefined && 
                             <SectionList
-                                ref={sectionListRef}
                                 sections={passengersSectionList}
-                                extraData={passengersSectionList}
                                 keyExtractor={(item, index) => index.toString()}
                                 onEndReached={handleScroll}
                                 onEndReachedThreshold={0.5}
-                                refreshing={true}
                                 renderItem={({item}) => (
                                     <View>    
                                         <View style={[styles.bg161e, styles.p15, styles.mb15]}>
