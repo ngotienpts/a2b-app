@@ -12,24 +12,13 @@ import NextPageSetting from './NextPageSetting';
 import { dataGender } from '../../constants';
 import ChoseImage from './ChoseImage';
 import { TokenContext } from '../../redux/tokenContext';
-import Skenleton from '../skeleton/Skenleton';
-import { Dimensions } from 'react-native';
+import LoadingSetting from './LoadingSetting';
 
 const Setting = () => {
     const navigation = useNavigation();
-    const apiName = 'Nguyen Van A';
-    const apiBirthday = '2023-05-12';
-    const apiPhoneNumber = '0912345678';
-    const apiLinkFb = 'mr.otthanh';
-    const apiMyCar = 'Volvo S90';
-    const apiBankAccount = '1111222233334444';
-    const apiBankName = 'Techcombank';
-    const apiNameBankAccount = 'NGUYEN VAN A';
-    const img = 'https://media.a2b.vn/user/2023/05/12/khanhhoang-093520.jpg';
     const regex = /\d/;
     const base64Regex = /^data:image\/jpeg;base64/;
 
-    const [settingData, setSettingData] = useState([]);
     const [avatar, setAvatar] = useState('');
     const [name, setName] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState(null);
@@ -45,7 +34,6 @@ const Setting = () => {
     const [userProfile, setUserProfile] = useState({});
     const [loading, setloading] = useState(true)
     const contextToken = useContext(TokenContext);
-    const cardWidth = Dimensions.get("window").width * 0.8;
 
     const handleAvaterChange = (newValue) => {
         setAvatar(newValue);
@@ -151,12 +139,6 @@ const Setting = () => {
         contextToken.setToken({});
         navigation.navigate('Login');
     }
-    // console.log(contextToken.token);
-
-    const handleLogout = async () => {
-        contextToken.setToken({});
-        navigation.navigate('Login');
-    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -165,31 +147,7 @@ const Setting = () => {
                 {/* header */}
                 <Header navigation={navigation} title="Tài khoản" />
                 {loading ? (
-                    <View style={{
-                        flex: 1,
-                        backgroundColor: "#000",
-                    }}>
-                        <Skenleton height={142} width={cardWidth + 80} style={{marginTop: 10, backgroundColor: '#0C1116',flex: 'flex-end'}} />
-                        <View style={{
-                          backgroundColor: "#000",
-                          alignItems: "center",
-                        }}>
-                          <Skenleton height={114} width={cardWidth - 217} 
-                            style={{
-                              marginTop: 30, 
-                              borderRadius: 100,
-                              backgroundColor: '#0C1116'
-                            }} 
-                          />
-                        </View>
-                        <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{marginBottom: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                    </View>
+                    <LoadingSetting />
                 ) : (
                     /* body */
                     <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>

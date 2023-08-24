@@ -20,8 +20,7 @@ import SentFormBooking from '../sentFormBooking/SentFormBooking';
 import { DetailTripContext } from '../../redux/detailTripContext';
 import { TokenContext } from '../../redux/tokenContext';
 import { MapContext } from '../../redux/mapContext';
-import { Dimensions } from 'react-native';
-import { waiting } from '../../constants';
+import Loading from './Loading';
 
 
 const FindComponent = () => {
@@ -36,7 +35,6 @@ const FindComponent = () => {
     const [isUnmounted, setIsUnmounted] = useState(false);
     const isFocused = useIsFocused();
     const navigation = useNavigation();
-    const cardWidth = Dimensions.get("window").width * 0.8;
 
     const {params: item} = useRoute();
     const paramsTrip = {
@@ -72,7 +70,6 @@ const FindComponent = () => {
 
     const automaticQuote = async (paramsTrip) => {
         await fetchAutomaticQuote(paramsTrip, contextToken.token)
-        // await fetchAutomaticQuote(paramsTrip, 'e1358385819f12b01db7990c1')
         .then((data) => {
             if(data.res === 'success'){
                 listReport(paramsTrip);
@@ -85,7 +82,6 @@ const FindComponent = () => {
 
     const detailTrip = async (paramsTrip, isFlag = 0) => {
         await fetchDetailTrip(paramsTrip,contextToken.token)
-        // await fetchDetailTrip(paramsTrip,'e1358385819f12b01db7990c1')
         .then((data) => {
             if(data.res === 'success'){
                 setDetail(data.result);
@@ -94,7 +90,6 @@ const FindComponent = () => {
                     duration: data.result.duration_all,
                     distance: data.result.distance_all
                 })
-
                 if(isFlag){
                     context.setBookingForm({
                         ...context.bookingForm,
@@ -134,7 +129,6 @@ const FindComponent = () => {
 
     const listReport = async (paramsTrip) => {
         await fetchListReport(paramsTrip,contextToken.token)
-        // await fetchListReport(paramsTrip,'e1358385819f12b01db7990c1')
         .then((data) => {
             if(data.res === 'success'){
                 setReports(data.result);
@@ -156,119 +150,119 @@ const FindComponent = () => {
                 <Header navigation={navigation} title="Tìm tài xế" />
 
                 {/* body */}
+                {loadingDetailTrip && loading ? (
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                 >
                     <SentFormBooking context={context} contextMap={contextMap}  title="Bạn đang đặt chuyến" />
                     {/* khoang cach & thoi gian */}
-                    {loadingDetailTrip && (
+                    <View
+                        style={[
+                            styles.mb24,
+                            styles.py15,
+                            styles.border1,
+                            styles.borderTop,
+                            styles.borderBot,
+                            styles.flexRow,
+                        ]}
+                    >
                         <View
                             style={[
-                                styles.mb24,
-                                styles.py15,
-                                styles.border1,
-                                styles.borderTop,
-                                styles.borderBot,
-                                styles.flexRow,
+                                styles.flexFull,
+                                styles.justifyBetween,
+                                styles.itemsCenter,
+                                styles.borderRight,
+                                styles.borderSolid,
                             ]}
                         >
-                            <View
+                            <Text
                                 style={[
-                                    styles.flexFull,
-                                    styles.justifyBetween,
-                                    styles.itemsCenter,
-                                    styles.borderRight,
-                                    styles.borderSolid,
+                                    styles.fs16,
+                                    styles.textGray77,
+                                    styles.lh24,
+                                    styles.textCenter,
                                 ]}
                             >
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.textGray77,
-                                        styles.lh24,
-                                        styles.textCenter,
-                                    ]}
-                                >
-                                    Quãng đường
-                                </Text>
-                                <View
-                                    style={[
-                                        styles.flexRow,
-                                        styles.justifyCenter,
-                                        styles.itemsCenter,
-                                        styles.pt20,
-                                    ]}
-                                >
-                                    <Text style={[styles.fs42, styles.textWhite, { lineHeight: 42 }]}>
-                                        {detail.distance_all}
-                                    </Text>
-                                    <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>km</Text>
-                                </View>
-                            </View>
+                                Quãng đường
+                            </Text>
                             <View
                                 style={[
-                                    styles.flexFull,
-                                    styles.justifyBetween,
+                                    styles.flexRow,
+                                    styles.justifyCenter,
                                     styles.itemsCenter,
-                                    styles.borderRight,
-                                    styles.borderSolid,
+                                    styles.pt20,
                                 ]}
                             >
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.textGray77,
-                                        styles.lh24,
-                                        styles.textCenter,
-                                    ]}
-                                >
-                                    Thời gian
+                                <Text style={[styles.fs42, styles.textWhite, { lineHeight: 42 }]}>
+                                    {detail.distance_all}
                                 </Text>
-                                <View
-                                    style={[
-                                        styles.flexRow,
-                                        styles.justifyCenter,
-                                        styles.itemsCenter,
-                                        styles.pt20,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.fs42,
-                                            styles.textWhite,
-                                            { lineHeight: 42, includeFontPadding: false },
-                                        ]}
-                                    >
-                                        {detail.duration_all}
-                                    </Text>
-                                    <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
-                                </View>
-                            </View>
-                            <View style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.textGray77,
-                                        styles.lh24,
-                                        styles.textCenter,
-                                    ]}
-                                >
-                                    Google map
-                                </Text>
-                                <View
-                                    style={[
-                                        styles.flexCenter,
-                                        styles.bgGray161,
-                                        styles.mt20,
-                                        { width: 73, height: 42 },
-                                    ]}
-                                >
-                                    <ArrowUturnRightIcon size={25} color={'white'} />
-                                </View>
+                                <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>km</Text>
                             </View>
                         </View>
-                    )}
+                        <View
+                            style={[
+                                styles.flexFull,
+                                styles.justifyBetween,
+                                styles.itemsCenter,
+                                styles.borderRight,
+                                styles.borderSolid,
+                            ]}
+                        >
+                            <Text
+                                style={[
+                                    styles.fs16,
+                                    styles.textGray77,
+                                    styles.lh24,
+                                    styles.textCenter,
+                                ]}
+                            >
+                                Thời gian
+                            </Text>
+                            <View
+                                style={[
+                                    styles.flexRow,
+                                    styles.justifyCenter,
+                                    styles.itemsCenter,
+                                    styles.pt20,
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.fs42,
+                                        styles.textWhite,
+                                        { lineHeight: 42, includeFontPadding: false },
+                                    ]}
+                                >
+                                    {detail.duration_all}
+                                </Text>
+                                <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
+                            </View>
+                        </View>
+                        <View style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
+                            <Text
+                                style={[
+                                    styles.fs16,
+                                    styles.textGray77,
+                                    styles.lh24,
+                                    styles.textCenter,
+                                ]}
+                            >
+                                Google map
+                            </Text>
+                            <View
+                                style={[
+                                    styles.flexCenter,
+                                    styles.bgGray161,
+                                    styles.mt20,
+                                    { width: 73, height: 42 },
+                                ]}
+                            >
+                                <ArrowUturnRightIcon size={25} color={'white'} />
+                            </View>
+                        </View>
+                    </View>
+
 
                     {/* driver list */}
                     <View>
@@ -286,136 +280,119 @@ const FindComponent = () => {
                         </Text>
 
                         {/* list */}
-                        {loading ? (
-                            <View>
-                                {reports.length !== undefined && reports.map((item) => (
-                                    <TouchableOpacity
-                                        key={item.reported_id.toString()}
-                                        style={[
-                                            styles.px15,
-                                            styles.py10,
-                                            styles.bg161e,
-                                            styles.flexRow,
-                                            styles.flexFull,
-                                            styles.mb20,
-                                        ]}
-                                        onPress={() => navigation.navigate('FindDetailScreen', item)}
-                                    >
-                                        <Image
-                                            source={{ uri: item?.image || fallbackImage }}
-                                            style={{ width: 133, height: 72 }}
-                                            resizeMode="cover"
-                                        />
-                                        <View style={[styles.pl15]}>
-                                            {/* name */}
-                                            <View style={[styles.flexRow, styles.itemsCenter]}>
-                                                <Text
-                                                    style={[
-                                                        styles.textWhite,
-                                                        styles.fs16,
-                                                        styles.fw700,
-                                                        styles.lh24,
-                                                    ]}
-                                                >
-                                                    {item?.fullname}
-                                                </Text>
-                                                {item?.is_confirmed == 1 && (
-                                                    <View style={[styles.pl10]}>
-                                                        <ShieldCheckIcon size={16} color={'white'} />
-                                                    </View>
-                                                )}
-                                            </View>
+                        <View>
+                            {reports.length !== undefined && reports.map((item) => (
+                                <TouchableOpacity
+                                    key={item.reported_id.toString()}
+                                    style={[
+                                        styles.px15,
+                                        styles.py10,
+                                        styles.bg161e,
+                                        styles.flexRow,
+                                        styles.flexFull,
+                                        styles.mb20,
+                                    ]}
+                                    onPress={() => navigation.navigate('FindDetailScreen', item)}
+                                >
+                                    <Image
+                                        source={{ uri: item?.image || fallbackImage }}
+                                        style={{ width: 133, height: 72 }}
+                                        resizeMode="cover"
+                                    />
+                                    <View style={[styles.pl15]}>
+                                        {/* name */}
+                                        <View style={[styles.flexRow, styles.itemsCenter]}>
+                                            <Text
+                                                style={[
+                                                    styles.textWhite,
+                                                    styles.fs16,
+                                                    styles.fw700,
+                                                    styles.lh24,
+                                                ]}
+                                            >
+                                                {item?.fullname}
+                                            </Text>
+                                            {item?.is_confirmed == 1 && (
+                                                <View style={[styles.pl10]}>
+                                                    <ShieldCheckIcon size={16} color={'white'} />
+                                                </View>
+                                            )}
+                                        </View>
 
-                                            {/* tên xe */}
-                                            <View style={[styles.flexRow, styles.itemsCenter]}>
-                                                <Text
-                                                    style={[
-                                                        styles.textWhite,
-                                                        styles.fs16,
-                                                        styles.fw400,
-                                                        styles.lh24,
-                                                    ]}
-                                                >
-                                                    {item?.vehicle_name} - {item?.vehicle_life}
-                                                </Text>
-                                                {item.is_wifi == 1 && (
-                                                    <WifiIcon
-                                                        size={16}
-                                                        color={'white'}
-                                                        style={[styles.ml10]}
-                                                    />
-                                                )}
-                                                {item.is_bottle == 1 && (
-                                                    <BeakerIcon
-                                                        size={16}
-                                                        color={'white'}
-                                                        style={[styles.ml5]}
-                                                    />
-                                                )}
-                                            </View>
+                                        {/* tên xe */}
+                                        <View style={[styles.flexRow, styles.itemsCenter]}>
+                                            <Text
+                                                style={[
+                                                    styles.textWhite,
+                                                    styles.fs16,
+                                                    styles.fw400,
+                                                    styles.lh24,
+                                                ]}
+                                            >
+                                                {item?.vehicle_name} - {item?.vehicle_life}
+                                            </Text>
+                                            {item.is_wifi == 1 && (
+                                                <WifiIcon
+                                                    size={16}
+                                                    color={'white'}
+                                                    style={[styles.ml10]}
+                                                />
+                                            )}
+                                            {item.is_bottle == 1 && (
+                                                <BeakerIcon
+                                                    size={16}
+                                                    color={'white'}
+                                                    style={[styles.ml5]}
+                                                />
+                                            )}
+                                        </View>
 
-                                            {/* đánh sao & giá tiền */}
-                                            <View style={[styles.flexRow, styles.itemsCenter]}>
-                                                {item?.avg_star.toString() && (
-                                                    <View style={[styles.flexRow, styles.itemsCenter]}>
-                                                        <StarIcon size={'16'} color={'white'} />
-                                                        <Text
-                                                            style={[
-                                                                styles.textWhite,
-                                                                styles.fs16,
-                                                                styles.lh24,
-                                                                styles.ml5,
-                                                            ]}
-                                                        >
-                                                            {item?.avg_star.toString()}
-                                                        </Text>
-                                                    </View>
-                                                )}
-                                                {item?.price_distance.toString() && (
-                                                    <View
+                                        {/* đánh sao & giá tiền */}
+                                        <View style={[styles.flexRow, styles.itemsCenter]}>
+                                            {item?.avg_star.toString() && (
+                                                <View style={[styles.flexRow, styles.itemsCenter]}>
+                                                    <StarIcon size={'16'} color={'white'} />
+                                                    <Text
                                                         style={[
-                                                            styles.flexRow,
-                                                            styles.itemsCenter,
-                                                            styles.ml24,
+                                                            styles.textWhite,
+                                                            styles.fs16,
+                                                            styles.lh24,
+                                                            styles.ml5,
                                                         ]}
                                                     >
-                                                        <CurrencyDollarIcon
-                                                            size={'16'}
-                                                            color={'white'}
-                                                        />
-                                                        <Text
-                                                            style={[
-                                                                styles.textWhite,
-                                                                styles.fs16,
-                                                                styles.lh24,
-                                                                styles.ml5,
-                                                            ]}
-                                                        >
-                                                            {item?.price_distance.toString()}
-                                                        </Text>
-                                                    </View>
-                                                )}
-                                            </View>
-                                        </View>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        ) : (
-                            <View>
-                                {waiting.map((val) => (
-                                    <View key={val?.id} style={[styles.card, {width: cardWidth + 80, marginBottom: 10}]}>
-                                        <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                                        <Skenleton height={75} width={cardWidth - 198} style={{marginRight: 10, alignItems: 'flex-end'}}/>
-                                        <View>
-                                            <Skenleton height={16} width={cardWidth - 145} style={{marginTop: 4, alignItems: 'flex-end'}} />
-                                            <Skenleton height={16} width={cardWidth - 145} style={{marginTop: 10, alignItems: 'flex-end'}} />
-                                            <Skenleton height={16} width={cardWidth - 145} style={{marginTop: 10, alignItems: 'flex-end'}} />
-                                        </View>
+                                                        {item?.avg_star.toString()}
+                                                    </Text>
+                                                </View>
+                                            )}
+                                            {item?.price_distance.toString() && (
+                                                <View
+                                                    style={[
+                                                        styles.flexRow,
+                                                        styles.itemsCenter,
+                                                        styles.ml24,
+                                                    ]}
+                                                >
+                                                    <CurrencyDollarIcon
+                                                        size={'16'}
+                                                        color={'white'}
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            styles.textWhite,
+                                                            styles.fs16,
+                                                            styles.lh24,
+                                                            styles.ml5,
+                                                        ]}
+                                                    >
+                                                        {item?.price_distance.toString()}
+                                                    </Text>
+                                                </View>
+                                            )}
                                         </View>
                                     </View>
-                                ))}
-                            </View>
-                        )}
+                                </TouchableOpacity>
+                            ))}
+                        </View>
                     </View>
 
                     {/* tắt thông báo */}
@@ -436,6 +413,9 @@ const FindComponent = () => {
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
+                ) : (
+                    <Loading />
+                )}
 
                 {/* buttom  huy chuyen */}
                 <View style={[styles.flexRow]}>

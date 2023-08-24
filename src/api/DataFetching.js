@@ -117,9 +117,9 @@ export const fetchListReport = (params,token) => {
     return apiCall(listReport,params);
 }
 //lich su chuyen di khach hang 
-export const fetchListHistoryPassenger = (token) => {
+export const fetchListHistoryPassenger = (params={}, token) => {
     const listHistoryPassenger = `${baseUrl}/${token}/history/customer`;
-    return apiCall(listHistoryPassenger);
+    return apiCall(listHistoryPassenger, params);
 }
 //lich su chuyen di tai xe
 export const fetchListHistoryDriver = (token) => {

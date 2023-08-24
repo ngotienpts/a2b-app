@@ -1,17 +1,16 @@
-import { SafeAreaView, StatusBar, View, ScrollView, Text, Image, TouchableOpacity } from "react-native";
+import { SafeAreaView, StatusBar, View, ScrollView, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import Header from "../header";
-import { StarIcon, XMarkIcon } from "react-native-heroicons/solid";
+import { MapPinIcon, StarIcon, StopCircleIcon, XMarkIcon } from "react-native-heroicons/solid";
 import { fallbackImage, fetchDetailCustomer, fetchDetailTrip } from "../../api/DataFetching";
 import styles from "../../styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useContext, useEffect, useState } from "react";
-import { MapContext } from "../../redux/mapContext";
-import SentFormBooking from "../sentFormBooking";
 import { CustomerFormContext } from "../../redux/customerFormContext";
 import FormCustomer from "../formCustomer";
 import Contact from "../contact";
-import ReviewCustomer from "../reviewCustomer";
 import { TokenContext } from "../../redux/tokenContext";
+import Skenleton from '../skeleton/Skenleton';
+
 
 const CancelDriverConfirmCompoment = () => {
     const navigation = useNavigation();
@@ -19,23 +18,24 @@ const CancelDriverConfirmCompoment = () => {
     const context = useContext(CustomerFormContext);
     const contextToken = useContext(TokenContext);
     const [isLoading, setIsLoading] = useState(false);
+    const cardWidth = Dimensions.get("window").width * 0.8;
 
     const detailTrip = async () => {
         const params = {
             trip_id: item?.trip_id
         }
-        await fetchDetailTrip(params,contextToken.token)
-        .then((data) => {
-            if(data.res === 'success'){
-                createContext(data);
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            setIsLoading(true);
-        })
+        await fetchDetailTrip(params, contextToken.token)
+            .then((data) => {
+                if (data.res === 'success') {
+                    createContext(data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoading(true);
+            })
     }
 
     const createContext = (data) => {
@@ -44,18 +44,18 @@ const CancelDriverConfirmCompoment = () => {
             tripId: data.result.trip_id,
             startPoint: {
                 start_name: data.result.start_name,
-                start: data.result.start_location, 
+                start: data.result.start_location,
             },
             endPoint: {
                 end_name: data.result.end_name,
-                end: data.result.end_location, 
+                end: data.result.end_location,
             },
             typeCar: data.result.vehicle_category_id,
             nameCar: data.result.name_category,
             startTime: data.result.start_time,
             comment: data.result.comment,
             duration: data?.result.duration_all,
-            distance: data?.result.distance_all, 
+            distance: data?.result.distance_all,
             coordinates: {
                 start: data.result.coordinates_start,
                 end: data.result.coordinates_end,
@@ -83,13 +83,12 @@ const CancelDriverConfirmCompoment = () => {
     }
 
     useEffect(() => {
-        if(item?.is_notify == 1){
+        if (item?.is_notify == 1) {
             detailTrip();
-            console.log(item);
-        }else{
+        } else {
             setIsLoading(true);
         }
-    },[])
+    }, [])
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -228,14 +227,62 @@ const CancelDriverConfirmCompoment = () => {
                                 styles.border4,
                                 styles.mx15,
                             ]}
-                            onPress={handleBackToHome}
+                            onPresstyle={handleBackToHome}
                         >
                             <Text style={[styles.fs16, styles.textWhite]}>Trang chủ</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             ) : (
-                <View></View>
+                <View style={{
+                    flex: 1,
+                    backgroundColor: "#000",
+                }}>
+                    <View style={{
+                        backgroundColor: "#000",
+                        alignItems: "center",
+                    }}>
+                        <Skenleton height={115} width={cardWidth - 217}
+                            style={{
+                                marginTop: 130,
+                                marginBottom: 130,
+                                borderRadius: 100,
+                                backgroundColor: '#777D92'
+                            }}
+                        />
+                    </View>
+                    <View style={[styles.card, {
+                        width: cardWidth + 80,
+                        paddingBottom: 20,
+                        paddingTop: 10,
+                        borderTopWidth: 2,
+                        borderBottomWidth: 2,
+                        borderColor: '#222B35'
+                    }]}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
+                            <StopCircleIcon
+                                size={20}
+                                color={'#777D92'}
+                                style={{ marginTop: 10, marginRight: 10 }}
+                            />
+                            <Skenleton height={16} width={cardWidth - 170} style={{ marginTop: 10, alignItems: 'flex-end' }} />
+                        </View>
+                        <View>
+                            <Skenleton height={16} width={cardWidth - 30} style={{ marginTop: 10, marginLeft: 30, alignItems: 'flex-end' }} />
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
+                            <MapPinIcon
+                                size={20}
+                                color={'#777D92'}
+                                style={{ marginTop: 10, marginRight: 10 }}
+                            />
+                            <Skenleton height={16} width={cardWidth - 170} style={{ marginTop: 10, alignItems: 'flex-end' }} />
+                        </View>
+                        <View>
+                            <Skenleton height={16} width={cardWidth - 30} style={{ marginTop: 10, marginLeft: 30, alignItems: 'flex-end' }} />
+                        </View>
+                    </View>
+                </View>
             )}
         </SafeAreaView>
     );

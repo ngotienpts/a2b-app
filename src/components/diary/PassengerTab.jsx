@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, SectionList } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { MapPinIcon } from 'react-native-heroicons/outline';
 import { StopCircleIcon, CheckCircleIcon } from 'react-native-heroicons/solid';
 
@@ -11,6 +11,7 @@ import { waiting } from '../../constants';
 import { Dimensions } from 'react-native';
 import Skenleton from '../skeleton/Skenleton';
 import { useNavigation } from '@react-navigation/native';
+import { debounce, throttle } from 'lodash';
 
 const PassengerTab = () => {
     const navigation = useNavigation();
@@ -21,17 +22,31 @@ const PassengerTab = () => {
     const startOfLastWeek = moment().subtract(1, 'weeks').startOf('isoWeek');
     const startOfMonth = moment().startOf('month');
     const startOfLastMonth = moment().subtract(1, 'months').startOf('month');
+    const [passengersSectionList, setPassengersSectionList] = useState({});
     const [passengers, setPassengers] = useState({});
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(2);
+    const sectionListRef = useRef(null);
     const contextToken = useContext(TokenContext);
     const cardWidth = Dimensions.get("window").width * 0.8;
+    
 
-    const listPassenger = () => {
-        fetchListHistoryPassenger(contextToken.token)
+    const listPassenger = (isLoading = 0) => {
+        const params = {
+            page: page,
+        }
+        // setPage(page - 1)
+        fetchListHistoryPassenger(isLoading ? params : {}, contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
-                // setPassengers(data.result);
-                setHistoryPassengers(data.result);
+                setPassengers(data.result);
+                if(isLoading){
+                    setHistoryPassengers([...passengers, ...data.result]);
+                    setPage(page + 1);
+                    setLoading(false);
+                }else{
+                    setHistoryPassengers(data.result);
+                }
             }
         })
         .catch((err) => {
@@ -62,11 +77,13 @@ const PassengerTab = () => {
             }
             if (dateFormat.isBetween(startOfLastMonth, startOfMonth, 'day', '[]')) {
                 return [{ data: passenger, title: 'Tháng trước' }];
+            }else{
+                return [{ data: passenger, title: 'Cũ hơn' }]
             }
-        
             // Hoặc trả về một mảng trống nếu không phù hợp với bất kỳ điều kiện nào
             return [];
         });
+        
 
         const convertArr = dateArr.reduce((result, item) => {
             // Tìm kiếm trong mảng kết quả có tồn tại title đã có trong item không
@@ -80,108 +97,66 @@ const PassengerTab = () => {
               result.push({ title: item.title, data: [item.data] });
             }
             return result;
-            // setPassengers(result);
         }, []);
-
-        setPassengers(convertArr);
+        setPassengersSectionList(convertArr);
     }
 
     const handleNavigation = async (item) => {
-        // console.log(item.driver_id);
         if(item?.status_number == 0){
             navigation.navigate('FindScreen', {id:item?.trip_id, isFlag:1})
         }
         else if(item?.status_number == 1){
-            const params = {
-                driver_id: item?.driver_id,
-            }
-            await fetchDetailDriver(params)
-            .then((data) => {
-                if(data.res === 'success'){
-                    let obj = data.result;
-                    obj.isFlag = 1;
-                    obj.id = item?.trip_id
-                    navigation.navigate('ConfirmScreen',obj);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+            getDetailDriver(item?.driver_id, 'ConfirmScreen');
         }
         else if(item?.status_number == 2){
-            const params = {
-                driver_id: item?.driver_id,
-            }
-            await fetchDetailDriver(params)
-            .then((data) => {
-                if(data.res === 'success'){
-                    let obj = data.result;
-                    obj.isFlag = 1;
-                    obj.id = item?.trip_id
-                    navigation.navigate('PickScreen',obj);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+            getDetailDriver(item?.driver_id);
         }
         else if(item?.status_number == 3){
-            const params = {
-                driver_id: item?.driver_id,
-            }
-            await fetchDetailDriver(params)
-            .then((data) => {
-                if(data.res === 'success'){
-                    let obj = data.result;
-                    obj.isFlag = 1;
-                    obj.id = item?.trip_id
-                    navigation.navigate('MovingScreen',obj);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+            getDetailDriver(item?.driver_id);
         }else if(item?.status_number == 4){
-            const params = {
-                driver_id: item?.driver_id,
+            getDetailDriver(item?.driver_id);
+        }else{
+            console.log(item?.driver_id);
+            if(item?.driver_id != 0){
+            }else{
+                // const data = {
+                //     tripId: item?.trip_id,
+                //     reason: item?.cancel_reason,
+                //     isFlag: 1
+                // }
+                // navigation.navigate('CancelClientConfirmScreen',data)
             }
-            await fetchDetailDriver(params)
-            .then((data) => {
-                if(data.res === 'success'){
-                    let obj = data.result;
-                    obj.isFlag = 1;
-                    obj.id = item?.trip_id
-                    navigation.navigate('CompleteScreen',obj);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-        }
-        else{
-            const params = {
-                driver_id: item?.driver_id,
-            }
-            await fetchDetailDriver(params)
-            .then((data) => {
-                if(data.res === 'success'){
-                    let obj = data.result;
-                    obj.isFlag = 1;
-                    obj.id = item?.trip_id
-                    navigation.navigate('CancelBookClientScreen',obj);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
         }
     }
 
+    const getDetailDriver = async (driverId, screen) => {
+        const params = {
+            driver_id: driverId,
+        }
+        await fetchDetailDriver(params)
+        .then((data) => {
+            if(data.res === 'success'){
+                let obj = data.result;
+                obj.isFlag = 1;
+                obj.id = item?.trip_id
+                navigation.navigate(screen,obj);
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const handleScroll = ({distanceFromEnd}) => {
+        if (distanceFromEnd > 150) {
+            listPassenger(1);
+        }
+    };
+
+
     useEffect(() => {
         listPassenger();
-        // console.log(passengers)
-
-    },[loading])
+    },[])
 
     return (
         <View>
@@ -189,10 +164,15 @@ const PassengerTab = () => {
             {loading ? (
                 <View>
                     <View style={[styles.pb50]}>
-                        {passengers.length !== undefined && 
+                        {passengersSectionList.length !== undefined && 
                             <SectionList
-                                sections={passengers}
-                                keyExtractor={(item, index) => item.trip_id}
+                                ref={sectionListRef}
+                                sections={passengersSectionList}
+                                extraData={passengersSectionList}
+                                keyExtractor={(item, index) => index.toString()}
+                                onEndReached={handleScroll}
+                                onEndReachedThreshold={0.5}
+                                refreshing={true}
                                 renderItem={({item}) => (
                                     <View>    
                                         <View style={[styles.bg161e, styles.p15, styles.mb15]}>
