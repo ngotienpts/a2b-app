@@ -83,7 +83,7 @@ const CancelDriverConfirmCompoment = () => {
     }
 
     useEffect(() => {
-        if(item?.is_notify == 1){
+        if(item?.is_notify == 1 || item?.isFlag == 1){
             detailTrip();
             console.log(item);
         }else{

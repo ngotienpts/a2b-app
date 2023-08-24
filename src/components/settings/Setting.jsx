@@ -153,11 +153,6 @@ const Setting = () => {
     }
     // console.log(contextToken.token);
 
-    const handleLogout = async () => {
-        contextToken.setToken({});
-        navigation.navigate('Login');
-    }
-
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
@@ -169,7 +164,7 @@ const Setting = () => {
                         flex: 1,
                         backgroundColor: "#000",
                     }}>
-                        <Skenleton height={142} width={cardWidth + 80} style={{marginTop: 10, backgroundColor: '#0C1116',flex: 'flex-end'}} />
+                        <Skenleton height={142} width={cardWidth + 80} style={[styles.flexStart,{marginTop: 10, backgroundColor: '#0C1116'}]} />
                         <View style={{
                           backgroundColor: "#000",
                           alignItems: "center",
@@ -182,13 +177,13 @@ const Setting = () => {
                             }} 
                           />
                         </View>
-                        <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{marginBottom: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-                        <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
+                        <Skenleton height={50} width={cardWidth + 80} style={[styles.flexStart, {marginTop: 50, backgroundColor: '#0C1116', borderBottomWidth: 2}]} />
+                        <Skenleton height={50} width={cardWidth + 80} style={[styles.flexStart, {backgroundColor: '#0C1116', borderBottomWidth: 2}]} />
+                        <Skenleton height={50} width={cardWidth + 80} style={[styles.flexStart, {backgroundColor: '#0C1116', borderBottomWidth: 2}]} />
+                        <Skenleton height={50} width={cardWidth + 80} style={[styles.flexStart, {marginBottom: 50, backgroundColor: '#0C1116', borderBottomWidth: 2}]} />
+                        <Skenleton height={50} width={cardWidth + 80} style={[styles.flexStart, {backgroundColor: '#0C1116', borderBottomWidth: 2}]} />
+                        <Skenleton height={50} width={cardWidth + 80} style={[styles.flexStart, {backgroundColor: '#0C1116', borderBottomWidth: 2}]} />
+                        <Skenleton height={50} width={cardWidth + 80} style={[styles.flexStart, {marginTop: 50, backgroundColor: '#0C1116', borderBottomWidth: 2}]} />
                     </View>
                 ) : (
                     /* body */
