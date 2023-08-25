@@ -26,7 +26,6 @@ const PassengerTab = () => {
     const [passengers, setPassengers] = useState({});
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(2);
-    const sectionListRef = useRef(null);
     const contextToken = useContext(TokenContext);
     const cardWidth = Dimensions.get("window").width * 0.8;
     
@@ -115,15 +114,14 @@ const PassengerTab = () => {
         }else if(item?.status_number == 4){
             getDetailDriver(item?.driver_id);
         }else{
-            console.log(item?.driver_id);
             if(item?.driver_id != 0){
             }else{
-                // const data = {
-                //     tripId: item?.trip_id,
-                //     reason: item?.cancel_reason,
-                //     isFlag: 1
-                // }
-                // navigation.navigate('CancelClientConfirmScreen',data)
+                const data = {
+                    tripId: item?.trip_id,
+                    reason: item?.cancel_reason,
+                    isFlag: 1
+                }
+                navigation.navigate('CancelClientConfirmScreen',data)
             }
         }
     }

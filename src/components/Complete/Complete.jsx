@@ -164,7 +164,7 @@ const Complete = () => {
                 <StatusBar barStyle="light-content" animated={true} />
                 <View style={[styles.flexFull, styles.bgBlack]}>
                     {/* header */}
-                    <Header navigation={navigation} title="Chi tiết chuyến đi" />
+                    <Header navigation={navigation} title="Hoàn thành chuyến đi" />
 
                     {/* body */}
                     <ScrollView

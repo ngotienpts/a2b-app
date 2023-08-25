@@ -131,8 +131,6 @@ const Setting = () => {
             }
         })
         .finally(() => setloading(false))
-        console.log(base64Regex.test(avatar));
-        console.log(avatar);
     }
 
     const handleLogout = async () => {
