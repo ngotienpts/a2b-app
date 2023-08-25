@@ -13,7 +13,7 @@ const LoadingSetting = () => {
             flex: 1,
             backgroundColor: "#000",
         }}>
-            <Skenleton height={142} width={cardWidth + 80} style={{marginTop: 10, backgroundColor: '#0C1116',flex: 'flex-end'}} />
+            <Skenleton height={142} width={cardWidth + 80} style={{marginTop: 10, backgroundColor: '#0C1116',alignItems: 'flex-end'}} />
             <View style={{
               backgroundColor: "#000",
               alignItems: "center",
@@ -26,13 +26,13 @@ const LoadingSetting = () => {
                 }} 
               />
             </View>
-            <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-            <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-            <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-            <Skenleton height={50} width={cardWidth + 80} style={{marginBottom: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-            <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-            <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
-            <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',flex: 'flex-start', borderBottomWidth: 2}} />
+            <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',alignItems: 'flex-start', borderBottomWidth: 2}} />
+            <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',alignItems: 'flex-start', borderBottomWidth: 2}} />
+            <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',alignItems: 'flex-start', borderBottomWidth: 2}} />
+            <Skenleton height={50} width={cardWidth + 80} style={{marginBottom: 50, backgroundColor: '#0C1116',alignItems: 'flex-start', borderBottomWidth: 2}} />
+            <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',alignItems: 'flex-start', borderBottomWidth: 2}} />
+            <Skenleton height={50} width={cardWidth + 80} style={{backgroundColor: '#0C1116',alignItems: 'flex-start', borderBottomWidth: 2}} />
+            <Skenleton height={50} width={cardWidth + 80} style={{marginTop: 50, backgroundColor: '#0C1116',alignItems: 'flex-start', borderBottomWidth: 2}} />
         </View>
     );
 };
