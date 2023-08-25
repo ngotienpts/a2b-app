@@ -158,22 +158,33 @@ const PassengerTab = () => {
                 console.log(err);
             })
         }
-        else{
-            const params = {
-                driver_id: item?.driver_id,
-            }
-            await fetchDetailDriver(params)
-            .then((data) => {
-                if(data.res === 'success'){
-                    let obj = data.result;
-                    obj.isFlag = 1;
-                    obj.id = item?.trip_id
-                    navigation.navigate('CancelBookClientScreen',obj);
+        else if(item?.status_number == 5){
+            console.log(item);
+            if(item?.driver_id != 0){
+                const params = {
+                    driver_id: item?.driver_id,
                 }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+                await fetchDetailDriver(params)
+                .then((data) => {
+                    if(data.res === 'success'){
+                        let obj = data.result;
+                        obj.isFlag = 1;
+                        obj.id = item?.trip_id
+                        navigation.navigate('CancelClientConfirmScreen',obj);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+            }
+            else{
+                const data = {
+                    tripId: item?.trip_id,
+                    reason: item?.cancel_reason,
+                    isFlag: 1
+                }
+                navigation.navigate('CancelClientConfirmScreen', data);
+            }
         }
     }
 

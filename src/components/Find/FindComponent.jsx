@@ -22,6 +22,7 @@ import { TokenContext } from '../../redux/tokenContext';
 import { MapContext } from '../../redux/mapContext';
 import { Dimensions } from 'react-native';
 import { waiting } from '../../constants';
+import Skenleton from '../skeleton/Skenleton';
 
 
 const FindComponent = () => {

@@ -118,7 +118,7 @@ const DriverTab = () => {
                     obj.isFlag = 1;
                     obj.trip_id = item?.trip_id;
                     obj.reason = item?.cancel_reason;
-                    console.log(obj);
+                    // console.log(obj);
                     navigation.navigate(Screen, obj);
                 }
             })
@@ -132,24 +132,22 @@ const DriverTab = () => {
         if (item?.status_number == 0) {
             listMyCar('DriverFindScreen');
         }
-        else if (item?.status_number == 1) {
-            listMyCar('DriverFindScreen');
-        }
-        else if (item?.status_number == 2) {
-            detailCustomer('DriverPickScreen', item?.id_user)
-        }
-        else if (item?.status_number == 3) {
-            detailCustomer('DriverMovingScreen', item?.id_user)
-        }
+        // else if (item?.status_number == 1) {
+        //     listMyCar('DriverFindScreen');
+        // }
+        // else if (item?.status_number == 2) {
+        //     detailCustomer('DriverPickScreen', item)
+        // }
+        // else if (item?.status_number == 3) {
+        //     detailCustomer('DriverMovingScreen', item)
+        // }
         else if (item?.status_number == 4) {
-            detailCustomer('DriverCompleteScreen', item?.id_user)
+            detailCustomer('DriverCompleteScreen', item)
         }
         else if (item?.status_number == 5){
             detailCustomer('CancelDriverConfirmScreen', item)
         }
     }
-
-
 
     useEffect(() => {
         listDrivers();

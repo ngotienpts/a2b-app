@@ -1,7 +1,7 @@
 import { SafeAreaView, StatusBar, View, ScrollView, Text, Image, TouchableOpacity } from "react-native";
 import Header from "../header";
 import { ShieldCheckIcon, StarIcon, XMarkIcon } from "react-native-heroicons/solid";
-import { fallbackImage } from "../../api/DataFetching";
+import { fallbackImage, fetchDetailTrip } from "../../api/DataFetching";
 import styles from "../../styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useContext, useEffect } from "react";
@@ -11,11 +11,13 @@ import SentFormBooking from "../sentFormBooking";
 import Contact from "../contact";
 import { CurrencyDollarIcon } from "react-native-heroicons/outline";
 import { DetailTripContext } from "../../redux/detailTripContext";
+import { TokenContext } from "../../redux/tokenContext";
 
 const CancelClientConfirmCompoment = () => {
     const navigation = useNavigation();
     const { params: item } = useRoute();
     const context = useContext(BookingFormContext);
+    const contextToken = useContext(TokenContext);
     const contextMap = useContext(MapContext);
     const contextDetailTrip = useContext(DetailTripContext);
 
@@ -37,8 +39,60 @@ const CancelClientConfirmCompoment = () => {
     useEffect(() => {
         if(item?.is_notify == 1){
             
+        }else if(item?.isFlag == 1){
+            const paramsTrip = {
+                trip_id: item?.tripId
+            }
+            detailTrip(paramsTrip);
+            // console.log(context);
         }
-    })
+    },[])
+
+    const detailTrip = async (paramsTrip) => {
+        await fetchDetailTrip(paramsTrip, contextToken.token)
+        .then((data) => {
+            if (data.res === 'success') {
+                createContext(data); 
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const createContext = async (data) => {
+        await context.setBookingForm({
+            ...context.bookingForm,
+            eniqueId: data?.result.trip_id,
+            startPoint: {
+                start_name: data?.result.start_name,
+                start: data?.result.start_location,
+                coordinates: {
+                    lat: data?.result.coordinates_start.split(',')[0],
+                    lng: data?.result.coordinates_start.split(',')[1],
+                }
+            },
+            endPoint: {
+                name: data?.result.end_name,
+                address: data?.result.end_location,
+                coordinates: {
+                    lat: data?.result.coordinates_end.split(',')[0],
+                    lng: data?.result.coordinates_end.split(',')[1],
+                }
+            },
+            typeCar: data?.result.vehicle_category_id,
+            nameCar: data?.result.name_category,
+            departureTime: data?.result.start_time,
+            note: data?.result.comment,
+            isPunish: data?.result.is_punish
+        })
+        await contextDetailTrip.setDetailTrip({
+            ...contextDetailTrip.detailTrip,
+            duration: data.result.duration_all,
+            distance: data.result.distance_all,
+            price_distance: data.result.price_report,
+        })
+    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
