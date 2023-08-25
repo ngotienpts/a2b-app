@@ -122,9 +122,9 @@ export const fetchListHistoryPassenger = (params={}, token) => {
     return apiCall(listHistoryPassenger, params);
 }
 //lich su chuyen di tai xe
-export const fetchListHistoryDriver = (token) => {
+export const fetchListHistoryDriver = (params={}, token) => {
     const listHistoryDriver = `${baseUrl}/${token}/history/driver`;
-    return apiCall(listHistoryDriver);
+    return apiCall(listHistoryDriver, params);
 }
 //lich su giao dich
 export const fetchListHistoryTransfer = (token) => {

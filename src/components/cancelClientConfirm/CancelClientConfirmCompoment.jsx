@@ -41,10 +41,9 @@ const CancelClientConfirmCompoment = () => {
             
         }else if(item?.isFlag == 1){
             const paramsTrip = {
-                trip_id: item?.tripId
+                trip_id: item?.id
             }
             detailTrip(paramsTrip);
-            console.log(context);
         }
     },[])
 
@@ -86,11 +85,12 @@ const CancelClientConfirmCompoment = () => {
             note: data?.result.comment,
             isPunish: data?.result.is_punish
         })
+        console.log(typeof data.result.price_report);
         await contextDetailTrip.setDetailTrip({
             ...contextDetailTrip.detailTrip,
             duration: data.result.duration_all,
             distance: data.result.distance_all,
-            price_distance: data.result.price_report,
+            price_distance: parseInt(data.result.price_report).toLocaleString('vi-VN'),
         })
     }
 
@@ -171,7 +171,6 @@ const CancelClientConfirmCompoment = () => {
                                 Thông tin tài xế
                             </Text>
                             <View style={[styles.flexColumn, styles.itemsCenter, styles.mb20]}>
-                                {/* avatar */}
                                 <Image
                                     source={{ uri: item?.image_driver || fallbackImage }}
                                     style={[
@@ -180,7 +179,6 @@ const CancelClientConfirmCompoment = () => {
                                     ]}
                                     resizeMode="cover"
                                 />
-                                {/* name */}
                                 <View style={[styles.flexRow, styles.itemsCenter]}>
                                     <Text
                                         style={[
@@ -199,7 +197,6 @@ const CancelClientConfirmCompoment = () => {
                                     )}
                                 </View>
 
-                                {/* đánh sao*/}
                                 {item?.average_rates.toString() && (
                                     <View style={[styles.flexRow, styles.itemsCenter]}>
                                         <StarIcon size={'16'} color={'white'} />
@@ -210,12 +207,10 @@ const CancelClientConfirmCompoment = () => {
                                 )}
                             </View>
 
-                            {/* contact */}
                             <Contact
                                 item={item}
                             />
 
-                            {/* thông tin xe */}
                             <View
                                 style={[
                                     styles.px15,
@@ -232,7 +227,7 @@ const CancelClientConfirmCompoment = () => {
                                     resizeMode="cover"
                                 />
                                 <View style={[styles.pl15]}>
-                                    {/* name */}
+
                                     <View style={[styles.flexRow, styles.itemsCenter]}>
                                         <Text
                                             style={[
@@ -250,7 +245,6 @@ const CancelClientConfirmCompoment = () => {
                                         )}
                                     </View>
 
-                                    {/* tên xe */}
                                     <View style={[styles.flexRow, styles.itemsCenter, styles.mt5]}>
                                         {item?.license_plates_color === 1 ? (
                                             <Text
@@ -281,7 +275,6 @@ const CancelClientConfirmCompoment = () => {
 
                                     </View>
 
-                                    {/* đánh sao & giá tiền */}
                                     {contextDetailTrip?.detailTrip.price_distance && (
                                         <View style={[styles.flexRow, styles.itemsCenter, styles.mt5]}>
                                             <CurrencyDollarIcon size={'16'} color={'white'} />

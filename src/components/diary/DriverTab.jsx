@@ -25,7 +25,7 @@ const DriverTab = () => {
     const [drivers, setDrivers] = useState({});
     const [driversSectionList, setDriversSectionList] = useState({});
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(2);
+    const [page, setPage] = useState(1);
     const contextToken = useContext(TokenContext);
     const cardWidth = Dimensions.get("window").width * 0.8;
 
@@ -33,16 +33,21 @@ const DriverTab = () => {
         const params = {
             page: page,
         }
-        fetchListHistoryDriver(contextToken.token)
+        fetchListHistoryDriver(isLoading ? params : {}, contextToken.token)
             .then((data) => {
-                setDrivers(data.result);
                 if (data.res === 'success') {
+                    if(page >= 2){
+                        setDrivers([...drivers, ...data.result])
+                    }else{
+                        setDrivers(data.result);
+                    }
                     if (isLoading) {
                         setHistoryPassengers([...drivers, ...data.result]);
                         setPage(page + 1);
                         setLoading(false);
                     } else {
                         setHistoryDriver(data.result);
+                        setPage(page + 1);
                     }
                 }
             })
@@ -104,6 +109,7 @@ const DriverTab = () => {
             listPassenger(1);
         }
     };
+    
     const listMyCar = async (Screen) => {
         await fetchListMyCar(contextToken.token)
             .then((data) => {

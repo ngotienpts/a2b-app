@@ -25,7 +25,7 @@ const PassengerTab = () => {
     const [passengersSectionList, setPassengersSectionList] = useState({});
     const [passengers, setPassengers] = useState({});
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(2);
+    const [page, setPage] = useState(1);
     const contextToken = useContext(TokenContext);
     const cardWidth = Dimensions.get("window").width * 0.8;
     
@@ -37,13 +37,18 @@ const PassengerTab = () => {
         fetchListHistoryPassenger(isLoading ? params : {}, contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
-                setPassengers(data.result);
+                if(page >= 2){
+                    setPassengers([...passengers, ...data.result])
+                }else{
+                    setPassengers(data.result);
+                }
                 if(isLoading){
                     setHistoryPassengers([...passengers, ...data.result]);
                     setPage(page + 1);
                     setLoading(false);
                 }else{
                     setHistoryPassengers(data.result);
+                    setPage(page + 1);
                 }
             }
         })
@@ -104,20 +109,21 @@ const PassengerTab = () => {
             navigation.navigate('FindScreen', {id:item?.trip_id, isFlag:1})
         }
         else if(item?.status_number == 1){
-            getDetailDriver(item?.driver_id, 'ConfirmScreen');
+            getDetailDriver(item, 'ConfirmScreen');
         }
         else if(item?.status_number == 2){
-            getDetailDriver(item?.driver_id);
+            getDetailDriver(item);
         }
         else if(item?.status_number == 3){
-            getDetailDriver(item?.driver_id);
+            getDetailDriver(item);
         }else if(item?.status_number == 4){
-            getDetailDriver(item?.driver_id);
+            getDetailDriver(item, 'CompleteScreen');
         }else{
             if(item?.driver_id != 0){
+                getDetailDriver(item, 'CancelClientConfirmScreen');
             }else{
                 const data = {
-                    tripId: item?.trip_id,
+                    id: item?.trip_id,
                     reason: item?.cancel_reason,
                     isFlag: 1
                 }
@@ -126,16 +132,17 @@ const PassengerTab = () => {
         }
     }
 
-    const getDetailDriver = async (driverId, screen) => {
+    const getDetailDriver = async (item, screen) => {
         const params = {
-            driver_id: driverId,
+            driver_id: item?.driver_id,
         }
         await fetchDetailDriver(params)
         .then((data) => {
             if(data.res === 'success'){
                 let obj = data.result;
                 obj.isFlag = 1;
-                obj.id = item?.trip_id
+                obj.id = item?.trip_id;
+                obj.reason = item?.cancel_reason && item?.cancel_reason;
                 navigation.navigate(screen,obj);
             }
         })
