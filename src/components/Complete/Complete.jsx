@@ -14,7 +14,7 @@ import { AirbnbRating } from 'react-native-ratings';
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchGetOneRate, fetchProfileUser, fetchReviewDriver } from '../../api/DataFetching';
+import { fallbackImage, fetchDetailTrip, fetchGetOneRate, fetchProfileUser, fetchReviewDriver } from '../../api/DataFetching';
 import { reviewTextComplete } from '../../constants';
 import Contact from '../contact';
 import QrCode from '../qrCode/QrCode';
@@ -33,14 +33,14 @@ const Complete = () => {
     const contextToken = useContext(TokenContext);
     const contextMap = useContext(MapContext);
     const [profile, setProfile] = useState({});
-    const [isLoading, setIsLoading] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingDetail, setIsLoadingDetail] = useState(false);
     const [statusReview, setStatusReview] = useState(0);
 
     // const handleScroll = () => {
     //     Keyboard.dismiss();
     // };
-
-    useEffect(() => {
+    const getProfile = () => {
         fetchProfileUser(contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
@@ -50,17 +50,76 @@ const Complete = () => {
         .catch((err) => {
             console.log(err);
         })
+    }
 
-        
+    const detailTrip = async (paramsTrip) => {
+        await fetchDetailTrip(paramsTrip, contextToken.token)
+        .then((data) => {
+            if (data.res === 'success') {
+                createContext(data); 
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoadingDetail(true);
+        })
+    }
+
+    const createContext = async (data) => {
+        await context.setBookingForm({
+            ...context.bookingForm,
+            eniqueId: data?.result.trip_id,
+            startPoint: {
+                start_name: data?.result.start_name,
+                start: data?.result.start_location,
+                coordinates: {
+                    lat: data?.result.coordinates_start.split(',')[0],
+                    lng: data?.result.coordinates_start.split(',')[1],
+                }
+            },
+            endPoint: {
+                name: data?.result.end_name,
+                address: data?.result.end_location,
+                coordinates: {
+                    lat: data?.result.coordinates_end.split(',')[0],
+                    lng: data?.result.coordinates_end.split(',')[1],
+                }
+            },
+            typeCar: data?.result.vehicle_category_id,
+            nameCar: data?.result.name_category,
+            departureTime: data?.result.start_time,
+            note: data?.result.comment,
+            isPunish: data?.result.is_punish
+        })
+
+        await contextDetailTrip.setDetailTrip({
+            ...contextDetailTrip.detailTrip,
+            duration: data.result.duration_all,
+            distance: data.result.distance_all,
+            price_distance: parseInt(data.result.price_report).toLocaleString('vi-VN'),
+        })
+    }
+
+    useEffect(() => {
+        getProfile();
+        if(item?.is_notify || item?.isFlag){
+            const paramsTrip = {
+                trip_id: item?.id
+            }
+            detailTrip(paramsTrip);
+        }else{
+            setIsLoading(true);
+        }
     },[])
 
     useEffect(() => {
         const params = {
-            trip_id: context.bookingForm.eniqueId
+            trip_id: context.bookingForm.eniqueId ? context.bookingForm.eniqueId : item?.id
         }
         fetchGetOneRate(params,contextToken.token)
         .then((data) => {
-            // console.log(data.result);
             setStatusReview(parseInt(data.result.status));
             setReviewText(data.result.content)
         })
@@ -164,7 +223,7 @@ const Complete = () => {
                 <StatusBar barStyle="light-content" animated={true} />
                 <View style={[styles.flexFull, styles.bgBlack]}>
                     {/* header */}
-                    <Header navigation={navigation} title="Chi tiết chuyến đi" />
+                    <Header navigation={navigation} title="Hoàn thành chuyến đi" />
 
                     {/* body */}
                     <ScrollView
@@ -238,11 +297,13 @@ const Complete = () => {
                         </View>
 
                         {/* qr code */}
-                        <QrCode 
-                            item={item}
-                            contextDetailTrip={contextDetailTrip}
-                            context={context}
-                        />
+                        {isLoadingDetail && (
+                            <QrCode 
+                                item={item}
+                                contextDetailTrip={contextDetailTrip}
+                                context={context}
+                            />
+                        )}
 
                         {/* rate */}
                         <View style={[styles.px15, styles.mb50]}>

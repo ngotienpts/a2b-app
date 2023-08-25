@@ -1,21 +1,23 @@
 import { SafeAreaView, StatusBar, View, ScrollView, Text, Image, TouchableOpacity } from "react-native";
 import Header from "../header";
 import { ShieldCheckIcon, StarIcon, XMarkIcon } from "react-native-heroicons/solid";
-import { fallbackImage } from "../../api/DataFetching";
+import { fallbackImage, fetchDetailTrip } from "../../api/DataFetching";
 import styles from "../../styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { BookingFormContext } from "../../redux/bookingFormContext";
 import { MapContext } from "../../redux/mapContext";
 import SentFormBooking from "../sentFormBooking";
 import Contact from "../contact";
 import { CurrencyDollarIcon } from "react-native-heroicons/outline";
 import { DetailTripContext } from "../../redux/detailTripContext";
+import { TokenContext } from "../../redux/tokenContext";
 
 const CancelClientConfirmCompoment = () => {
     const navigation = useNavigation();
     const { params: item } = useRoute();
     const context = useContext(BookingFormContext);
+    const contextToken = useContext(TokenContext);
     const contextMap = useContext(MapContext);
     const contextDetailTrip = useContext(DetailTripContext);
 
@@ -31,6 +33,64 @@ const CancelClientConfirmCompoment = () => {
             departureTime: '',
             note: '',
             isPunish: 0
+        })
+    }
+
+    useEffect(() => {
+        if(item?.is_notify == 1){
+            
+        }else if(item?.isFlag == 1){
+            const paramsTrip = {
+                trip_id: item?.id
+            }
+            detailTrip(paramsTrip);
+        }
+    },[])
+
+    const detailTrip = async (paramsTrip) => {
+        await fetchDetailTrip(paramsTrip, contextToken.token)
+        .then((data) => {
+            if (data.res === 'success') {
+                createContext(data); 
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const createContext = async (data) => {
+        await context.setBookingForm({
+            ...context.bookingForm,
+            eniqueId: data?.result.trip_id,
+            startPoint: {
+                start_name: data?.result.start_name,
+                start: data?.result.start_location,
+                coordinates: {
+                    lat: data?.result.coordinates_start.split(',')[0],
+                    lng: data?.result.coordinates_start.split(',')[1],
+                }
+            },
+            endPoint: {
+                name: data?.result.end_name,
+                address: data?.result.end_location,
+                coordinates: {
+                    lat: data?.result.coordinates_end.split(',')[0],
+                    lng: data?.result.coordinates_end.split(',')[1],
+                }
+            },
+            typeCar: data?.result.vehicle_category_id,
+            nameCar: data?.result.name_category,
+            departureTime: data?.result.start_time,
+            note: data?.result.comment,
+            isPunish: data?.result.is_punish
+        })
+        console.log(typeof data.result.price_report);
+        await contextDetailTrip.setDetailTrip({
+            ...contextDetailTrip.detailTrip,
+            duration: data.result.duration_all,
+            distance: data.result.distance_all,
+            price_distance: parseInt(data.result.price_report).toLocaleString('vi-VN'),
         })
     }
 
@@ -111,7 +171,6 @@ const CancelClientConfirmCompoment = () => {
                                 Thông tin tài xế
                             </Text>
                             <View style={[styles.flexColumn, styles.itemsCenter, styles.mb20]}>
-                                {/* avatar */}
                                 <Image
                                     source={{ uri: item?.image_driver || fallbackImage }}
                                     style={[
@@ -120,7 +179,6 @@ const CancelClientConfirmCompoment = () => {
                                     ]}
                                     resizeMode="cover"
                                 />
-                                {/* name */}
                                 <View style={[styles.flexRow, styles.itemsCenter]}>
                                     <Text
                                         style={[
@@ -139,7 +197,6 @@ const CancelClientConfirmCompoment = () => {
                                     )}
                                 </View>
 
-                                {/* đánh sao*/}
                                 {item?.average_rates.toString() && (
                                     <View style={[styles.flexRow, styles.itemsCenter]}>
                                         <StarIcon size={'16'} color={'white'} />
@@ -150,12 +207,10 @@ const CancelClientConfirmCompoment = () => {
                                 )}
                             </View>
 
-                            {/* contact */}
                             <Contact
                                 item={item}
                             />
 
-                            {/* thông tin xe */}
                             <View
                                 style={[
                                     styles.px15,
@@ -172,7 +227,7 @@ const CancelClientConfirmCompoment = () => {
                                     resizeMode="cover"
                                 />
                                 <View style={[styles.pl15]}>
-                                    {/* name */}
+
                                     <View style={[styles.flexRow, styles.itemsCenter]}>
                                         <Text
                                             style={[
@@ -190,7 +245,6 @@ const CancelClientConfirmCompoment = () => {
                                         )}
                                     </View>
 
-                                    {/* tên xe */}
                                     <View style={[styles.flexRow, styles.itemsCenter, styles.mt5]}>
                                         {item?.license_plates_color === 1 ? (
                                             <Text
@@ -221,7 +275,6 @@ const CancelClientConfirmCompoment = () => {
 
                                     </View>
 
-                                    {/* đánh sao & giá tiền */}
                                     {contextDetailTrip?.detailTrip.price_distance && (
                                         <View style={[styles.flexRow, styles.itemsCenter, styles.mt5]}>
                                             <CurrencyDollarIcon size={'16'} color={'white'} />

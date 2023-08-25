@@ -13,7 +13,7 @@ import {
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchCancelReport, fetchCheckReport, fetchDetailCustomer, fetchDetailTrip, fetchGetOneCategoryVehicle, fetchPickUpCustomer, fetchSendReport } from '../../api/DataFetching';
+import { fallbackImage, fetchCancelReport, fetchCheckReport, fetchDetailCustomer, fetchDetailTrip, fetchGetLocationDriver, fetchGetOneCategoryVehicle, fetchPickUpCustomer, fetchSendReport } from '../../api/DataFetching';
 import PayNumber from '../editPayNumber';
 import { MapContext } from '../../redux/mapContext';
 import FormCustomer from '../formCustomer';
@@ -22,9 +22,12 @@ import Contact from '../contact';
 import { CustomerFormContext } from '../../redux/customerFormContext';
 import DistanceInfomation from '../distanceInfomation/DistanceInfomation';
 import ReviewCustomer from '../reviewCustomer/ReviewCustomer';
+import ContentLoader from 'react-native-easy-content-loader';
 
 const DriverFindDetailComponent = () => {
     const context = useContext(CustomerFormContext);
+    const contextToken = useContext(TokenContext);
+    const contextMap = useContext(MapContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
     const [price, setPrice] = useState(0);
@@ -32,7 +35,6 @@ const DriverFindDetailComponent = () => {
     const [isLoadingCustomer, setIsLoadingCustomer] = useState(false);
     const [coords, setCoords] = useState(null);
     const [status, setStatus] = useState(null);
-    const contextToken = useContext(TokenContext);
 
     const handlePriceChange = (newPrice) => {
         setPrice(newPrice);
@@ -40,7 +42,7 @@ const DriverFindDetailComponent = () => {
 
     const detailTrip = async () => {
         const params = {
-            trip_id: item?.id
+            trip_id: item?.id ? item?.id : item?.trip_id
         }
         await fetchDetailTrip(params,contextToken.token)
         .then((data) => {
@@ -57,7 +59,7 @@ const DriverFindDetailComponent = () => {
     const createContext = (data, nameCar) => {
         context.setCustomerForm({
             ...context.customerForm,
-            tripId: item?.id,
+            tripId: data.result.trip_id,
             startPoint: {
                 start_name: data.result.start_name,
                 start: data.result.start_location, 
@@ -105,6 +107,9 @@ const DriverFindDetailComponent = () => {
         .catch((err) => {
             console.log(err);
         })
+        .finally(() => {
+            setIsLoadingCustomer(true);
+        })
     }
     
     const detailCustomer = async (id) => {
@@ -117,14 +122,11 @@ const DriverFindDetailComponent = () => {
         .catch((err) => {
             console.log(err);
         })
-        .finally(() => {
-            setIsLoadingCustomer(true);
-        })
     }
 
     const checkReport = async () => {
         await fetchCheckReport({
-            trip_id: item?.id
+            trip_id: item?.id ? item?.id : item?.trip_id
         },contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
@@ -135,11 +137,28 @@ const DriverFindDetailComponent = () => {
         })
     }
 
+    const getLocationDriver = async (driverId) => {
+        await fetchGetLocationDriver({
+            driver_id: driverId,
+        })
+        .then((data) => {
+            contextMap.setMap({
+                ...contextMap.map,
+                start: {
+                    coordinates: {
+                        lat: data.result.lat,
+                        lng: data.result.lng,
+                    }
+                }
+            })
+        })
+    }
+
     const handleReport = async (handle) => {
         // console.log(handle);
         if(handle == 'cancel'){
             const data = {
-                trip_id: item?.id,
+                trip_id: item?.id ? item?.id : item?.trip_id,
                 user_id: customer?.user_id
             }
             await fetchCancelReport(data, contextToken.token)
@@ -171,7 +190,7 @@ const DriverFindDetailComponent = () => {
             })
         }else if(handle == 'send'){
             const data = {
-                trip_id: item?.id,
+                trip_id: item?.id ? item?.id : item?.trip_id,
                 trip_price: price,
                 distance: context?.customerForm.distance,
                 user_id: customer?.user_id
@@ -209,49 +228,51 @@ const DriverFindDetailComponent = () => {
     useEffect(() => {
         detailTrip();
         checkReport();
+        if(item?.is_notify || item?.driver_id){
+            getLocationDriver(item?.driver_id);
+        }
     }, [item.id]);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
-            <View style={[styles.flexFull, styles.bgBlack]}>
-                {/* header */}
-                <Header navigation={navigation} title="Tìm tài xế" />
+            {isLoadingCustomer ? (
+                <View style={[styles.flexFull, styles.bgBlack]}>
+                    {/* header */}
+                    <Header navigation={navigation} title="Tìm tài xế" />
 
-                {/* body */}
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={[styles.flexFull, styles.pt15]}
-                >
-                    {isLoadingCustomer && (
-                        <FormCustomer context={context} title="Thông tin chuyến đi" />
-                    )}
-                    {/* khoang cach & thoi gian */}
-                    {isLoadingCustomer && (
+                    {/* body */}
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        style={[styles.flexFull, styles.pt15]}
+                    >
+
+                        <FormCustomer context={context} tripId={item?.trip_id && item?.trip_id} title="Thông tin chuyến đi" />
+                        {/* khoang cach & thoi gian */}
+
                         <DistanceInfomation context={context}/>
-                    )}
+    
 
-                    {/* bang tinh */}
-                    <View style={[styles.bgWhite, styles.p15]}>
-                        <Text style={[styles.fs27, styles.lh32, styles.fw400, styles.mb15]}>
-                            Bảng tính
-                        </Text>
-                        {/* thoi gian du tinh */}
-                        <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                Thời gian dự tính
+                        {/* bang tinh */}
+                        <View style={[styles.bgWhite, styles.p15]}>
+                            <Text style={[styles.fs27, styles.lh32, styles.fw400, styles.mb15]}>
+                                Bảng tính
                             </Text>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{context?.customerForm.duration} phút</Text>
-                        </View>
-                        {/* khoang cach */}
-                        <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                Khoảng cách
-                            </Text>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{context?.customerForm.distance} km</Text>
-                        </View>
-                        {/* bao gia */}
-                        {isLoadingCustomer && (
+                            {/* thoi gian du tinh */}
+                            <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
+                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
+                                    Thời gian dự tính
+                                </Text>
+                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{context?.customerForm.duration} phút</Text>
+                            </View>
+                            {/* khoang cach */}
+                            <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
+                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
+                                    Khoảng cách
+                                </Text>
+                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{context?.customerForm.distance} km</Text>
+                            </View>
+                            {/* bao gia */}
                             <View style={[styles.borderBot5, styles.py10]}>
                                 <View style={[styles.flexBetween, styles.mb15]}>
                                     <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
@@ -293,134 +314,144 @@ const DriverFindDetailComponent = () => {
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-                        )}
-                        {/* so du diem */}
-                        <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
-                            <View style={[styles.flexRow, styles.itemsCenter]}>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                    Số dư điểm
-                                </Text>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.bg161e,
-                                        styles.px10,
-                                        styles.flexCenter,
-                                        styles.ml10,
-                                    ]}
-                                >
-                                    <Text style={[styles.textWhite, styles.fs12, styles.lh20]}>
-                                        Nạp điểm
+                            {/* so du diem */}
+                            <View style={[styles.flexBetween, styles.borderBot5, styles.py10]}>
+                                <View style={[styles.flexRow, styles.itemsCenter]}>
+                                    <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
+                                        Số dư điểm
                                     </Text>
-                                </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.bg161e,
+                                            styles.px10,
+                                            styles.flexCenter,
+                                            styles.ml10,
+                                        ]}
+                                    >
+                                        <Text style={[styles.textWhite, styles.fs12, styles.lh20]}>
+                                            Nạp điểm
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>30K</Text>
                             </View>
-                            <Text style={[styles.fs16, styles.lh24, styles.fw400]}>30K</Text>
-                        </View>
-                        {/* phi nen tang */}
-                        <View style={[styles.py10]}>
-                            <View style={[styles.flexBetween]}>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
-                                    Phí nền tảng (3%)
+                            {/* phi nen tang */}
+                            <View style={[styles.py10]}>
+                                <View style={[styles.flexBetween]}>
+                                    <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
+                                        Phí nền tảng (3%)
+                                    </Text>
+                                    <Text style={[styles.fs16, styles.lh24, styles.fw400]}>- {price * 0.03 / 1000}K</Text>
+                                </View>
+                                <Text style={[styles.fs12, styles.fw400, styles.textGray77]}>
+                                    (Trừ sau khi kết thúc chuyến đi)
                                 </Text>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>- {price * 0.03 / 1000}K</Text>
                             </View>
-                            <Text style={[styles.fs12, styles.fw400, styles.textGray77]}>
-                                (Trừ sau khi kết thúc chuyến đi)
-                            </Text>
                         </View>
-                    </View>
 
-                    {/* thông tin tài xế */}
-                    <View
-                        style={[styles.border1, styles.borderTop, styles.borderSolid, styles.pt24]}
-                    >
-                        <Text
-                            style={[
-                                styles.fs27,
-                                styles.textWhite,
-                                styles.lh32,
-                                styles.fw300,
-                                styles.px15,
-                                styles.mb24,
-                            ]}
+                        {/* thông tin tài xế */}
+                        <View
+                            style={[styles.border1, styles.borderTop, styles.borderSolid, styles.pt24]}
                         >
-                            Thông tin hành khách
-                        </Text>
-                        <View style={[styles.flexColumn, styles.itemsCenter, styles.mb20]}>
-                            {/* avatar */}
-                            <Image
-                                source={{ uri: customer?.image || fallbackImage }}
+                            <Text
                                 style={[
-                                    styles.mb15,
-                                    { width: 120, height: 120, borderRadius: 999 },
+                                    styles.fs27,
+                                    styles.textWhite,
+                                    styles.lh32,
+                                    styles.fw300,
+                                    styles.px15,
+                                    styles.mb24,
                                 ]}
-                                resizeMode="cover"
-                            />
-                            {/* name */}
-                            <View style={[styles.flexRow, styles.itemsCenter]}>
-                                <Text
+                            >
+                                Thông tin hành khách
+                            </Text>
+                            <View style={[styles.flexColumn, styles.itemsCenter, styles.mb20]}>
+                                {/* avatar */}
+                                <Image
+                                    source={{ uri: customer?.image || fallbackImage }}
                                     style={[
-                                        styles.textWhite,
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.lh24,
+                                        styles.mb15,
+                                        { width: 120, height: 120, borderRadius: 999 },
                                     ]}
-                                >
-                                    {customer?.fullname}
-                                </Text>
-                                {item?.protected && (
-                                    <View style={[styles.pl10]}>
-                                        <ShieldCheckIcon size={16} color={'white'} />
+                                    resizeMode="cover"
+                                />
+                                {/* name */}
+                                <View style={[styles.flexRow, styles.itemsCenter]}>
+                                    <Text
+                                        style={[
+                                            styles.textWhite,
+                                            styles.fs16,
+                                            styles.fw700,
+                                            styles.lh24,
+                                        ]}
+                                    >
+                                        {customer?.fullname}
+                                    </Text>
+                                    {item?.protected && (
+                                        <View style={[styles.pl10]}>
+                                            <ShieldCheckIcon size={16} color={'white'} />
+                                        </View>
+                                    )}
+                                </View>
+
+                                {/* đánh sao*/}
+                                {customer?.average_rates.toString() && (
+                                    <View style={[styles.flexRow, styles.itemsCenter]}>
+                                        <StarIcon size={'16'} color={'white'} />
+                                        <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
+                                            {customer?.average_rates.toString()}
+                                        </Text>
                                     </View>
                                 )}
                             </View>
 
-                            {/* đánh sao*/}
-                            {customer?.average_rates.toString() && (
-                                <View style={[styles.flexRow, styles.itemsCenter]}>
-                                    <StarIcon size={'16'} color={'white'} />
-                                    <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
-                                        {customer?.average_rates.toString()}
-                                    </Text>
-                                </View>
-                            )}
+                            {/* contact */}
+                            <Contact item={customer}/>
+
+                            {/* đánh giá */}
+                            <ReviewCustomer />
                         </View>
+                    </ScrollView>
 
-                        {/* contact */}
-                        <Contact item={customer}/>
-
-                        {/* đánh giá */}
-                        <ReviewCustomer />
+                    {/* buttom  huy chuyen & tim tai xe*/}
+                    <View style={[styles.flexRow]}>
+                        <TouchableOpacity
+                            style={[
+                                styles.h48,
+                                styles.bgGray161,
+                                styles.flexFull,
+                                styles.itemsCenter,
+                                styles.justifyCenter,
+                            ]}
+                            onPress={() => navigation.navigate('CancelBookDriverScreen', customer)}
+                        >
+                            <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[
+                                styles.h48,
+                                styles.bgRed,
+                                styles.flexFull,
+                                styles.itemsCenter,
+                                styles.justifyCenter,
+                            ]}
+                            onPress={handlePickUpCustomer}
+                        >
+                            <Text style={[styles.fs16, styles.textWhite]}>Đón khách</Text>
+                        </TouchableOpacity>
                     </View>
-                </ScrollView>
-
-                {/* buttom  huy chuyen & tim tai xe*/}
-                <View style={[styles.flexRow]}>
-                    <TouchableOpacity
-                        style={[
-                            styles.h48,
-                            styles.bgGray161,
-                            styles.flexFull,
-                            styles.itemsCenter,
-                            styles.justifyCenter,
-                        ]}
-                        onPress={() => navigation.navigate('CancelBookDriverScreen', customer)}
-                    >
-                        <Text style={[styles.fs16, styles.textWhite]}>Hủy chuyến</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            styles.h48,
-                            styles.bgRed,
-                            styles.flexFull,
-                            styles.itemsCenter,
-                            styles.justifyCenter,
-                        ]}
-                        onPress={handlePickUpCustomer}
-                    >
-                        <Text style={[styles.fs16, styles.textWhite]}>Đón khách</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+                </View>            
+            ) : (
+                <ContentLoader
+                    pRows={2} // Số dòng
+                    listSize={2}
+                    primaryColor='#999'
+                    pWidth={['100%', '100%']} // Độ rộng của từng dòng, có thể điều chỉnh theo nhu cầu
+                    pHeight={[60, 60]} // Chiều cao của từng dòng
+                    pAnimate={true} // Tắt hiệu ứng loading, có thể bật lại theo nhu cầu
+                >
+                </ContentLoader>
+            )}
         </SafeAreaView>
     );
 };

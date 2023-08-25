@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, Dimensions, Alert } from 'react-native';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
@@ -62,8 +62,8 @@ const Wifi = () => {
   const [ListMyCar, setListMyCar] = useState([]);
   const [wifiName, setWifiName] = useState(null);
   const [wifiPass, setWifiPass] = useState(null);
-  const contextToken = useContext(TokenContext);
   const [loading, setLoading] = useState(true);
+  const contextToken = useContext(TokenContext);
 
 
   const HandleWifiNameChange = useCallback((newValue) => {

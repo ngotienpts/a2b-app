@@ -38,7 +38,13 @@ const MapBookStart = () => {
         longitude: item?.coordinates.lng
     });
 
-    // console.log(1);
+    const handleChangeRegion = useCallback((coord,val) => {
+        setResults(val);
+        setCoordinates({
+            latitude: coord?.lat,
+            longitude: coord?.lng
+        })
+    },[])
 
     const handleRegionChange = (region) => {
         setCoordinates({
@@ -168,7 +174,7 @@ const MapBookStart = () => {
                     </View>
 
                     {/* result */}
-                    {inputValue.length > 0 ? (
+                    {inputValue.length > 0 && (
                         <ResultStart
                             results={results}
                             navigation={navigation}
@@ -179,14 +185,15 @@ const MapBookStart = () => {
                                 styles.bg161e,
                                 { maxHeight: keyboardHeight * 0.7 },
                             ]}
+                            onChangeRegion={handleChangeRegion}
                             paddingBottom={0}
                         />
-                    ) : null}
+                    )}
                 </View>
 
                 <MapView
                     style={{ flex: 1 }}
-                    initialRegion={{
+                    region={{
                         latitude: coordinates.latitude,
                         longitude: coordinates.longitude,
                         latitudeDelta: 0.0922,

@@ -861,5 +861,17 @@ const styles = StyleSheet.create({
         height: 15,
         marginHorizontal: 12,
     },
+    card: {
+        backgroundColor: '#161E28',
+        padding: 10,
+        elevation: 3,
+        shadowColor: "black",
+        shadowOffset: {
+        width: 0,
+        height: 3,
+        },
+        shadowOpacity: 0.24,
+        shadowRadius: 4,
+    }
 });
 export default styles;

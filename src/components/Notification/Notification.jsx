@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 
@@ -9,62 +9,64 @@ import MomentComponent from '../moment';
 import { fetchListNoti, fetchReadAllNoti, fetchReadOneNoti } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import { useNotification } from '../../redux/notificationContext';
+import Skenleton from '../skeleton/Skenleton';
+import { waiting } from '../../constants';
 
 const Notification = () => {
     const { handleHiddenNoti } = useNotification();
     const navigation = useNavigation();
     const context = useContext(TokenContext);
     const [notifications, setNotifications] = useState({});
-    // const prevNoti = useRef(null);
     const [isUnmounted, setIsUnmounted] = useState(false);
     const [isDot, setIsDot] = useState(true);
     const isFocused = useIsFocused();
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(2);
     const [count, setCount] = useState(0);
-
+    const cardWidth = Dimensions.get("window").width * 0.8;
     // useEffect này chỉ chạy một lần khi component mount
     useEffect(() => {
         listNotification();
     }, []);
 
-    // useEffect(() => {
-    //     if (!isFocused) {
-    //       // Màn hình bị blur, thực hiện unmount
-    //       setIsUnmounted(true);
-    //     } else {
-    //       // Màn hình được focus lại, không cần unmount
-    //       setIsUnmounted(false);
-    //     }
-    //   }, [isFocused]);
+    useEffect(() => {
+        if (!isFocused) {
+          // Màn hình bị blur, thực hiện unmount
+          setIsUnmounted(true);
+        } else {
+          // Màn hình được focus lại, không cần unmount
+          setIsUnmounted(false);
+        }
+    }, [isFocused]);
 
-    // useEffect(() => {
-    // // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
-    // // console.log(isUnmounted);
-    // // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
-    //     if (!isUnmounted) {
-    //         // Gọi API hoặc tác vụ khác...
-    //         listNotification();
+    useEffect(() => {
+    // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
+    // console.log(isUnmounted);
+    // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
+        if (!isUnmounted) {
+            // Gọi API hoặc tác vụ khác...
+            listNotification();
+            // console.log(1);
 
-    //     }
-    // }, [isUnmounted]);   
+        }
+    }, [isUnmounted]);   
 
     const listNotification = () => {
         let params = {}
-        fetchListNoti(params,context.token)
-        .then((data) => {
-            if (data.res === 'success') {
-                setNotifications(data.result);
-                handleHiddenNoti(data.count);
-                setCount(data.count - 1);
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            setLoading(true);
-        });
+        fetchListNoti(params, context.token)
+            .then((data) => {
+                if (data.res === 'success') {
+                    setNotifications(data.result);
+                    handleHiddenNoti(data.count);
+                    setCount(data.count - 1);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                setLoading(true);
+            });
     };
 
     // Xử lý khi thông báo được ẩn
@@ -75,34 +77,34 @@ const Notification = () => {
         }));
         setNotifications(updatedNotifications);
         fetchReadAllNoti(context.token)
-        .then((data) => {
-            // console.log(data);
-            if(data.res === 'success') {
-                handleHiddenNoti(0);
-                // handleHiddenNoti(context.token);
-            }
-        })
+            .then((data) => {
+                // console.log(data);
+                if (data.res === 'success') {
+                    handleHiddenNoti(0);
+                    // handleHiddenNoti(context.token);
+                }
+            })
     };
 
     // Xử lý từng thông báo bị ẩn
     const handleClickOneNoti = (noti) => {
-        const index = notifications.findIndex((n) => n.notify_id === noti.notify_id && n.status == 0); //tim vi tri key noti chon voi danh sach noti api
-        if (index !== -1) {
-            // Đánh dấu thông báo là đã đọc bằng cách đặt isRead thành true
-            const updatedNotifications = [...notifications]; // lay danh sách noti của api kết hợp
-            updatedNotifications[index] = { ...noti, isRead: true }; // kết hợp noti thứ i của api với noti được chọn và thêm key isRead = true
-            setNotifications(updatedNotifications); // cập nhật lại noti
-            setCount(prevCount => Math.max(0, prevCount - 1));
-            handleHiddenNoti(count)
-        }
+        // const index = notifications.findIndex((n) => n.notify_id === noti.notify_id && n.status == 0); //tim vi tri key noti chon voi danh sach noti api
+        // if (index !== -1) {
+        //     // Đánh dấu thông báo là đã đọc bằng cách đặt isRead thành true
+        //     const updatedNotifications = [...notifications]; // lay danh sách noti của api kết hợp
+        //     updatedNotifications[index] = { ...noti, isRead: true }; // kết hợp noti thứ i của api với noti được chọn và thêm key isRead = true
+        //     setNotifications(updatedNotifications); // cập nhật lại noti
+        //     setCount(prevCount => Math.max(0, prevCount - 1));
+        //     handleHiddenNoti(count)
+        // }
         fetchReadOneNoti({
             notify_id: noti.notify_id
-        },context.token)
-        .then((data) => {
-            if(data.res === 'success'){
-                navigation.navigate(noti.screen,JSON.parse(noti.data))
-            }
-        })
+        }, context.token)
+            .then((data) => {
+                if (data.res === 'success') {
+                    navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
+                }
+            })
     }
 
     const handleScroll = (event) => {
@@ -119,21 +121,21 @@ const Notification = () => {
         const params = {
             page: page
         }
-        fetchListNoti(params,context.token)
-        .then((data) => {
-            if (data.res === 'success') {
-                setNotifications([...notifications, ...data.result]);
-                setPage(page + 1);
-                setLoading(false);
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            setLoading(true);
-            // console.log('render');
-        });
+        fetchListNoti(params, context.token)
+            .then((data) => {
+                if (data.res === 'success') {
+                    setNotifications([...notifications, ...data.result]);
+                    setPage(page + 1);
+                    setLoading(false);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                setLoading(true);
+                // console.log('render');
+            });
 
     }
 
@@ -149,7 +151,7 @@ const Notification = () => {
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                     onScroll={handleScroll}
-                    scrollEventThrottle={1600} 
+                    scrollEventThrottle={1600}
                 >
                     {/* title */}
                     <View style={[styles.flexBetween, styles.mb24, styles.px15]}>
@@ -163,7 +165,7 @@ const Notification = () => {
                     </View>
 
                     {/* list notification */}
-                    {loading &&
+                    {loading ? (
                         <View style={{ paddingBottom: 100 }}>
                             {notifications.length != undefined && notifications.map((noti, index) => (
                                 <TouchableOpacity
@@ -187,17 +189,17 @@ const Notification = () => {
                                             ]}
                                         />
 
-                                     
-                                    {!noti.isRead && noti.status == 0 && (
-                                        <Text
-                                            style={[
-                                                styles.bgRed,
-                                                styles.borderFull,
-                                                { width: 10, height: 10 },
-                                            ]}
-                                        ></Text>
-                                    )}
-        
+
+                                        {!noti.isRead && noti.status == 0 && (
+                                            <Text
+                                                style={[
+                                                    styles.bgRed,
+                                                    styles.borderFull,
+                                                    { width: 10, height: 10 },
+                                                ]}
+                                            ></Text>
+                                        )}
+
                                     </View>
                                     <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
                                         {noti.content}
@@ -205,7 +207,18 @@ const Notification = () => {
                                 </TouchableOpacity>
                             ))}
                         </View>
-                    }
+                    ) : (
+                    <View>
+                        {waiting.map((val) => (
+                            <View key={val?.id} style={[styles.card, {width: cardWidth + 80, marginBottom: 10}]}>
+                                <View>
+                                    <Skenleton height={16} width={cardWidth - 216} style={{marginTop: 10, alignItems: 'flex-end'}} />
+                                    <Skenleton height={16} width={cardWidth - 80} style={{marginTop: 10, marginBottom: 10, alignItems: 'flex-end'}} />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                    )}
 
                 </ScrollView>
             </View>

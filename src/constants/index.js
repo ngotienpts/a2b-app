@@ -212,3 +212,8 @@ export const filterReview = [
     { id: 2, title: 'Tốt nhất', name: 'star', filter: 'DESC' },
     { id: 3, title: 'Tệ nhất', name: 'star', filter: 'ASC' },
 ]
+export const waiting = [
+    {id: 0},
+    {id: 1},
+    {id: 2},
+]

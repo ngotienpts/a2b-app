@@ -12,12 +12,13 @@ import NextPageSetting from './NextPageSetting';
 import { dataGender } from '../../constants';
 import ChoseImage from './ChoseImage';
 import { TokenContext } from '../../redux/tokenContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoadingSetting from './LoadingSetting';
 
 const Setting = () => {
     const navigation = useNavigation();
     const regex = /\d/;
     const base64Regex = /^data:image\/jpeg;base64/;
+
     const [avatar, setAvatar] = useState('');
     const [name, setName] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState(null);
@@ -97,14 +98,6 @@ const Setting = () => {
             .finally(() => setloading(false))
     }
 
-    // const getUserProfile = () => {
-        // fetchGetUserProfile('79ee7846612b106c445826c19')
-        //     .then((data) => {
-        //         if (data.res == 'success') {
-        //             setUserProfile(data.result);
-        //         }
-        //     })
-        //     .finally(() => setloading(false))
     const getUserProfile = () => {
         fetchGetUserProfile(contextToken.token)
         .then((data) => {
@@ -138,8 +131,6 @@ const Setting = () => {
             }
         })
         .finally(() => setloading(false))
-        console.log(base64Regex.test(avatar));
-        console.log(avatar);
     }
 
     const handleLogout = async () => {
@@ -153,7 +144,9 @@ const Setting = () => {
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Tài khoản" />
-                {loading ? (<Text>Đang lấy dữ liệu...</Text>) : (
+                {loading ? (
+                    <LoadingSetting />
+                ) : (
                     /* body */
                     <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
                         {/* top */}
@@ -178,7 +171,7 @@ const Setting = () => {
                                         styles.h32,
                                         styles.flexCenter,
                                     ]}
-                                    onPress={() => navigation.navigate('DiaryScreen')}
+                                    onPress={() => navigation.navigate('DiaryScreen',{data:2})}
                                 >
                                     <Text
                                         style={[
@@ -216,6 +209,7 @@ const Setting = () => {
                                 </TouchableOpacity>
                             </View>
                         </View>
+
                         {/* avatar */}
                         <View style={[styles.flexCenter, styles.my24]}>
                             <ChoseImage
@@ -226,8 +220,7 @@ const Setting = () => {
                                 borderFull={styles.borderFull}
                                 onChangeImage={handleAvaterChange}
                             />
-                        </View>         
-                        
+                        </View>
 
                         {/* list */}
                         <View>

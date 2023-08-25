@@ -103,15 +103,16 @@ const AppNavigation = () => {
                 <NavigationContainer>
                   <Stack.Navigator screenOptions={{ headerShown: false }}>
                       <Stack.Screen name="Login" component={LoginScreen} />
+                      <Stack.Screen name="FindScreen" component={FindSreen} />
                       <Stack.Screen name="Home" component={HomeStackNavigation} />
                       <Stack.Screen name="Book" component={BookScreen} />
+                      <Stack.Screen name="DiaryScreen" component={DiaryScreen} />
                       <Stack.Screen name="DriverScreen" component={DriverScreen} />
                       <Stack.Screen name="UserScreen" component={UserScreen} />
                       <Stack.Screen name="WifiScreen" component={WifiScreen} />
                       <Stack.Screen name="MapScreen" component={MapScreen} />
                       <Stack.Screen name="MapScreenStart" component={MapScreenStart} />
                       <Stack.Screen name="PreMapScreen" component={PreMapScreen} />
-                      <Stack.Screen name="FindScreen" component={FindSreen} />
                       <Stack.Screen name="FindDetailScreen" component={FindDetailScreen} />
                       <Stack.Screen name="ConfirmScreen" component={ConfirmScreen} />
                       <Stack.Screen name="PickScreen" component={PickScreen} />
