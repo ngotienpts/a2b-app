@@ -20,6 +20,7 @@ import { fetchSearchEndpoint, fetchStartGPS } from '../../api/DataFetching';
 import Result from '../home/Result';
 import { TokenContext } from '../../redux/tokenContext';
 import { MapContext } from '../../redux/mapContext';
+import ResultEnd from './ResultEnd';
 
 const MapBook = () => {
     const navigation = useNavigation();
@@ -36,6 +37,14 @@ const MapBook = () => {
         latitude: item?.coordinates.lat ? item?.coordinates.lat : 20.975120399813672,
         longitude: item?.coordinates.lng ? item?.coordinates.lng : 105.78747338684025
     });
+
+    const handleChangeRegion = useCallback((coord,val) => {
+        setResults(val);
+        setCoordinates({
+            latitude: coord?.lat,
+            longitude: coord?.lng
+        })
+    },[])
 
     const handleRegionChange = (region) => {
         setCoordinates({
@@ -166,10 +175,11 @@ const MapBook = () => {
 
                     {/* result */}
                     {inputValue.length > 0 ? (
-                        <Result
+                        <ResultEnd
                             results={results}
                             navigation={navigation}
                             point={'end'}
+                            onChangeRegion={handleChangeRegion}
                             style={[
                                 styles.flexFull,
                                 styles.p15,
@@ -183,7 +193,7 @@ const MapBook = () => {
 
                 <MapView
                     style={{ flex: 1 }}
-                    initialRegion={{
+                    region={{
                         latitude: coordinates.latitude,
                         longitude: coordinates.longitude,
                         latitudeDelta: 0.0922,

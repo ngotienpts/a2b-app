@@ -9,7 +9,7 @@ import { AirbnbRating } from 'react-native-ratings';
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchGetOneRate, fetchReviewCustomer } from '../../api/DataFetching';
+import { fallbackImage, fetchGetOneRate, fetchReviewCustomer, fetchDetailTrip } from '../../api/DataFetching';
 import { reviewTextComplete } from '../../constants';
 import { CustomerFormContext } from '../../redux/customerFormContext';
 import FormCustomer from '../formCustomer';
@@ -18,6 +18,8 @@ import SpreadSheet from '../spreadSheet';
 import { TokenContext } from '../../redux/tokenContext';
 import { Alert } from 'react-native';
 import { MapContext } from '../../redux/mapContext';
+import { format } from 'date-fns';
+
 
 const DriverCompleteComponent = () => {
     const context = useContext(CustomerFormContext);
@@ -114,31 +116,95 @@ const DriverCompleteComponent = () => {
         navigation.navigate('HomeScreen');
     }
 
-    useEffect(() => {
+    const createContext = (data) => {
+        context.setCustomerForm({
+            ...context.customerForm,
+            tripId: data.result.trip_id,
+            startPoint: {
+                start_name: data.result.start_name,
+                start: data.result.start_location, 
+            },
+            endPoint: {
+                end_name: data.result.end_name,
+                end: data.result.end_location, 
+            },
+            typeCar: data.result.vehicle_category_id,
+            nameCar: data.result.name_category,
+            startTime: data.result.start_time,
+            comment: data.result.comment,
+            duration: data?.result.duration_all,
+            distance: data?.result.distance_all, 
+            coordinates: {
+                start: data.result.coordinates_start,
+                end: data.result.coordinates_end,
+            },
+            price: data.result.status_report == 1 ? parseFloat(data.result.price_report) : parseFloat(data.result.price_per_km * data.result.distance_price)
+        })
+    }
+
+    const detailTrip = async () => {
         const params = {
-            trip_id: context?.customerForm.tripId
+            trip_id: item?.trip_id
         }
-        fetchGetOneRate(params,contextToken.token)
+        await fetchDetailTrip(params,contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
-                setStatusReview(parseInt(data.result.status));
-                setReviewText(data.result.content)
+                createContext(data);
             }
         })
         .catch((err) => {
             console.log(err);
         })
-        .finally(() => {
-            setIsLoading(true);
-        })
+    }
+
+    useEffect(() => {
+        if(item?.isFlag == 1){
+            detailTrip();
+            const params = {
+                trip_id: context?.customerForm.tripId
+            }
+            fetchGetOneRate(params,contextToken.token)
+            .then((data) => {
+                if(data.res === 'success'){
+                    setStatusReview(parseInt(data.result.status));
+                    setReviewText(data.result.content)
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoading(true);
+            })
+        }
+        else{
+            const params = {
+                trip_id: context?.customerForm.tripId
+            }
+            fetchGetOneRate(params,contextToken.token)
+            .then((data) => {
+                if(data.res === 'success'){
+                    setStatusReview(parseInt(data.result.status));
+                    setReviewText(data.result.content)
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoading(true);
+            })
+
+        }
     },[statusReview])
+    // console.log(new Date(context?.customerForm.startTime));
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
-                <Header navigation={navigation} title="Hoàn thành chuyến đi" />
+                <Header navigation={navigation} title="Chi tiết chuyến đi" />
 
                 {/* body */}
                 <ScrollView
@@ -211,7 +277,10 @@ const DriverCompleteComponent = () => {
                     {/* bang tinh */}
                     <SpreadSheet context={context}/>
 
-                    <FormCustomer context={context} title="Thông tin chuyến đi" />
+                    {isLoading && (
+                        <FormCustomer context={context} title="Thông tin chuyến đi" />
+                    )}
+
 
                     {/* rate */}
                     <View

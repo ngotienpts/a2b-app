@@ -1,20 +1,20 @@
 import { View, Text, TouchableOpacity, FlatList, Keyboard } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { MapPinIcon } from 'react-native-heroicons/outline';
 
 import styles from '../../styles';
 import { MapContext } from '../../redux/mapContext';
 
-const ResultStart = ({ results, navigation, style, paddingBottom, point, onChangeRegion }) => {
+const ResultEnd = ({ results, navigation, style, paddingBottom, onChangeRegion }) => {
     const handleScroll = () => {
         Keyboard.dismiss();
     };
-
     const contextMap = useContext(MapContext);
     const chooseLocation = (item, selectItem) => {
+        // console.log(item);
         contextMap.setMap({
             ...contextMap.map,
-            start: {
+            end: {
                 name: item.name,
                 address: item.address,
                 coordinates: item.coordinates
@@ -22,7 +22,6 @@ const ResultStart = ({ results, navigation, style, paddingBottom, point, onChang
         })
         onChangeRegion(item.coordinates,selectItem);
         Keyboard.dismiss();
-
     }
     return (
         <View style={style}>
@@ -35,7 +34,7 @@ const ResultStart = ({ results, navigation, style, paddingBottom, point, onChang
                 keyExtractor={(item) => item.name.toString()+Math.random()}
                 renderItem={({ item }) => (
                     <TouchableOpacity
-                        onPress={() => chooseLocation(item, false)}
+                        onPress={() => chooseLocation(item,false)}
                     >
                         <View style={[styles.flexRow, styles.mb24]}>
                             <MapPinIcon size={24} color={'white'} />
@@ -62,4 +61,4 @@ const ResultStart = ({ results, navigation, style, paddingBottom, point, onChang
     );
 };
 
-export default ResultStart;
+export default ResultEnd;
