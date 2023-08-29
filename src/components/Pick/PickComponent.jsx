@@ -14,7 +14,7 @@ import {
 
 import styles from '../../styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { fallbackImage } from '../../api/DataFetching';
+import { fallbackImage, fetchDetailTrip } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import { Linking } from 'react-native';
@@ -23,8 +23,11 @@ import MapViewDirections from 'react-native-maps-directions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MapContext } from '../../redux/mapContext';
 import Contact from '../contact';
+import { TokenContext } from '../../redux/tokenContext';
 
 const PickComponent = () => {
+    const contextToken = useContext(TokenContext);
+
     const context = useContext(BookingFormContext);
     const contextMap = useContext(MapContext);
     const contextDetailTrip = useContext(DetailTripContext);
@@ -33,10 +36,19 @@ const PickComponent = () => {
     const navigation = useNavigation();
     const [duration, setDuration] = useState('');
     const [coordinatesPassenger, setCoordinatesPassenger] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         getCoordinates();
         // console.log(item);
+        if(item?.is_notify || item?.isFlag){
+            const paramsTrip = {
+                trip_id: item?.id
+            }
+            detailTrip(paramsTrip);
+        }else{
+            setIsLoading(true);
+        }
     },[])
 
     const getCoordinates = async () => {
@@ -53,6 +65,78 @@ const PickComponent = () => {
     const handleIndicatorStyle = {
         backgroundColor: 'gray',
     };
+
+
+    const detailTrip = async (paramsTrip) => {
+        await fetchDetailTrip(paramsTrip, contextToken.token)
+        .then((data) => {
+            if (data.res === 'success') {
+                createContext(data); 
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoading(true);
+        })
+    }
+
+
+    const createContext = async (data) => {
+        await context.setBookingForm({
+            ...context.bookingForm,
+            eniqueId: data?.result.trip_id,
+            startPoint: {
+                start_name: data?.result.start_name,
+                start: data?.result.start_location,
+                coordinates: {
+                    lat: data?.result.coordinates_start.split(',')[0],
+                    lng: data?.result.coordinates_start.split(',')[1],
+                }
+            },
+            endPoint: {
+                name: data?.result.end_name,
+                address: data?.result.end_location,
+                coordinates: {
+                    lat: data?.result.coordinates_end.split(',')[0],
+                    lng: data?.result.coordinates_end.split(',')[1],
+                }
+            },
+            typeCar: data?.result.vehicle_category_id,
+            nameCar: data?.result.name_category,
+            departureTime: data?.result.start_time,
+            note: data?.result.comment,
+            isPunish: data?.result.is_punish
+        })
+
+        await contextDetailTrip.setDetailTrip({
+            ...contextDetailTrip.detailTrip,
+            duration: data.result.duration_all,
+            distance: data.result.distance_all,
+            price_distance: parseInt(data.result.price_report).toLocaleString('vi-VN'),
+        })
+
+        await contextMap.setMap({
+            ...contextMap.map,
+            start: {
+                name: data?.result.start_name,
+                address: data?.result.start_location,
+                coordinates: {
+                    lat: data?.result.coordinates_start.split(',')[0],
+                    lng: data?.result.coordinates_start.split(',')[1],
+                }
+            },
+            end: {
+                name: data?.result.end_name,
+                address: data?.result.end_location,
+                coordinates: {
+                    lat: data?.result.coordinates_end.split(',')[0],
+                    lng: data?.result.coordinates_end.split(',')[1],
+                }
+            }
+        })
+    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -83,33 +167,35 @@ const PickComponent = () => {
                         {Math.floor(duration)} phút
                     </Text>
                 </View>
+                {isLoading && (
                 <GestureHandlerRootView style={[styles.flexFull, styles.bgBlack]}>
+                    {/* Map  */}
                     <MapView
                         style={[styles.flexFull]}
                         initialRegion={{
-                            latitude: item?.lat,
-                            longitude: item?.lng,
+                            latitude: parseFloat(item?.lat),
+                            longitude: parseFloat(item?.lng),
                             latitudeDelta: 0.0922,
                             longitudeDelta: 0.0421,
                         }}
-                        mapType={Platform.OS == "android" ? "none" : "standard"}
+                        // mapType={Platform.OS == "android" ? "none" : "standard"}
                         // provider={PROVIDER_GOOGLE}
                     >
                         <Marker
-                            coordinate={{ latitude: item?.lat, longitude: item?.lng }}
+                            coordinate={{ latitude: parseFloat(item?.lat), longitude: parseFloat(item?.lng) }}
                             title="Vị trí của tài xế"
                             description="Vị trí di chuyển chi tiết của tài xế"
                             // onDragEnd={(e) => this.setState({ x: e.nativeEvent.coordinate })}
                         />
                         {contextMap.map.start.length !== 0 ? (
                             <Marker
-                                coordinate={{ latitude: contextMap.map.start.coordinates.lat, longitude: contextMap.map.start.coordinates.lng }}
+                                coordinate={{ latitude: parseFloat(contextMap.map.start.coordinates.lat), longitude: parseFloat(contextMap.map.start.coordinates.lng)}}
                                 title="Vị trí của khách đặt"
                                 description="Vị trí di chuyển chi tiết của khách đặt"
                             />
                         ) : (
                             <Marker
-                                coordinate={{ latitude: coordinatesPassenger.lat, longitude: coordinatesPassenger.lng }}
+                                coordinate={{ latitude: parsrFloat(coordinatesPassenger.lat), longitude: parseFloat(coordinatesPassenger.lng) }}
                                 title="Vị trí của khách đặt"
                                 description="Vị trí di chuyển chi tiết của khách đặt"
                             />
@@ -277,14 +363,13 @@ const PickComponent = () => {
                                                         styles.ml5,
                                                     ]}
                                                 >
-                                                    {contextDetailTrip?.detailTrip.price_distance}
+                                                    {contextDetailTrip?.detailTrip.price_distance.toString()}
                                                 </Text>
                                             </View>
                                         )}
                                     </View>
                                 </View>
                             </View>
-
                             <SentFormBooking context={context} contextMap={contextMap} title="Tài xế đang đến" />
                             <TouchableOpacity onPress={() => navigation.navigate('MovingScreen',item)}>
                                 <Text style={[styles.textWhite, styles.flexCenter, styles.fs27]}>Go Moving</Text>
@@ -292,6 +377,7 @@ const PickComponent = () => {
                         </BottomSheetScrollView>
                     </BottomSheet>
                 </GestureHandlerRootView>
+                )}
             </View>
         </SafeAreaView>
     );

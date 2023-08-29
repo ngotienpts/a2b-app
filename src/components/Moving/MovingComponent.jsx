@@ -11,7 +11,7 @@ import {
 import styles from '../../styles';
 import Header from '../header/Header';
 import { BookingFormContext } from '../../redux/bookingFormContext';
-import { fallbackImage } from '../../api/DataFetching';
+import { fallbackImage, fetchDetailTrip } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking';
 import { MapContext } from '../../redux/mapContext';
 import { DetailTripContext } from '../../redux/detailTripContext';
@@ -20,19 +20,31 @@ import getDirections from 'react-native-google-maps-directions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Contact from '../contact';
 import QrCode from '../qrCode/QrCode';
+import { TokenContext } from '../../redux/tokenContext';
 
 const MovingComponent = () => {
+    const contextToken = useContext(TokenContext);
+
     const context = useContext(BookingFormContext);
     const contextMap = useContext(MapContext);
     const contextDetailTrip = useContext(DetailTripContext);
     const {params: item} = useRoute();
     const navigation = useNavigation();
     const [coordinatesPassenger, setCoordinatesPassenger] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     
     useEffect(() => {
         getCoordinates();
         // console.log(contextDetailTrip?.detailTrip.price_distance.replace('.',''));
+        if(item?.is_notify || item?.isFlag){
+            const paramsTrip = {
+                trip_id: item?.id
+            }
+            detailTrip(paramsTrip);
+        }else{
+            setIsLoading(true);
+        }
     },[])
     
     const getCoordinates = async () => {
@@ -67,6 +79,77 @@ const MovingComponent = () => {
         getDirections(data)
     }
 
+    const detailTrip = async (paramsTrip) => {
+        await fetchDetailTrip(paramsTrip, contextToken.token)
+        .then((data) => {
+            if (data.res === 'success') {
+                createContext(data); 
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoading(true);
+        })
+    }
+
+
+    const createContext = async (data) => {
+        await context.setBookingForm({
+            ...context.bookingForm,
+            eniqueId: data?.result.trip_id,
+            startPoint: {
+                start_name: data?.result.start_name,
+                start: data?.result.start_location,
+                coordinates: {
+                    lat: data?.result.coordinates_start.split(',')[0],
+                    lng: data?.result.coordinates_start.split(',')[1],
+                }
+            },
+            endPoint: {
+                name: data?.result.end_name,
+                address: data?.result.end_location,
+                coordinates: {
+                    lat: data?.result.coordinates_end.split(',')[0],
+                    lng: data?.result.coordinates_end.split(',')[1],
+                }
+            },
+            typeCar: data?.result.vehicle_category_id,
+            nameCar: data?.result.name_category,
+            departureTime: data?.result.start_time,
+            note: data?.result.comment,
+            isPunish: data?.result.is_punish
+        })
+
+        await contextDetailTrip.setDetailTrip({
+            ...contextDetailTrip.detailTrip,
+            duration: data.result.duration_all,
+            distance: data.result.distance_all,
+            price_distance: parseInt(data.result.price_report).toLocaleString('vi-VN'),
+        })
+
+        await contextMap.setMap({
+            ...contextMap.map,
+            start: {
+                name: data?.result.start_name,
+                address: data?.result.start_location,
+                coordinates: {
+                    lat: data?.result.coordinates_start.split(',')[0],
+                    lng: data?.result.coordinates_start.split(',')[1],
+                }
+            },
+            end: {
+                name: data?.result.end_name,
+                address: data?.result.end_location,
+                coordinates: {
+                    lat: data?.result.coordinates_end.split(',')[0],
+                    lng: data?.result.coordinates_end.split(',')[1],
+                }
+            }
+        })
+    }
+
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
@@ -75,6 +158,7 @@ const MovingComponent = () => {
                 <Header navigation={navigation} title="Chi tiết chuyến đi" />
 
                 {/* body */}
+                {isLoading &&(
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
@@ -331,6 +415,7 @@ const MovingComponent = () => {
                         </Text>
                     </TouchableOpacity>
                 </ScrollView>
+                )}
             </View>
         </SafeAreaView>
     );
