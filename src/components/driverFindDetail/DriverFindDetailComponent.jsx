@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, StatusBar, Alert } from 'react-native';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StarIcon } from 'react-native-heroicons/solid';
@@ -33,8 +33,10 @@ const DriverFindDetailComponent = () => {
     const [price, setPrice] = useState(0);
     const [customer, setCustomer] = useState(null);
     const [isLoadingCustomer, setIsLoadingCustomer] = useState(false);
+    const [shouldNavigateToCancel, setShouldNavigateToCancel] = useState(false);
     const [coords, setCoords] = useState(null);
     const [status, setStatus] = useState(null);
+    const cancelObjRef = useRef(null);
 
     const handlePriceChange = (newPrice) => {
         setPrice(newPrice);
@@ -48,7 +50,7 @@ const DriverFindDetailComponent = () => {
         .then((data) => {
             if(data.res === 'success'){
                 oneCateVehicle(data);
-                detailCustomer(data?.result.user_id)
+                detailCustomer(data.result)
             }
         })
         .catch((err) => {
@@ -112,12 +114,19 @@ const DriverFindDetailComponent = () => {
         })
     }
     
-    const detailCustomer = async (id) => {
+    const detailCustomer = async (result) => {
         await fetchDetailCustomer({
-            user_id: id
+            user_id: result.user_id
         })
         .then((data) => {
-            setCustomer(data.result);
+            const obj = data.result;
+            if(result?.status == 5){
+                obj.reason = result.cancel_reason;
+                cancelObjRef.current = obj;
+                setShouldNavigateToCancel(true)
+                // navigation.navigate('CancelDriverConfirmScreen',obj);
+            }
+            setCustomer(obj);
         })
         .catch((err) => {
             console.log(err);
@@ -231,7 +240,10 @@ const DriverFindDetailComponent = () => {
         if(item?.is_notify || item?.driver_id){
             getLocationDriver(item?.driver_id);
         }
-    }, [item.id]);
+        if (shouldNavigateToCancel) {
+            navigation.navigate('CancelDriverConfirmScreen', cancelObjRef.current);
+        }
+    }, [item.id,shouldNavigateToCancel]);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>

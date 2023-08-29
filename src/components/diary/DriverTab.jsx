@@ -106,7 +106,7 @@ const DriverTab = () => {
 
     const handleScroll = ({ distanceFromEnd }) => {
         if (distanceFromEnd > 150) {
-            listPassenger(1);
+            listDrivers(1);
         }
     };
     
@@ -138,7 +138,6 @@ const DriverTab = () => {
                     obj.isFlag = 1;
                     obj.trip_id = item?.trip_id;
                     obj.reason = item?.cancel_reason;
-                    console.log(obj);
                     navigation.navigate(Screen, obj);
                 }
             })

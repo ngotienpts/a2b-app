@@ -100,11 +100,11 @@ const Notification = () => {
         fetchReadOneNoti({
             notify_id: noti.notify_id
         }, context.token)
-            .then((data) => {
-                if (data.res === 'success') {
-                    navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
-                }
-            })
+        .then((data) => {
+            if (data.res === 'success') {
+                navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
+            }
+        })
     }
 
     const handleScroll = (event) => {

@@ -87,8 +87,8 @@ const PickComponent = () => {
                     <MapView
                         style={[styles.flexFull]}
                         initialRegion={{
-                            latitude: item?.lat,
-                            longitude: item?.lng,
+                            latitude: parseFloat(item?.lat),
+                            longitude: parseFloat(item?.lng),
                             latitudeDelta: 0.0922,
                             longitudeDelta: 0.0421,
                         }}
@@ -96,7 +96,7 @@ const PickComponent = () => {
                         // provider={PROVIDER_GOOGLE}
                     >
                         <Marker
-                            coordinate={{ latitude: item?.lat, longitude: item?.lng }}
+                            coordinate={{ latitude: parseFloat(item?.lat), longitude: parseFloat(item?.lng) }}
                             title="Vị trí của tài xế"
                             description="Vị trí di chuyển chi tiết của tài xế"
                             // onDragEnd={(e) => this.setState({ x: e.nativeEvent.coordinate })}

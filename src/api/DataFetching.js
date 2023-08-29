@@ -211,7 +211,7 @@ export const fetchUpdateRoad = (data,token) => {
     const updateRoad = `${baseUrl}/${token}/vehicle/updateRoad`;
     return postApi(updateRoad,data);
 }
-//tro thanh tai xe
+//bat dau tim khach
 export const fetchBecomeDriver = (token) => {
     const becomeDriver = `${baseUrl}/${token}/vehicle/find`;
     return postApi(becomeDriver);
@@ -291,4 +291,9 @@ export const fetchCancelTrip = (data,token) => {
 export const fetchGetLocationDriver = (params) => {
     const getLocationDriver = `${baseUrl}/1/vehicle/location`;
     return apiCall(getLocationDriver,params);
+}
+//tro thanh tai xe
+export const fetchTurnOnDriver = (token) => {
+    const turnOnDriver = `${baseUrl}/${token}/profile/turnOn`;
+    return postApi(turnOnDriver);
 }
