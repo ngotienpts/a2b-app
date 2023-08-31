@@ -228,7 +228,7 @@ const DriverFindDetailComponent = () => {
     useEffect(() => {
         detailTrip();
         checkReport();
-        if(item?.is_notify || item?.driver_id){
+        if(item?.is_notify || item?.driver_id || item?.isFlag){
             getLocationDriver(item?.driver_id);
         }
     }, [item.id]);

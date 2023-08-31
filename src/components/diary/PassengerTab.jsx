@@ -127,6 +127,7 @@ const PassengerTab = () => {
                     reason: item?.cancel_reason,
                     isFlag: 1
                 }
+                // console.log(data);
                 navigation.navigate('CancelClientConfirmScreen',data)
             }
         }
@@ -160,6 +161,9 @@ const PassengerTab = () => {
 
     useEffect(() => {
         listPassenger();
+        // return() => {
+        //     console.log('clean up');
+        // }
     },[])
 
     return (

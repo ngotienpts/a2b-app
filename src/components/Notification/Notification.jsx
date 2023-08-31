@@ -102,6 +102,7 @@ const Notification = () => {
         }, context.token)
             .then((data) => {
                 if (data.res === 'success') {
+                    // console.log(data);
                     navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
                 }
             })
