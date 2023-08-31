@@ -109,17 +109,28 @@ const DriverTab = () => {
             listDrivers(1);
         }
     };
-    
-    const listMyCar = async (Screen) => {
+
+    const listMyCar = async (Screen, item) => {
         await fetchListMyCar(contextToken.token)
             .then((data) => {
                 if (data.res === 'success') {
+                    const parts = data.result.start_location.split(', ');
+                    const country = parts.pop();
+                    const street = parts.join(', ');;
+                    const title = street.substring(0, street.indexOf(","));
+                    const address = street.replace(title + ',', '').trim();
                     let obj = {};
                     obj.radius = data.result.distane_to_customer;
                     obj.price = data.result.price_per_km;
                     obj.isEnabled = data.result.price_per_km ? true : false;
                     obj.isFlag = 1;
-                    // console.log(obj);
+                    obj.currentPosition = {
+                        title: title,
+                        address: address
+                    }
+                    obj.id = item.trip_id
+                    obj.driver_id = item?.id_driver
+                    // console.log(item);
                     navigation.navigate(Screen, obj);
                 }
             })
@@ -128,7 +139,7 @@ const DriverTab = () => {
             })
     }
 
-    const detailCustomer = async (Screen,item) => {
+    const detailCustomer = async (Screen, item) => {
         await fetchDetailCustomer({
             user_id: item?.id_user
         })
@@ -151,7 +162,7 @@ const DriverTab = () => {
             listMyCar('DriverFindScreen');
         }
         else if (item?.status_number == 1) {
-            listMyCar('DriverFindScreen');
+            listMyCar('DriverFindDetailScreen', item);
         }
         else if (item?.status_number == 2) {
             detailCustomer('DriverPickScreen', item)
@@ -162,7 +173,7 @@ const DriverTab = () => {
         else if (item?.status_number == 4) {
             detailCustomer('DriverCompleteScreen', item)
         }
-        else if (item?.status_number == 5){
+        else if (item?.status_number == 5) {
             detailCustomer('CancelDriverConfirmScreen', item)
         }
     }

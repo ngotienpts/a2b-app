@@ -115,7 +115,11 @@ const PassengerTab = () => {
             getDetailDriver(item);
         }
         else if(item?.status_number == 3){
-            getDetailDriver(item);
+ 
+            getDetailDriver(item, 'PickScreen');
+        }
+        else if(item?.status_number == 3){
+            getDetailDriver(item, 'MovingScreen');
         }else if(item?.status_number == 4){
             getDetailDriver(item, 'CompleteScreen');
         }else{

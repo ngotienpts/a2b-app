@@ -14,7 +14,7 @@ import {
     ViewfinderCircleIcon,
 } from 'react-native-heroicons/outline';
 import { Image } from 'react-native';
-import { fallbackImage, fetchFindCustomer, fetchTurnOffDriver } from '../../api/DataFetching';
+import { fallbackImage, fetchFindCustomer, fetchTurnOffDriver, fetchDetailTrip } from '../../api/DataFetching';
 import { CircleFade } from 'react-native-animated-spinkit';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import { MapContext } from '../../redux/mapContext';
@@ -32,6 +32,7 @@ const DriverFind = () => {
 
     useEffect(() => {
         findCustomer();
+        console.log(item);
     },[])
 
     useInterval(() => {
@@ -63,6 +64,44 @@ const DriverFind = () => {
             }
         })
     }
+
+    const detailTrip = async (paramsTrip) => {
+        await fetchDetailTrip(paramsTrip, contextToken.token)
+        .then((data) => {
+            if (data.res === 'success') {
+                createContext(data); 
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoading(true);
+        })
+    }
+
+    const createContext = async (data) => {
+        await contextMap.setMap({
+            ...contextMap.map,
+            start: {
+                name: data?.result.start_name,
+                address: data?.result.start_location,
+                coordinates: {
+                    lat: data?.result.coordinates_start.split(',')[0],
+                    lng: data?.result.coordinates_start.split(',')[1],
+                }
+            },
+            end: {
+                name: data?.result.end_name,
+                address: data?.result.end_location,
+                coordinates: {
+                    lat: data?.result.coordinates_end.split(',')[0],
+                    lng: data?.result.coordinates_end.split(',')[1],
+                }
+            }
+        })
+    }
+
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>

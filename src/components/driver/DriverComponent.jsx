@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, StatusBar, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar, Alert, Dimensions } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchBecomeDriver, fetchGetAndUpdateGPSDriver, fetchListMyCar, fetchStartGPS, fetchUpdateRoad, fetchUpdateStatusPrice } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import { MapContext } from '../../redux/mapContext';
+import Skenleton from '../skeleton/Skenleton';
+
 
 const DriverComponent = () => {
     const navigation = useNavigation();
@@ -25,6 +27,8 @@ const DriverComponent = () => {
     const [item, setItem] = useState(null);
     const contextToken = useContext(TokenContext)
     const contextMap = useContext(MapContext);
+    const cardWidth = Dimensions.get("window").width * 0.8;
+
     // console.log(contextMap);
     const toggleSwitch = () => {
         setIsEnabled((previousState) => !previousState)
@@ -66,6 +70,9 @@ const DriverComponent = () => {
         .catch((err) => {
             console.log(err);
         })
+        .finally(() => {
+            setIsLoading(true);
+        })
     }
 
     const infomationDriver = async () => {
@@ -94,9 +101,6 @@ const DriverComponent = () => {
         .catch((err) => {
             console.log(err);
         })
-        .finally(() => {
-            setIsLoading(true);
-        })
     }
 
     const navigationScreenBackOrError = (name = '', item = '') => {
@@ -115,8 +119,7 @@ const DriverComponent = () => {
             currentPosition: currentPosition,
         }
         
-        if(!contextMap.map.end && !driver?.end_location){
-            
+        if(!contextMap.map.end && !driver?.end_location){          
             Alert.alert(
                 'Thông báo',
                 'Yêu cầu bạn hãy chọn điểm kết thúc để bắt đầu tìm khách!',
@@ -236,10 +239,13 @@ const DriverComponent = () => {
                                             styles.mb5,
                                         ]}
                                     >
-                                        Vị trí hiện tại: {currentPosition?.title}
+                                        Vị trí hiện tại: 
+                                        {isLoading ? 
+                                        ' '+currentPosition?.title : 
+                                        (<Skenleton height={16} width={cardWidth - 170} style={{marginLeft: 10, alignItems: 'flex-end' }}/>)}
                                     </Text>
                                     <Text style={[styles.textGray77, styles.fs15]}>
-                                        {currentPosition?.address}
+                                        {isLoading ? currentPosition?.address : (<Skenleton height={16} width={cardWidth - 30} style={{ marginTop: 10, alignItems: 'flex-end' }}/>)}
                                     </Text>
                                 </View>
                             </View>

@@ -56,6 +56,13 @@ const DriverFindDetailComponent = () => {
         .catch((err) => {
             console.log(err);
         })
+        .finally(() => {
+            if(item?.is_notify){
+                setIsLoadingCustomer(false);
+            }else{
+                setIsLoadingCustomer(true);
+            }
+        })
     }
 
     const createContext = (data, nameCar) => {
@@ -109,28 +116,29 @@ const DriverFindDetailComponent = () => {
         .catch((err) => {
             console.log(err);
         })
-        .finally(() => {
-            setIsLoadingCustomer(true);
-        })
     }
     
     const detailCustomer = async (result) => {
-        await fetchDetailCustomer({
-            user_id: result.user_id
-        })
-        .then((data) => {
+        try {
+            const data = await fetchDetailCustomer({
+                user_id: result.user_id
+            });
             const obj = data.result;
-            if(result?.status == 5){
+            if (result?.status == 5) {
                 obj.reason = result.cancel_reason;
                 cancelObjRef.current = obj;
-                setShouldNavigateToCancel(true)
-                // navigation.navigate('CancelDriverConfirmScreen',obj);
+                setShouldNavigateToCancel(true);
             }
             setCustomer(obj);
-        })
-        .catch((err) => {
+        } catch (err) {
             console.log(err);
-        })
+        } finally {
+            if(item?.is_notify && result?.status == 5){
+                setIsLoadingCustomer(false);
+            }else{
+                setIsLoadingCustomer(true);
+            }
+        }
     }
 
     const checkReport = async () => {
@@ -237,7 +245,7 @@ const DriverFindDetailComponent = () => {
     useEffect(() => {
         detailTrip();
         checkReport();
-        if(item?.is_notify || item?.driver_id){
+        if(item?.is_notify || item?.driver_id || item?.isFlag){
             getLocationDriver(item?.driver_id);
         }
         if (shouldNavigateToCancel) {

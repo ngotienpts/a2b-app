@@ -43,89 +43,102 @@ const DriverPickComponent = () => {
     const [isLoadingDriver, setIsLoadingDriver] = useState(false);
     const { params: item } = useRoute();
     const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+    const notiRef = useRef(null);
 
     const detailOneCustomer = async (tripId) => {
+        let status = '';
         await fetchDetailTrip({
             trip_id: tripId
-        },contextToken.token)
-        .then((data) => {
-            if(data.res === 'success'){
-                context.setCustomerForm({
-                    ...context.customerForm,
-                    tripId: data.result.trip_id,
-                    startPoint: {
-                        start_name: data.result.start_name,
-                        start: data.result.start_location
-                    },
-                    endPoint: {
-                        end_name: data.result.end_name,
-                        end: data.result.end_location
-                    },
-                    typeCar: data.result.vehicle_category_id,
-                    nameCar: data.result.name_category,
-                    startTime: data.result.start_time,
-                    comment: data.result.comment,
-                    duration: data.result.duration_all,
-                    distance: data.result.distance_all,
-                    coordinates: {
-                        start: data.result.coordinates_start,
-                        end: data.result.coordinates_end
-                    },
-                    price: data.result.price_report,
-                })
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            setIsLoading(true);
-        })
-    } 
+        }, contextToken.token)
+            .then((data) => {
+                if (data.res === 'success') {
+                    const obj = data.result;
+                    status = data.result.status;
+                    if (obj.status == 3) {
+
+                    }
+                    context.setCustomerForm({
+                        ...context.customerForm,
+                        tripId: data.result.trip_id,
+                        startPoint: {
+                            start_name: data.result.start_name,
+                            start: data.result.start_location
+                        },
+                        endPoint: {
+                            end_name: data.result.end_name,
+                            end: data.result.end_location
+                        },
+                        typeCar: data.result.vehicle_category_id,
+                        nameCar: data.result.name_category,
+                        startTime: data.result.start_time,
+                        comment: data.result.comment,
+                        duration: parseFloat(data.result.duration_all),
+                        distance: parseFloat(data.result.distance_all),
+                        coordinates: {
+                            start: data.result.coordinates_start,
+                            end: data.result.coordinates_end
+                        },
+                        price: parseFloat(data.result.price_report),
+                    })
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                if (status == 3 && item?.is_notify) {
+                    setIsLoading(false);
+                } else {
+                    setIsLoading(true);
+                }
+            })
+    }
 
     const detailOneDriver = async (driverId) => {
         await fetchDetailDriver({
             driver_id: driverId
         })
-        .then((data) => {
-            if(data.res === 'success'){
-                contextMap.setMap({
-                    ...contextMap.map,
-                    start: {
-                        coordinates: {
-                            lat: data.result.lat,
-                            lng: data.result.lng
+            .then((data) => {
+                if (data.res === 'success') {
+                    contextMap.setMap({
+                        ...contextMap.map,
+                        start: {
+                            coordinates: {
+                                lat: data.result.lat,
+                                lng: data.result.lng
+                            }
                         }
-                    }
-                    
-                })
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            setIsLoadingDriver(true);
-        })
+                    })
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoadingDriver(true);
+            })
     }
+
+    useEffect(() => {
+        if (item?.is_noti && item?.trip_id) {
+            detailOneCustomer(item?.trip_id);
+            detailOneDriver(item?.driver_id);
+        } else {
+            setIsLoading(true);
+            setIsLoadingDriver(true);
+        }
+    }, [])
 
     useEffect(() => {
         if (toggleStateBtn) {
             fetchOnAJourney({
                 trip_id: context.customerForm.tripId ? context.customerForm.tripId : item?.trip_id
-            },contextToken.token)
-            .then((data) => {
-                if(data.res === 'success'){
-                    navigation.navigate('DriverMovingScreen', item);
-                }
-            })
-        }
-        if(item?.is_noti && item?.trip_id){
-            detailOneCustomer(item?.trip_id);
-            detailOneDriver(item?.driver_id);
-        }else{
-            setIsLoading(true);
-            setIsLoadingDriver(true);
+            }, contextToken.token)
+                .then((data) => {
+                    if (data.res === 'success') {
+                        navigation.navigate('DriverMovingScreen', item);
+                    }
+                })
         }
     }, [toggleStateBtn, navigation]);
 
@@ -139,61 +152,62 @@ const DriverPickComponent = () => {
 
     return (
         <View style={[styles.flexFull, styles.bgBlack]}>
-            <View style={[styles.flexFull]}>
-                <View
-                    style={[
-                        styles.absolute,
-                        styles.z30,
-                        styles.bgBlue1A7,
-                        styles.px10,
-                        styles.py5,
-                        Platform.OS === 'ios' && styles.mt24,
-                        styles.flexCenter,
-                        { top: 15, left: 15, borderRadius: 8 },
-                    ]}
-                >
-                    <ClockIcon size={16} color={'white'} />
-                    <Text
+            {isLoading && isLoadingDriver && (
+                
+                <View style={[styles.flexFull]}>
+                    <View
                         style={[
-                            styles.ml5,
-                            styles.fs16,
-                            styles.textWhite,
-                            styles.lh24,
-                            styles.fw400,
+                            styles.absolute,
+                            styles.z30,
+                            styles.bgBlue1A7,
+                            styles.px10,
+                            styles.py5,
+                            Platform.OS === 'ios' && styles.mt24,
+                            styles.flexCenter,
+                            { top: 15, left: 15, borderRadius: 8 },
                         ]}
                     >
-                        14 Phút
-                    </Text>
-                </View>
+                        <ClockIcon size={16} color={'white'} />
+                        <Text
+                            style={[
+                                styles.ml5,
+                                styles.fs16,
+                                styles.textWhite,
+                                styles.lh24,
+                                styles.fw400,
+                            ]}
+                        >
+                            14 Phút
+                        </Text>
+                    </View>
                     <GestureHandlerRootView style={[styles.flexFull, styles.bgBlack]}>
-                        {isLoading && isLoadingDriver && (
-                            <MapView
-                                style={[styles.flexFull]}
-                                initialRegion={{
+                        <MapView
+                            style={[styles.flexFull]}
+                            initialRegion={{
+                                latitude: contextMap.map.start.coordinates.lat,
+                                longitude: contextMap.map.start.coordinates.lng,
+                                latitudeDelta: 0.0922,
+                                longitudeDelta: 0.0421,
+                            }}
+                        >
+                            <Marker
+                                coordinate={{
                                     latitude: contextMap.map.start.coordinates.lat,
-                                    longitude: contextMap.map.start.coordinates.lng,
-                                    latitudeDelta: 0.0922,
-                                    longitudeDelta: 0.0421,
+                                    longitude: contextMap.map.start.coordinates.lng
                                 }}
-                            >
-                                <Marker
-                                    coordinate={{ 
-                                        latitude: contextMap.map.start.coordinates.lat, 
-                                        longitude: contextMap.map.start.coordinates.lng 
-                                    }}
-                                    title="Tài xế"
-                                    description="Đây là tọa độ của tài xế"
-                                />
-                                <Marker
-                                    coordinate={{ 
-                                        latitude: context.customerForm.coordinates.start.split(',')[0], 
-                                        longitude: context.customerForm.coordinates.start.split(',')[1]
-                                    }}
-                                    title="Khách hàng"
-                                    description="Đây là tọa độ của khách hàng"
-                                /> 
-                            </MapView> 
-                        )}
+                                title="Tài xế"
+                                description="Đây là tọa độ của tài xế"
+                            />
+                            <Marker
+                                coordinate={{
+                                    latitude: context.customerForm.coordinates.start.split(',')[0],
+                                    longitude: context.customerForm.coordinates.start.split(',')[1]
+                                }}
+                                title="Khách hàng"
+                                description="Đây là tọa độ của khách hàng"
+                            />
+                        </MapView>
+
 
                         {/* Bottom Sheet Drawer */}
                         <BottomSheet
@@ -203,15 +217,9 @@ const DriverPickComponent = () => {
                             handleIndicatorStyle={handleIndicatorStyle}
                         >
                             <BottomSheetScrollView style={[styles.bgBlack, styles.pt24]}>
-                                {isLoading && (
-                                    <FormCustomer context={context} title="Đi đón khách" />
-                                )}
-
+                                <FormCustomer context={context} title="Đi đón khách" />
                                 {/* khoang cach & thoi gian */}
-                                {isLoading && (
-                                    <DistanceInfomation context={context}/>
-                                )}
-
+                                <DistanceInfomation context={context} />
                                 {/* thông tin tài xế */}
                                 <View style={[styles.pt10]}>
                                     <Text
@@ -267,17 +275,17 @@ const DriverPickComponent = () => {
                                     </View>
 
                                     {/* contact */}
-                                    <Contact item={item}/>
+                                    <Contact item={item} />
 
                                     {/* đánh giá */}
                                     <ReviewCustomer />
 
                                 </View>
                             </BottomSheetScrollView>
-                        </BottomSheet> 
+                        </BottomSheet>
                     </GestureHandlerRootView>
-            </View>
-
+                </View>
+            )}  
             {/* buttom bắt đầu chuyến đi*/}
             <View style={[styles.flexRow, styles.bgBlack, styles.flexCenter]}>
                 <ToggleSwipeable

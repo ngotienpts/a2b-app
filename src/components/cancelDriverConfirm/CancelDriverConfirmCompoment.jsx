@@ -65,7 +65,6 @@ const CancelDriverConfirmCompoment = () => {
     }
 
     const handleBackToHome = () => {
-        // console.log(context.bookingForm.eniqueId);
         navigation.navigate('HomeScreen')
         context.setCustomerForm({
             tripId: '',
@@ -85,8 +84,8 @@ const CancelDriverConfirmCompoment = () => {
     useEffect(() => {
         if (item?.is_notify == 1 || item?.isFlag == 1) {
             detailTrip();
-        } else {
-            setIsLoading(true);
+        }else{
+            setIsLoading(true)
         }
     }, [])
 
@@ -227,7 +226,7 @@ const CancelDriverConfirmCompoment = () => {
                                 styles.border4,
                                 styles.mx15,
                             ]}
-                            onPresstyle={handleBackToHome}
+                            onPress={handleBackToHome}
                         >
                             <Text style={[styles.fs16, styles.textWhite]}>Trang chủ</Text>
                         </TouchableOpacity>

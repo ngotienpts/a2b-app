@@ -22,6 +22,7 @@ const FormCustomer = ({ title, context, tripId}) => {
     const toogleDropdown = () => {
         setDropdownVisible((isDropdownVisible) => !isDropdownVisible);
     };
+
     return (
         <View>
             <View style={[styles.flexBetween, styles.mb24, styles.px15]}>

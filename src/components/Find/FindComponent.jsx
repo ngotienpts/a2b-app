@@ -38,32 +38,19 @@ const FindComponent = () => {
 
     const {params: item} = useRoute();
     const paramsTrip = {
-        trip_id: item?.id
+        trip_id: item?.id ? item?.id : item?.trip_id
     }
 
     useEffect(() => {
-        if (!isFocused) {
-          // Màn hình bị blur, thực hiện unmount
-          setIsUnmounted(true);
-        } else {
-          // Màn hình được focus lại, không cần unmount
-          setIsUnmounted(false);
+        if (isFocused) {
+            detailTrip(paramsTrip,item?.isFlag,item?.is_notify)
+            listReport(paramsTrip)
         }
       }, [isFocused]);
     
     useEffect(() => {
-    // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
-    // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
-        if (!isUnmounted) {
-            // Gọi API hoặc tác vụ khác...
-            detailTrip(paramsTrip,item?.isFlag)
-            listReport(paramsTrip)
-        }
-    }, [isUnmounted]); 
-    
-    useEffect(() => {
         // Truyền giá trị từ context vào biến local
-        detailTrip(paramsTrip,item?.isFlag)
+        detailTrip(paramsTrip,item?.isFlag,item?.is_notify)
         listReport(paramsTrip)
         automaticQuote(paramsTrip);
     }, []);
@@ -80,7 +67,7 @@ const FindComponent = () => {
         })
     }
 
-    const detailTrip = async (paramsTrip, isFlag = 0) => {
+    const detailTrip = async (paramsTrip, isFlag = 0, isNoti = 0) => {
         await fetchDetailTrip(paramsTrip,contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
@@ -90,7 +77,7 @@ const FindComponent = () => {
                     duration: data.result.duration_all,
                     distance: data.result.distance_all
                 })
-                if(isFlag){
+                if(isFlag || isNoti){
                     context.setBookingForm({
                         ...context.bookingForm,
                         eniqueId: data?.result.trip_id,

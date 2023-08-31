@@ -37,13 +37,12 @@ const CancelClientConfirmCompoment = () => {
     }
 
     useEffect(() => {
-        if(item?.is_notify == 1){
-            
-        }else if(item?.isFlag == 1){
+        if(item?.isFlag == 1 || item?.is_notify == 1){
             const paramsTrip = {
-                trip_id: item?.id
+                trip_id: item?.id ? item?.id : item?.trip_id
             }
             detailTrip(paramsTrip);
+            // console.log(context);
         }
     },[])
 
@@ -85,12 +84,12 @@ const CancelClientConfirmCompoment = () => {
             note: data?.result.comment,
             isPunish: data?.result.is_punish
         })
-        console.log(typeof data.result.price_report);
         await contextDetailTrip.setDetailTrip({
             ...contextDetailTrip.detailTrip,
             duration: data.result.duration_all,
             distance: data.result.distance_all,
             price_distance: parseInt(data.result.price_report).toLocaleString('vi-VN'),
+
         })
     }
 

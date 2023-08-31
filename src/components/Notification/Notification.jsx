@@ -21,42 +21,35 @@ const Notification = () => {
     const [isDot, setIsDot] = useState(true);
     const isFocused = useIsFocused();
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(2);
+    const [page, setPage] = useState(1);
     const [count, setCount] = useState(0);
     const cardWidth = Dimensions.get("window").width * 0.8;
     // useEffect này chỉ chạy một lần khi component mount
-    useEffect(() => {
-        listNotification();
-    }, []);
 
     useEffect(() => {
-        if (!isFocused) {
-          // Màn hình bị blur, thực hiện unmount
-          setIsUnmounted(true);
-        } else {
-          // Màn hình được focus lại, không cần unmount
-          setIsUnmounted(false);
+        if (isFocused) {
+            // Gọi API hoặc tác vụ khác...
+            listNotification(page);
         }
     }, [isFocused]);
 
-    useEffect(() => {
-    // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
-    // console.log(isUnmounted);
-    // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
-        if (!isUnmounted) {
-            // Gọi API hoặc tác vụ khác...
-            listNotification();
-            // console.log(1);
-
-        }
-    }, [isUnmounted]);   
-
-    const listNotification = () => {
-        let params = {}
-        fetchListNoti(params, context.token)
+    const listNotification = (newPage, isLoading = false) => {
+        let params = {
+            page: newPage
+        };
+        fetchListNoti(params,'79ee7846612b106c445826c19')
             .then((data) => {
                 if (data.res === 'success') {
-                    setNotifications(data.result);
+                    let newData = data.result;
+                    if (newPage > 1 || isLoading) {
+                        //tranh truong hợp về cuối dễ bị trùng khi unmount lại
+                        newData = newData.filter(item => !notifications.some((noti) => noti.notify_id == item.notify_id)); 
+                        // some la phuong thuc kiem tra neu dung tra ve true con khong ve false 
+                        setNotifications([...notifications, ...newData]);
+                    } else {
+                        setNotifications(newData);
+                    }
+                    setPage(newPage);
                     handleHiddenNoti(data.count);
                     setCount(data.count - 1);
                 }
@@ -68,7 +61,6 @@ const Notification = () => {
                 setLoading(true);
             });
     };
-
     // Xử lý khi thông báo được ẩn
     const handleHideNotification = () => {
         const updatedNotifications = notifications.map((noti) => ({
@@ -100,44 +92,21 @@ const Notification = () => {
         fetchReadOneNoti({
             notify_id: noti.notify_id
         }, context.token)
-        .then((data) => {
-            if (data.res === 'success') {
-                navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
-            }
-        })
+            .then((data) => {
+                if (data.res === 'success') {
+                    navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
+                }
+            })
     }
 
     const handleScroll = (event) => {
         const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
         const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 80;
         if (isCloseToBottom) {
-            loadMoreData();
+            listNotification(page + 1, true);
         }
 
     };
-
-    const loadMoreData = async () => {
-        setLoading(true);
-        const params = {
-            page: page
-        }
-        fetchListNoti(params, context.token)
-            .then((data) => {
-                if (data.res === 'success') {
-                    setNotifications([...notifications, ...data.result]);
-                    setPage(page + 1);
-                    setLoading(false);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {
-                setLoading(true);
-                // console.log('render');
-            });
-
-    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -148,8 +117,8 @@ const Notification = () => {
 
                 {/* body */}
                 <ScrollView
-                    showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
+                    showsVerticalScrollIndicator={false}
                     onScroll={handleScroll}
                     scrollEventThrottle={1600}
                 >
@@ -208,16 +177,16 @@ const Notification = () => {
                             ))}
                         </View>
                     ) : (
-                    <View>
-                        {waiting.map((val) => (
-                            <View key={val?.id} style={[styles.card, {width: cardWidth + 80, marginBottom: 10}]}>
-                                <View>
-                                    <Skenleton height={16} width={cardWidth - 216} style={{marginTop: 10, alignItems: 'flex-end'}} />
-                                    <Skenleton height={16} width={cardWidth - 80} style={{marginTop: 10, marginBottom: 10, alignItems: 'flex-end'}} />
+                        <View>
+                            {waiting.map((val) => (
+                                <View key={val?.id} style={[styles.card, { width: cardWidth + 80, marginBottom: 10 }]}>
+                                    <View>
+                                        <Skenleton height={16} width={cardWidth - 216} style={{ marginTop: 10, alignItems: 'flex-end' }} />
+                                        <Skenleton height={16} width={cardWidth - 80} style={{ marginTop: 10, marginBottom: 10, alignItems: 'flex-end' }} />
+                                    </View>
                                 </View>
-                            </View>
-                        ))}
-                    </View>
+                            ))}
+                        </View>
                     )}
 
                 </ScrollView>

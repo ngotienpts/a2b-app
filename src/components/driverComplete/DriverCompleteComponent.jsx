@@ -123,7 +123,7 @@ const DriverCompleteComponent = () => {
         const params = {
             trip_id: item?.trip_id
         }
-        await fetchDetailTrip(params,contextToken.token)
+        await fetchDetailTrip(params,'79ee7846612b106c445826c19')
         .then((data) => {
             if(data.res === 'success'){
                 createContext(data);
@@ -183,7 +183,7 @@ const DriverCompleteComponent = () => {
     }
 
     useEffect(() => {
-        if(item?.isFlag == 1){
+        if(item?.isFlag == 1 || item?.is_notify == 1){
             detailTrip();
         }
         getOneRate();

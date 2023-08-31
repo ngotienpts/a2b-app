@@ -127,9 +127,9 @@ export const fetchListHistoryDriver = (params={}, token) => {
     return apiCall(listHistoryDriver, params);
 }
 //lich su giao dich
-export const fetchListHistoryTransfer = (token) => {
+export const fetchListHistoryTransfer = (params={},token) => {
     const listHistoryTransfer = `${baseUrl}/${token}/history/payment`;
-    return apiCall(listHistoryTransfer);
+    return apiCall(listHistoryTransfer,params);
 }
 //danh sach danh gia cua tai xe
 export const fetchListReviewDriver = (params) => {
