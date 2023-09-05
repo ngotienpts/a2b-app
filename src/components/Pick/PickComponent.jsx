@@ -41,9 +41,9 @@ const PickComponent = () => {
     useEffect(() => {
         getCoordinates();
         // console.log(item);
-        if(item?.is_notify || item?.isFlag){
+        if(item?.is_notify || item?.isFlag ){
             const paramsTrip = {
-                trip_id: item?.id
+                trip_id: item?.id ? item?.id : item?.trip_id
             }
             detailTrip(paramsTrip);
         }else{
@@ -70,6 +70,7 @@ const PickComponent = () => {
     const detailTrip = async (paramsTrip) => {
         await fetchDetailTrip(paramsTrip, contextToken.token)
         .then((data) => {
+            // console.log(data);
             if (data.res === 'success') {
                 createContext(data); 
             }
@@ -195,7 +196,7 @@ const PickComponent = () => {
                             />
                         ) : (
                             <Marker
-                                coordinate={{ latitude: parsrFloat(coordinatesPassenger.lat), longitude: parseFloat(coordinatesPassenger.lng) }}
+                                coordinate={{ latitude: parseFloat(coordinatesPassenger.lat), longitude: parseFloat(coordinatesPassenger.lng) }}
                                 title="Vị trí của khách đặt"
                                 description="Vị trí di chuyển chi tiết của khách đặt"
                             />
@@ -346,7 +347,7 @@ const PickComponent = () => {
                                         </View>
 
                                         {/* đánh sao & giá tiền */}
-                                        {contextDetailTrip?.detailTrip.price_distance && (
+                                        {contextDetailTrip?.detailTrip.price_distance.toString() && (
                                             <View
                                                 style={[
                                                     styles.flexRow,

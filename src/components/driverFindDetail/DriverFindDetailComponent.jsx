@@ -13,7 +13,7 @@ import {
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchCancelReport, fetchCheckReport, fetchDetailCustomer, fetchDetailTrip, fetchGetLocationDriver, fetchGetOneCategoryVehicle, fetchPickUpCustomer, fetchSendReport } from '../../api/DataFetching';
+import { fallbackImage, fetchCancelReport, fetchCheckReport, fetchDetailCustomer, fetchDetailTrip, fetchGetLocationDriver, fetchGetOneCategoryVehicle, fetchPickUpCustomer, fetchSendReport, fetchGetCoin } from '../../api/DataFetching';
 import PayNumber from '../editPayNumber';
 import { MapContext } from '../../redux/mapContext';
 import FormCustomer from '../formCustomer';
@@ -33,8 +33,12 @@ const DriverFindDetailComponent = () => {
     const [price, setPrice] = useState(0);
     const [customer, setCustomer] = useState(null);
     const [isLoadingCustomer, setIsLoadingCustomer] = useState(false);
+    const [shouldNavigateToCancel, setShouldNavigateToCancel] = useState(false);
     const [coords, setCoords] = useState(null);
     const [status, setStatus] = useState(null);
+    const [coin, setCoin] = useState(null);
+    const cancelObjRef = useRef(null);
+
 
     const handlePriceChange = (newPrice) => {
         setPrice(newPrice);
@@ -53,6 +57,13 @@ const DriverFindDetailComponent = () => {
         })
         .catch((err) => {
             console.log(err);
+        })
+        .finally(() => {
+            if(item?.is_notify){
+                setIsLoadingCustomer(false);
+            }else{
+                setIsLoadingCustomer(true);
+            }
         })
     }
 
@@ -107,21 +118,44 @@ const DriverFindDetailComponent = () => {
         .catch((err) => {
             console.log(err);
         })
-        .finally(() => {
-            setIsLoadingCustomer(true);
-        })
+        // .finally(() => {
+        //     setIsLoadingCustomer(true);
+        // })
     }
     
-    const detailCustomer = async (id) => {
-        await fetchDetailCustomer({
-            user_id: id
-        })
-        .then((data) => {
-            setCustomer(data.result);
-        })
-        .catch((err) => {
+    // const detailCustomer = async (id) => {
+    //     await fetchDetailCustomer({
+    //         user_id: id
+    //     })
+    //     .then((data) => {
+    //         setCustomer(data.result);
+    //     })
+    //     .catch((err) => {
+    //         console.log(err);
+    //     })
+    // }
+
+    const detailCustomer = async (result) => {
+        try {
+            const data = await fetchDetailCustomer({
+                user_id: result.user_id
+            });
+            const obj = data.result;
+            if (result?.status == 5) {
+                obj.reason = result.cancel_reason;
+                cancelObjRef.current = obj;
+                setShouldNavigateToCancel(true);
+            }
+            setCustomer(obj);
+        } catch (err) {
             console.log(err);
-        })
+        } finally {
+            if(item?.is_notify && result?.status == 5){
+                setIsLoadingCustomer(false);
+            }else{
+                setIsLoadingCustomer(true);
+            }
+        }
     }
 
     const checkReport = async () => {
@@ -212,26 +246,39 @@ const DriverFindDetailComponent = () => {
         }
     }
 
+    const getCoin = async () => {
+        fetchGetCoin(contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                setCoin(data.result.coin);
+            }
+        })
+    }
+
     const handlePickUpCustomer = async () => {
-        navigation.navigate('DriverPickScreen', customer)
-        // fetchPickUpCustomer({
-        //     trip_id: item?.id,
-        //     user_id: customer?.user_id
-        // },contextToken.token)
-        // .then((data) => {
-        //     if(data.res === 'success'){
-        //         navigation.navigate('DriverPickScreen', customer)
-        //     }
-        // })
+        // navigation.navigate('DriverPickScreen', customer)
+        fetchPickUpCustomer({
+            trip_id: item?.id,
+            user_id: customer?.user_id
+        },contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                navigation.navigate('DriverPickScreen', customer)
+            }
+        })
     }
 
     useEffect(() => {
         detailTrip();
         checkReport();
+        getCoin();
         if(item?.is_notify || item?.driver_id || item?.isFlag){
             getLocationDriver(item?.driver_id);
         }
-    }, [item.id]);
+        if (shouldNavigateToCancel) {
+            navigation.navigate('CancelDriverConfirmScreen', cancelObjRef.current);
+        }
+    }, [item.id,shouldNavigateToCancel]);
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -333,7 +380,7 @@ const DriverFindDetailComponent = () => {
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>30K</Text>
+                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{coin}K</Text>
                             </View>
                             {/* phi nen tang */}
                             <View style={[styles.py10]}>

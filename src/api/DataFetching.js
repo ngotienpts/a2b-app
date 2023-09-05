@@ -292,3 +292,8 @@ export const fetchGetLocationDriver = (params) => {
     const getLocationDriver = `${baseUrl}/1/vehicle/location`;
     return apiCall(getLocationDriver,params);
 }
+//lay số xu của người dùng
+export const fetchGetCoin = (token) => {
+    const getCoin = `${baseUrl}/${token}/profile/getCoin`;
+    return apiCall(getCoin);
+}

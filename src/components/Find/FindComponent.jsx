@@ -41,7 +41,7 @@ const FindComponent = () => {
 
     const {params: item} = useRoute();
     const paramsTrip = {
-        trip_id: item?.id
+        trip_id: item?.id ? item?.id : item?.trip_id
     }
 
     useEffect(() => {
@@ -59,14 +59,14 @@ const FindComponent = () => {
     // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
         if (!isUnmounted) {
             // Gọi API hoặc tác vụ khác...
-            detailTrip(paramsTrip,item?.isFlag)
+            detailTrip(paramsTrip,item?.isFlag, item?.is_notify)
             listReport(paramsTrip)
         }
     }, [isUnmounted]); 
     
     useEffect(() => {
         // Truyền giá trị từ context vào biến local
-        detailTrip(paramsTrip,item?.isFlag)
+        detailTrip(paramsTrip,item?.isFlag, item?.is_notify)
         listReport(paramsTrip)
         automaticQuote(paramsTrip);
     }, []);
@@ -84,7 +84,7 @@ const FindComponent = () => {
         })
     }
 
-    const detailTrip = async (paramsTrip, isFlag = 0) => {
+    const detailTrip = async (paramsTrip, isFlag = 0, is_notify = 0) => {
         await fetchDetailTrip(paramsTrip,contextToken.token)
         // await fetchDetailTrip(paramsTrip,'e1358385819f12b01db7990c1')
         .then((data) => {
@@ -96,7 +96,7 @@ const FindComponent = () => {
                     distance: data.result.distance_all
                 })
 
-                if(isFlag){
+                if(isFlag || is_notify){
                     context.setBookingForm({
                         ...context.bookingForm,
                         eniqueId: data?.result.trip_id,
@@ -161,11 +161,13 @@ const FindComponent = () => {
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
                 >
-                    <SentFormBooking context={context} contextMap={contextMap}  title="Bạn đang đặt chuyến" />
+                    {/* {loadingDetailTrip && ( */}
+                        <SentFormBooking context={context} contextMap={contextMap}  title="Bạn đang đặt chuyến" />
+                    {/* )} */}
                     {/* khoang cach & thoi gian */}
                     {loadingDetailTrip && (
                         <View
-                            style={[
+                        style={[
                                 styles.mb24,
                                 styles.py15,
                                 styles.border1,

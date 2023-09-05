@@ -36,10 +36,10 @@ const MovingComponent = () => {
     
     useEffect(() => {
         getCoordinates();
-        // console.log(contextDetailTrip?.detailTrip.price_distance.replace('.',''));
+        // console.log(contextDetailTrip);
         if(item?.is_notify || item?.isFlag){
             const paramsTrip = {
-                trip_id: item?.id
+                trip_id: item?.id ? item?.id : item?.trip_id
             }
             detailTrip(paramsTrip);
         }else{

@@ -94,8 +94,9 @@ const DriverMovingComponent = () => {
     }
 
     useEffect(() => {
-        if(item?.isFlag){
-            detailTrip()
+        if(item?.isFlag || item?.is_notify){
+            detailTrip();
+            // console.log(item);
         }else{
             setIsLoading(true);
         }

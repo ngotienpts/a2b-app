@@ -28,7 +28,7 @@ const QrCode = ({item, contextDetailTrip, context}) => {
             }
         })
         .catch((err) => {
-            console.log('err',err);
+            console.log(err);
         })
         .finally(() => {
             setIsLoading(true);
@@ -68,9 +68,11 @@ const QrCode = ({item, contextDetailTrip, context}) => {
             )}
             <View style={[styles.flexFull, styles.pl12]}>
                 <View style={[styles.flexBetween, styles.mb5]}>
+                    {item?.bank_name && (
                     <Text style={[styles.fw700, styles.lh24, styles.fs16]}>
                         {item?.bank_name ? item?.bank_name : ''}
                     </Text>
+                    )}
                     {item?.bank_number && (
                         <TouchableOpacity style={[styles.p5]} onPress={() => copyBankNumber(item?.bank_number)}>
                             <Square2StackIcon size={20} color={'#000'} />
@@ -78,9 +80,11 @@ const QrCode = ({item, contextDetailTrip, context}) => {
                     )}
                 </View>
                 <View style={[styles.flexRow, styles.mb5]}>
+                    {item?.bank_number && (
                     <Text style={[styles.fs16, styles.fw300, styles.mr24]}>
                         {item?.bank_number ? item?.bank_number : ''}
                     </Text>
+                    )}
                     {isCopy && (
                         <Text style={[styles.textRedE8, styles.fs16]}>Đã copy</Text>
                     )}
