@@ -85,7 +85,7 @@ const CancelDriverConfirmCompoment = () => {
     useEffect(() => {
         if(item?.is_notify == 1 || item?.isFlag == 1){
             detailTrip();
-        } else {
+        }else{
             setIsLoading(true);
         }
     }, [])

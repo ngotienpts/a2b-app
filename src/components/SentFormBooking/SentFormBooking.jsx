@@ -20,9 +20,7 @@ const SentFormBooking = ({ title, context, contextMap }) => {
     }, [isDropdownVisible]);
 
     // const detailTrip = async() => {
-
     // }
-
     const toogleDropdown = () => {
         setDropdownVisible((isDropdownVisible) => !isDropdownVisible);
     };

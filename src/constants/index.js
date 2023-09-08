@@ -216,4 +216,20 @@ export const waiting = [
     {id: 0},
     {id: 1},
     {id: 2},
-]
+];
+export const statusDriver = [
+    { id: 0, screen: 'DriverFindDetailScreen' },
+    { id: 1, screen: 'DriverFindDetailScreen' },
+    { id: 2, screen: 'DriverPickScreen' },
+    { id: 3, screen: 'DriverMovingScreen' },
+    { id: 4, screen: 'DriverCompleteScreen' },
+    { id: 5, screen: 'CancelDriverConfirmScreen' },
+];
+export const statusUser = [
+    { id: 0, screen: 'FindScreen' },
+    { id: 1, screen: 'ConfirmScreen' },
+    { id: 2, screen: 'PickScreen' },
+    { id: 3, screen: 'MovingScreen' },
+    { id: 4, screen: 'CompleteScreen' },
+    { id: 5, screen: 'CancelClientConfirmScreen' },
+];

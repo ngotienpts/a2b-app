@@ -112,10 +112,10 @@ const PassengerTab = () => {
             getDetailDriver(item, 'ConfirmScreen');
         }
         else if(item?.status_number == 2){
-            getDetailDriver(item);
+            getDetailDriver(item, 'PickScreen');
         }
         else if(item?.status_number == 3){
-            getDetailDriver(item);
+            getDetailDriver(item, 'MovingScreen');
         }else if(item?.status_number == 4){
             getDetailDriver(item, 'CompleteScreen');
         }else{
@@ -127,6 +127,7 @@ const PassengerTab = () => {
                     reason: item?.cancel_reason,
                     isFlag: 1
                 }
+                // console.log(data);
                 navigation.navigate('CancelClientConfirmScreen',data)
             }
         }
@@ -160,6 +161,9 @@ const PassengerTab = () => {
 
     useEffect(() => {
         listPassenger();
+        // return() => {
+        //     console.log('clean up');
+        // }
     },[])
 
     return (

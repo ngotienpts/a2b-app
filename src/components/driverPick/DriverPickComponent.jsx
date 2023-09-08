@@ -120,7 +120,7 @@ const DriverPickComponent = () => {
                 }
             })
         }
-        if(item?.is_noti && item?.trip_id){
+        if((item?.is_noti || item?.isFlag) && (item?.trip_id || item?.id)){
             detailOneCustomer(item?.trip_id);
             detailOneDriver(item?.driver_id);
         }else{
@@ -170,24 +170,24 @@ const DriverPickComponent = () => {
                             <MapView
                                 style={[styles.flexFull]}
                                 initialRegion={{
-                                    latitude: contextMap.map.start.coordinates.lat,
-                                    longitude: contextMap.map.start.coordinates.lng,
+                                    latitude: parseFloat(contextMap.map.start.coordinates.lat),
+                                    longitude: parseFloat(contextMap.map.start.coordinates.lng),
                                     latitudeDelta: 0.0922,
                                     longitudeDelta: 0.0421,
                                 }}
                             >
                                 <Marker
                                     coordinate={{ 
-                                        latitude: contextMap.map.start.coordinates.lat, 
-                                        longitude: contextMap.map.start.coordinates.lng 
+                                        latitude: parseFloat(contextMap.map.start.coordinates.lat), 
+                                        longitude: parseFloat(contextMap.map.start.coordinates.lng) 
                                     }}
                                     title="Tài xế"
                                     description="Đây là tọa độ của tài xế"
                                 />
                                 <Marker
                                     coordinate={{ 
-                                        latitude: context.customerForm.coordinates.start.split(',')[0], 
-                                        longitude: context.customerForm.coordinates.start.split(',')[1]
+                                        latitude: parseFloat(context.customerForm.coordinates.start.split(',')[0]), 
+                                        longitude: parseFloat(context.customerForm.coordinates.start.split(',')[1])
                                     }}
                                     title="Khách hàng"
                                     description="Đây là tọa độ của khách hàng"

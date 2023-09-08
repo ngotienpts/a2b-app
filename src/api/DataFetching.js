@@ -117,7 +117,7 @@ export const fetchListReport = (params,token) => {
     return apiCall(listReport,params);
 }
 //lich su chuyen di khach hang 
-export const fetchListHistoryPassenger = (params={}, token) => {
+export const fetchListHistoryPassenger = (params, token) => {
     const listHistoryPassenger = `${baseUrl}/${token}/history/customer`;
     return apiCall(listHistoryPassenger, params);
 }
@@ -291,4 +291,9 @@ export const fetchCancelTrip = (data,token) => {
 export const fetchGetLocationDriver = (params) => {
     const getLocationDriver = `${baseUrl}/1/vehicle/location`;
     return apiCall(getLocationDriver,params);
+}
+//lay số xu của người dùng
+export const fetchGetCoin = (token) => {
+    const getCoin = `${baseUrl}/${token}/profile/getCoin`;
+    return apiCall(getCoin);
 }

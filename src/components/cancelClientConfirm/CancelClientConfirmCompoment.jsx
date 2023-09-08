@@ -4,7 +4,7 @@ import { ShieldCheckIcon, StarIcon, XMarkIcon } from "react-native-heroicons/sol
 import { fallbackImage, fetchDetailTrip } from "../../api/DataFetching";
 import styles from "../../styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { BookingFormContext } from "../../redux/bookingFormContext";
 import { MapContext } from "../../redux/mapContext";
 import SentFormBooking from "../sentFormBooking";
@@ -20,6 +20,7 @@ const CancelClientConfirmCompoment = () => {
     const contextToken = useContext(TokenContext);
     const contextMap = useContext(MapContext);
     const contextDetailTrip = useContext(DetailTripContext);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleBackToHome = () => {
         // console.log(context.bookingForm.eniqueId);
@@ -34,6 +35,10 @@ const CancelClientConfirmCompoment = () => {
             note: '',
             isPunish: 0
         })
+        contextMap.setMap({
+            start: '',
+            end: ''
+        })
     }
 
     useEffect(() => {
@@ -46,18 +51,6 @@ const CancelClientConfirmCompoment = () => {
             detailTrip(paramsTrip);
         }
     },[])
-
-    const detailTrip = async (paramsTrip) => {
-        await fetchDetailTrip(paramsTrip, contextToken.token)
-        .then((data) => {
-            if (data.res === 'success') {
-                createContext(data); 
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-    }
 
     const createContext = async (data) => {
         await context.setBookingForm({
@@ -93,7 +86,40 @@ const CancelClientConfirmCompoment = () => {
             price_distance: parseInt(data.result.price_report).toLocaleString('vi-VN'),
         })
     }
+    
+    const detailTrip = async (paramsTrip) => {
+        await fetchDetailTrip(paramsTrip, contextToken.token)
+            .then((data) => {
+                // console.log(data);
+                if (data.res === 'success') {
+                    createContext(data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoading(true);
+            })
+    }
 
+
+
+    useEffect(() => {
+        if (item?.is_notify == 1 || item?.isFlag == 1) {
+            const paramsTrip = {
+                trip_id: item?.id
+            }
+            detailTrip(paramsTrip);
+            // console.log(context);
+        }else{
+            setIsLoading(true)
+        }
+        // console.log(item);
+    }, [])
+
+
+    
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
@@ -102,6 +128,7 @@ const CancelClientConfirmCompoment = () => {
                 <Header navigation={navigation} title="Hủy chuyến" />
 
                 {/* body */}
+                {isLoading && (
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
@@ -295,6 +322,7 @@ const CancelClientConfirmCompoment = () => {
                         </View>
                     )}
                 </ScrollView>
+                )}
 
                 {/* buttom  huy chuyen & tim tai xe*/}
                 <View style={[styles.flexRow]}>
