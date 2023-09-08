@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StarIcon } from 'react-native-heroicons/solid';
@@ -7,11 +7,12 @@ import {
     ArrowUturnRightIcon,
     ShieldCheckIcon,
 } from 'react-native-heroicons/outline';
+import ContentLoader from 'react-native-easy-content-loader';
 
 import styles from '../../styles';
 import Header from '../header/Header';
 import { BookingFormContext } from '../../redux/bookingFormContext';
-import { fallbackImage, fetchDetailTrip } from '../../api/DataFetching';
+import { fallbackImage, fetchDetailTrip, fetchDetailDriver } from '../../api/DataFetching';
 import SentFormBooking from '../sentFormBooking';
 import { MapContext } from '../../redux/mapContext';
 import { DetailTripContext } from '../../redux/detailTripContext';
@@ -21,6 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Contact from '../contact';
 import QrCode from '../qrCode/QrCode';
 import { TokenContext } from '../../redux/tokenContext';
+import { statusUser } from '../../constants';
 
 const MovingComponent = () => {
     const contextToken = useContext(TokenContext);
@@ -32,6 +34,9 @@ const MovingComponent = () => {
     const navigation = useNavigation();
     const [coordinatesPassenger, setCoordinatesPassenger] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [shouldNavigate, setShouldNavigate] = useState(false);
+    const screenRef = useRef(null);
+    const objRef = useRef(null);
 
     
     useEffect(() => {
@@ -45,7 +50,11 @@ const MovingComponent = () => {
         }else{
             setIsLoading(true);
         }
-    },[])
+        if (shouldNavigate) {
+            // console.log(objRef.current);
+            navigation.navigate(screenRef.current, objRef.current);
+        }
+    },[shouldNavigate])
     
     const getCoordinates = async () => {
         setCoordinatesPassenger({
@@ -80,9 +89,18 @@ const MovingComponent = () => {
     }
 
     const detailTrip = async (paramsTrip) => {
+        let status;
         await fetchDetailTrip(paramsTrip, contextToken.token)
         .then((data) => {
             if (data.res === 'success') {
+                if (data.result.status != 3) {
+                    return getDetailDriver(data.result.driver_id).then(() => {
+                        setShouldNavigate(true);
+                        let a = statusUser.filter((status) => status.id == data.result.status);
+                        screenRef.current = a[0].screen;
+                    })
+                }
+                status = data.result.status;
                 createContext(data); 
             }
         })
@@ -90,7 +108,11 @@ const MovingComponent = () => {
             console.log(err);
         })
         .finally(() => {
-            setIsLoading(true);
+            if (status != 0) {
+                setIsLoading(false);
+            } else {
+                setIsLoading(true);
+            }
         })
     }
 
@@ -150,15 +172,32 @@ const MovingComponent = () => {
         })
     }
 
+    const getDetailDriver = async (driverId) => {
+        const params = {
+            driver_id: driverId,
+        }
+        try {
+            const data = await fetchDetailDriver(params);
+            if (data.res === 'success') {
+                const obj = data.result;
+                obj.is_notify = item?.is_notify ? item?.is_notify : '';
+                obj.trip_id = item?.trip_id
+                objRef.current = obj;
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
+                {isLoading ? (
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Chi tiết chuyến đi" />
 
                 {/* body */}
-                {isLoading &&(
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
@@ -415,8 +454,18 @@ const MovingComponent = () => {
                         </Text>
                     </TouchableOpacity>
                 </ScrollView>
-                )}
             </View>
+                ) : (
+                    <ContentLoader
+                    pRows={2} // Số dòng
+                    listSize={2}
+                    primaryColor='#999'
+                    pWidth={['100%', '100%']} // Độ rộng của từng dòng, có thể điều chỉnh theo nhu cầu
+                    pHeight={[60, 60]} // Chiều cao của từng dòng
+                    pAnimate={true} // Tắt hiệu ứng loading, có thể bật lại theo nhu cầu
+                >
+                </ContentLoader>
+                )}
         </SafeAreaView>
     );
 };

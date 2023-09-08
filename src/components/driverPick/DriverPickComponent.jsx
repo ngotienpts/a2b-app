@@ -120,7 +120,7 @@ const DriverPickComponent = () => {
                 }
             })
         }
-        if((item?.is_noti || item?.isFlag) && item?.trip_id){
+        if((item?.is_noti || item?.isFlag) && (item?.trip_id || item?.id)){
             detailOneCustomer(item?.trip_id);
             detailOneDriver(item?.driver_id);
         }else{

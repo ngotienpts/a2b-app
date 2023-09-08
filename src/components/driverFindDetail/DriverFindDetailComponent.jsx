@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, StatusBar, Alert } from 'react-native';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StarIcon } from 'react-native-heroicons/solid';
@@ -23,6 +23,7 @@ import { CustomerFormContext } from '../../redux/customerFormContext';
 import DistanceInfomation from '../distanceInfomation/DistanceInfomation';
 import ReviewCustomer from '../reviewCustomer/ReviewCustomer';
 import ContentLoader from 'react-native-easy-content-loader';
+import { statusDriver } from '../../constants';
 
 const DriverFindDetailComponent = () => {
     const context = useContext(CustomerFormContext);
@@ -38,6 +39,7 @@ const DriverFindDetailComponent = () => {
     const [status, setStatus] = useState(null);
     const [coin, setCoin] = useState(null);
     const cancelObjRef = useRef(null);
+    const screenRef = useRef(null);
 
 
     const handlePriceChange = (newPrice) => {
@@ -52,18 +54,19 @@ const DriverFindDetailComponent = () => {
         .then((data) => {
             if(data.res === 'success'){
                 oneCateVehicle(data);
-                detailCustomer(data?.result.user_id)
+                detailCustomer(data?.result)
             }
         })
         .catch((err) => {
             console.log(err);
         })
         .finally(() => {
-            if(item?.is_notify){
-                setIsLoadingCustomer(false);
-            }else{
-                setIsLoadingCustomer(true);
-            }
+            // if(item?.is_notify){
+            //     setIsLoadingCustomer(false);
+            // }
+            // else{
+                // setIsLoadingCustomer(true);
+            // }
         })
     }
 
@@ -123,34 +126,26 @@ const DriverFindDetailComponent = () => {
         // })
     }
     
-    // const detailCustomer = async (id) => {
-    //     await fetchDetailCustomer({
-    //         user_id: id
-    //     })
-    //     .then((data) => {
-    //         setCustomer(data.result);
-    //     })
-    //     .catch((err) => {
-    //         console.log(err);
-    //     })
-    // }
-
     const detailCustomer = async (result) => {
         try {
             const data = await fetchDetailCustomer({
                 user_id: result.user_id
             });
             const obj = data.result;
-            if (result?.status == 5) {
+            if (result?.status != 0 && result?.status != 1) {
                 obj.reason = result.cancel_reason;
+                obj.is_notify = item?.is_notify ? item?.is_notify : ''
                 cancelObjRef.current = obj;
                 setShouldNavigateToCancel(true);
+            let a = statusDriver.filter((status) => status.id == result?.status);
+            screenRef.current = a[0].screen;
+            // console.log(screenRef.current);
             }
             setCustomer(obj);
         } catch (err) {
             console.log(err);
         } finally {
-            if(item?.is_notify && result?.status == 5){
+            if(item?.is_notify && (result?.status != 0 && result?.status != 1) ){
                 setIsLoadingCustomer(false);
             }else{
                 setIsLoadingCustomer(true);
@@ -267,7 +262,7 @@ const DriverFindDetailComponent = () => {
             }
         })
     }
-
+    
     useEffect(() => {
         detailTrip();
         checkReport();
@@ -276,7 +271,8 @@ const DriverFindDetailComponent = () => {
             getLocationDriver(item?.driver_id);
         }
         if (shouldNavigateToCancel) {
-            navigation.navigate('CancelDriverConfirmScreen', cancelObjRef.current);
+            // console.log(screenRef.current);
+            navigation.navigate(screenRef.current, cancelObjRef.current);
         }
     }, [item.id,shouldNavigateToCancel]);
 
@@ -434,7 +430,7 @@ const DriverFindDetailComponent = () => {
                                     >
                                         {customer?.fullname}
                                     </Text>
-                                    {item?.protected && (
+                                    {customer?.is_confirmed == 2 && (
                                         <View style={[styles.pl10]}>
                                             <ShieldCheckIcon size={16} color={'white'} />
                                         </View>

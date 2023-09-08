@@ -48,6 +48,9 @@ const DriverMovingComponent = () => {
         .catch((err) => {
             console.log(err);
         })
+        .finally(() => {
+            setIsLoading(true);
+        })
     }
 
     const createContext = (data, nameCar) => {
@@ -88,15 +91,15 @@ const DriverMovingComponent = () => {
         .catch((err) => {
             console.log(err);
         })
-        .finally(() => {
-            setIsLoading(true);
-        })
+        // .finally(() => {
+        //     setIsLoading(true);
+        // })
     }
 
     useEffect(() => {
+        // console.log(isLoading);
         if(item?.isFlag || item?.is_notify){
             detailTrip();
-            // console.log(item);
         }else{
             setIsLoading(true);
         }

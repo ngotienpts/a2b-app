@@ -1,6 +1,6 @@
 
 import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar, Linking } from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { CheckIcon, StarIcon } from 'react-native-heroicons/solid';
@@ -30,11 +30,12 @@ const Confirm = () => {
     const contextDetailTrip = useContext(DetailTripContext);
     const { params: item } = useRoute();
     const navigation = useNavigation();
+    const [isLoading, setIsLoading] = useState(false)
     const paramsTrip = {
-        trip_id: item?.id
+        trip_id: item?.id ? item?.id : item?.trip_id
     }
 
-    const detailTrip = async (paramsTrip, isFlag = 0) => {
+    const detailTrip = async (paramsTrip, isFlag = 0, is_notify = 0) => {
         await fetchDetailTrip(paramsTrip, contextToken.token)
         // await fetchDetailTrip(paramsTrip, 'e1358385819f12b01db7990c1')
             .then((data) => {
@@ -46,8 +47,7 @@ const Confirm = () => {
                         distance: data.result.distance_all,
                         price_distance: data.result.price_report,
                     })
-
-                    if (isFlag) {
+                    if (isFlag || is_notify) {
                         context.setBookingForm({
                             ...context.bookingForm,
                             eniqueId: data?.result.trip_id,
@@ -79,20 +79,21 @@ const Confirm = () => {
             .catch((err) => {
                 console.log(err);
             })
-        // .finally(() => {
-        //     setLoadingDetailTrip(true);
-        // })
+        .finally(() => {
+            setIsLoading(true);
+        })
     }
 
     useEffect(() => {
-        detailTrip(paramsTrip, item?.isFlag);
-        console.log(paramsTrip);
+        detailTrip(paramsTrip, item?.isFlag, item?.is_notify);
+        // console.log('confirm',item);
     }, [])
 
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
+            {isLoading && (
             <View style={[styles.flexFull, styles.bgBlack]}>
                 {/* header */}
                 <Header navigation={navigation} title="Thành công" />
@@ -176,22 +177,22 @@ const Confirm = () => {
                                 >
                                     {item?.fullname}
                                 </Text>
-                                {/* {item?.is_confirmed == 1 && (
+                                {item?.is_confirmed == 2 && (
                                     <View style={[styles.pl10]}>
                                         <ShieldCheckIcon size={16} color={'white'} />
                                     </View>
-                                )} */}
+                                )}
                             </View>
 
                             {/* đánh sao*/}
-                            {/* {item?.average_rates.toString() && (
+                            {item?.average_rates.toString() && (
                                 <View style={[styles.flexRow, styles.itemsCenter]}>
                                     <StarIcon size={'16'} color={'white'} />
                                     <Text style={[styles.textWhite, styles.fs16, styles.lh24]}>
                                         {item?.average_rates.toString()}
                                     </Text>
                                 </View>
-                            )} */}
+                            )}
                         </View>
 
                         {/* contact */}
@@ -317,6 +318,7 @@ const Confirm = () => {
                     </TouchableOpacity>
                 </View>
             </View>
+            )}
         </SafeAreaView>
     );
 };
