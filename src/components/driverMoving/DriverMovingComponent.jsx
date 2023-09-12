@@ -23,6 +23,7 @@ import SpreadSheet from '../spreadSheet';
 import DistanceInfomation from '../distanceInfomation/DistanceInfomation';
 import ReviewCustomer from '../reviewCustomer';
 import { TokenContext } from '../../redux/tokenContext';
+import { format } from 'date-fns';
 
 const DriverMovingComponent = () => {
     const context = useContext(CustomerFormContext);
@@ -48,9 +49,9 @@ const DriverMovingComponent = () => {
         .catch((err) => {
             console.log(err);
         })
-        .finally(() => {
-            setIsLoading(true);
-        })
+        // .finally(() => {
+        //     setIsLoading(true);
+        // })
     }
 
     const createContext = (data, nameCar) => {
@@ -91,9 +92,9 @@ const DriverMovingComponent = () => {
         .catch((err) => {
             console.log(err);
         })
-        // .finally(() => {
-        //     setIsLoading(true);
-        // })
+        .finally(() => {
+            setIsLoading(true);
+        })
     }
 
     useEffect(() => {

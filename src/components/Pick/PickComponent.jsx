@@ -76,19 +76,19 @@ const PickComponent = () => {
 
 
     const detailTrip = async (paramsTrip) => {
-        let status;
+        let status = 0;
         await fetchDetailTrip(paramsTrip, contextToken.token)
             .then((data) => {
                 // console.log(data);
                 if (data.res === 'success') {
-                    if (data.result.status != 2) {
-                        return getDetailDriver(data.result.driver_id).then(() => {
-                            setShouldNavigate(true);
-                            let a = statusUser.filter((status) => status.id == data.result.status);
-                            screenRef.current = a[0].screen;
-                        })
-                    }
-                    status = data.result.status;
+                    // if (data.result.status != 2) {
+                    //     return getDetailDriver(data.result.driver_id).then(() => {
+                    //         setShouldNavigate(true);
+                    //         let a = statusUser.filter((status) => status.id == data.result.status);
+                    //         screenRef.current = a[0].screen;
+                    //     })
+                    // }
+                    // status = data.result.status;
                     createContext(data);
                 }
             })
@@ -160,22 +160,22 @@ const PickComponent = () => {
         })
     }
 
-    const getDetailDriver = async (driverId) => {
-        const params = {
-            driver_id: driverId,
-        }
-        try {
-            const data = await fetchDetailDriver(params);
-            if (data.res === 'success') {
-                const obj = data.result;
-                obj.is_notify = item?.is_notify ? item?.is_notify : '';
-                obj.trip_id = item?.trip_id
-                objRef.current = obj;
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    // const getDetailDriver = async (driverId) => {
+    //     const params = {
+    //         driver_id: driverId,
+    //     }
+    //     try {
+    //         const data = await fetchDetailDriver(params);
+    //         if (data.res === 'success') {
+    //             const obj = data.result;
+    //             obj.is_notify = item?.is_notify ? item?.is_notify : '';
+    //             obj.trip_id = item?.trip_id
+    //             objRef.current = obj;
+    //         }
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
