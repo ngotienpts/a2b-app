@@ -89,18 +89,18 @@ const MovingComponent = () => {
     }
 
     const detailTrip = async (paramsTrip) => {
-        let status;
+        let status = 0;
         await fetchDetailTrip(paramsTrip, contextToken.token)
         .then((data) => {
             if (data.res === 'success') {
-                if (data.result.status != 3) {
-                    return getDetailDriver(data.result.driver_id).then(() => {
-                        setShouldNavigate(true);
-                        let a = statusUser.filter((status) => status.id == data.result.status);
-                        screenRef.current = a[0].screen;
-                    })
-                }
-                status = data.result.status;
+                // if (data.result.status != 3) {
+                //     return getDetailDriver(data.result.driver_id).then(() => {
+                //         setShouldNavigate(true);
+                //         let a = statusUser.filter((status) => status.id == data.result.status);
+                //         screenRef.current = a[0].screen;
+                //     })
+                // }
+                // status = data.result.status;
                 createContext(data); 
             }
         })

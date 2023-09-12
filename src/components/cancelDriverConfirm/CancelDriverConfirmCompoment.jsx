@@ -144,7 +144,7 @@ const CancelDriverConfirmCompoment = () => {
                                     styles.fw300,
                                 ]}
                             >
-                                {item?.reason}
+                                {item?.cancel_reason}
                             </Text>
                         </View>
 

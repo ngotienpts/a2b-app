@@ -133,7 +133,7 @@ const DriverFindDetailComponent = () => {
             });
             const obj = data.result;
             if (result?.status != 0 && result?.status != 1) {
-                obj.reason = result.cancel_reason;
+                obj.cancel_reason = result.cancel_reason;
                 obj.is_notify = item?.is_notify ? item?.is_notify : ''
                 cancelObjRef.current = obj;
                 setShouldNavigateToCancel(true);

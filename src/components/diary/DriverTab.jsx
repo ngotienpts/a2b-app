@@ -128,7 +128,7 @@ const DriverTab = () => {
                     let obj = data.result;
                     obj.isFlag = 1;
                     obj.trip_id = item?.trip_id;
-                    obj.reason = item?.cancel_reason;
+                    obj.cancel_reason = item?.cancel_reason;
                     obj.driver_id = item?.id_driver;
                     // console.log(obj);
                     navigation.navigate(Screen, obj);

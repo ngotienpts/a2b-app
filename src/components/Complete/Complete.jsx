@@ -57,6 +57,7 @@ const Complete = () => {
     const detailTrip = async (paramsTrip) => {
         await fetchDetailTrip(paramsTrip, contextToken.token)
             .then((data) => {
+                // console.log(paramsTrip);
                 if (data.res === 'success') {
                     createContext(data);
                 }
@@ -110,6 +111,7 @@ const Complete = () => {
             const paramsTrip = {
                 trip_id: item?.id ? item?.id : item?.trip_id
             }
+            // console.log(item);
             detailTrip(paramsTrip);
         } else {
             setIsLoading(true);

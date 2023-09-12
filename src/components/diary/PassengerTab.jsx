@@ -124,7 +124,7 @@ const PassengerTab = () => {
             }else{
                 const data = {
                     id: item?.trip_id,
-                    reason: item?.cancel_reason,
+                    cancel_reason: item?.cancel_reason,
                     isFlag: 1
                 }
                 // console.log(data);
@@ -143,7 +143,7 @@ const PassengerTab = () => {
                 let obj = data.result;
                 obj.isFlag = 1;
                 obj.id = item?.trip_id;
-                obj.reason = item?.cancel_reason && item?.cancel_reason;
+                obj.cancel_reason = item?.cancel_reason && item?.cancel_reason;
                 navigation.navigate(screen,obj);
             }
         })

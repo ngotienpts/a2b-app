@@ -38,7 +38,7 @@ const CancelBookClientComponent = () => {
             if(data.res === 'success'){
                 // console.log(data);
                 if(item !== undefined){
-                    item.reason = reason;
+                    item.cancel_reason = reason;
                     navigation.navigate('CancelClientConfirmScreen', item);
                 }else{
                     navigation.navigate('CancelClientConfirmScreen', reason);

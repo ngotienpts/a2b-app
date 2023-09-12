@@ -75,7 +75,7 @@ const FindComponent = () => {
         listReport(paramsTrip)
         automaticQuote(paramsTrip);
         if (shouldNavigate) {
-            navigation.navigate(screenRef.current, objRef.current);
+            // navigation.navigate(screenRef.current, objRef.current);
         }
     }, [shouldNavigate]);
 
@@ -93,7 +93,7 @@ const FindComponent = () => {
     }
 
     const detailTrip = async (paramsTrip, isFlag = 0, is_notify = 0) => {
-        let status;
+        let status = 1;
         await fetchDetailTrip(paramsTrip, contextToken.token)
             // await fetchDetailTrip(paramsTrip,'e1358385819f12b01db7990c1')
             .then((data) => {
@@ -146,11 +146,11 @@ const FindComponent = () => {
                 console.log(err);
             })
             .finally(() => {
-                if (status != 0) {
-                    setLoadingDetailTrip(false);
-                } else {
+                // if (status != 0) {
+                //     setLoadingDetailTrip(false);
+                // } else {
                     setLoadingDetailTrip(true);
-                }
+                // }
             })
     }
 

@@ -6,11 +6,11 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import styles from '../../styles';
 import Header from '../header';
 import MomentComponent from '../moment';
-import { fetchListNoti, fetchReadAllNoti, fetchReadOneNoti } from '../../api/DataFetching';
+import { fetchListNoti, fetchReadAllNoti, fetchReadOneNoti, fetchDetailTrip, fetchDetailDriver, fetchDetailCustomer } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import { useNotification } from '../../redux/notificationContext';
 import Skenleton from '../skeleton/Skenleton';
-import { waiting } from '../../constants';
+import { waiting, statusDriver, statusUser } from '../../constants';
 
 const Notification = () => {
     const { handleHiddenNoti } = useNotification();
@@ -31,25 +31,25 @@ const Notification = () => {
 
     useEffect(() => {
         if (!isFocused) {
-          // Màn hình bị blur, thực hiện unmount
-          setIsUnmounted(true);
+            // Màn hình bị blur, thực hiện unmount
+            setIsUnmounted(true);
         } else {
-          // Màn hình được focus lại, không cần unmount
-          setIsUnmounted(false);
+            // Màn hình được focus lại, không cần unmount
+            setIsUnmounted(false);
         }
     }, [isFocused]);
 
     useEffect(() => {
-    // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
-    // console.log(isUnmounted);
-    // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
+        // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
+        // console.log(isUnmounted);
+        // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
         if (!isUnmounted) {
             // Gọi API hoặc tác vụ khác...
             listNotification();
             // console.log(1);
 
         }
-    }, [isUnmounted]);   
+    }, [isUnmounted]);
 
     const listNotification = () => {
         let params = {}
@@ -103,7 +103,57 @@ const Notification = () => {
             .then((data) => {
                 if (data.res === 'success') {
                     // console.log(data, noti);
-                    navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
+                    // console.log(JSON.parse(noti.data));
+                    if (JSON.parse(noti.data).trip_id) {
+                        getDetailTrip(JSON.parse(noti.data));
+                    } else {
+                        navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
+                    }
+                }
+            })
+    }
+
+    const getDetailTrip = async (notiData) => {
+        await fetchDetailTrip({
+            trip_id: notiData.trip_id
+        }, context.token)
+        .then((data) => {
+                if (data.res === 'success') {
+                    if (notiData.is_user) {
+                        getDataDriver(data.result)
+                    } else if (notiData.is_driver) {
+                        getDataUser(data.result)
+                    }
+                }
+            })
+    }
+
+    const getDataUser = async (dataTrip) => {
+        await fetchDetailCustomer({
+            user_id: dataTrip.user_id,
+        })
+            .then((data) => {
+                if (data.res === 'success') {
+                    let obj = {...dataTrip, ...data.result};
+                    let a = statusDriver.filter((status) => status.id == dataTrip.status);
+                    obj.is_notify = 1;
+                    // console.log(a[0].screen);
+                    navigation.navigate(a[0].screen, obj);
+                }
+            })
+    }
+
+    const getDataDriver = async (dataTrip) => {
+        await fetchDetailDriver({
+            driver_id: dataTrip.driver_id,
+        })
+            .then((data) => {
+                if (data.res === 'success') {
+                    let obj = {...data.result, ...dataTrip};
+                    let a = statusUser.filter((status) => status.id == dataTrip.status);
+                    obj.is_notify = 1;
+                    // console.log(dataTrip);
+                    navigation.navigate(a[0].screen, obj);
                 }
             })
     }
@@ -209,16 +259,16 @@ const Notification = () => {
                             ))}
                         </View>
                     ) : (
-                    <View>
-                        {waiting.map((val) => (
-                            <View key={val?.id} style={[styles.card, {width: cardWidth + 80, marginBottom: 10}]}>
-                                <View>
-                                    <Skenleton height={16} width={cardWidth - 216} style={{marginTop: 10, alignItems: 'flex-end'}} />
-                                    <Skenleton height={16} width={cardWidth - 80} style={{marginTop: 10, marginBottom: 10, alignItems: 'flex-end'}} />
+                        <View>
+                            {waiting.map((val) => (
+                                <View key={val?.id} style={[styles.card, { width: cardWidth + 80, marginBottom: 10 }]}>
+                                    <View>
+                                        <Skenleton height={16} width={cardWidth - 216} style={{ marginTop: 10, alignItems: 'flex-end' }} />
+                                        <Skenleton height={16} width={cardWidth - 80} style={{ marginTop: 10, marginBottom: 10, alignItems: 'flex-end' }} />
+                                    </View>
                                 </View>
-                            </View>
-                        ))}
-                    </View>
+                            ))}
+                        </View>
                     )}
 
                 </ScrollView>
