@@ -21,6 +21,7 @@ import { DetailTripContext } from '../../redux/detailTripContext';
 import { TokenContext } from '../../redux/tokenContext';
 import { MapContext } from '../../redux/mapContext';
 import Loading from './Loading';
+import getDirections from 'react-native-google-maps-directions';
 
 
 const FindComponent = () => {
@@ -129,6 +130,31 @@ const FindComponent = () => {
         })
     }
 
+    const openGoogleMap = async () => {
+        const data = {
+            source: {
+                latitude: parseFloat(context.bookingForm.startPoint.coordinates.lat),
+                longitude: parseFloat(context.bookingForm.startPoint.coordinates.lng)
+            },
+            destination: {
+                latitude: parseFloat(context.bookingForm.endPoint.coordinates.lat),
+                longitude: parseFloat(context.bookingForm.endPoint.coordinates.lng)
+            },
+            params: [
+                {
+                    key: "travelmode",
+                    value: "driving"        // may be "walking", "bicycling" or "transit" as well
+                },
+                {
+                    key: "dir_action",
+                    value: "navigate"       // this instantly initializes navigation using the given travel mode
+                }
+            ]
+        }
+      
+        getDirections(data)
+    }
+
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
@@ -226,28 +252,33 @@ const FindComponent = () => {
                                 <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
                             </View>
                         </View>
-                        <View style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
-                            <Text
-                                style={[
-                                    styles.fs16,
-                                    styles.textGray77,
-                                    styles.lh24,
-                                    styles.textCenter,
-                                ]}
-                            >
-                                Google map
-                            </Text>
-                            <View
-                                style={[
-                                    styles.flexCenter,
-                                    styles.bgGray161,
-                                    styles.mt20,
-                                    { width: 73, height: 42 },
-                                ]}
-                            >
-                                <ArrowUturnRightIcon size={25} color={'white'} />
-                            </View>
-                        </View>
+                        <TouchableOpacity
+                            onPress={openGoogleMap}
+                            style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}
+                        >
+                            <View >
+                                <Text
+                                    style={[
+                                        styles.fs16,
+                                        styles.textGray77,
+                                        styles.lh24,
+                                        styles.textCenter,
+                                    ]}
+                                >
+                                    Google map
+                                </Text>
+                                <View
+                                    style={[
+                                        styles.flexCenter,
+                                        styles.bgGray161,
+                                        styles.mt20,
+                                        { width: 73, height: 42 },
+                                    ]}
+                                >
+                                    <ArrowUturnRightIcon size={25} color={'white'} />
+                                </View>
+                            </View>          
+                        </TouchableOpacity>
                     </View>
 
 
