@@ -57,7 +57,7 @@ const SpreadSheet = ({context}) => {
                     <Text style={[styles.fs16, styles.lh24, styles.fw400]}>
                         Phí nền tảng (3%)
                     </Text>
-                    <Text style={[styles.fs16, styles.lh24, styles.fw400]}>- {context?.customerForm.price * 0.03 / 1000}K</Text>
+                    <Text style={[styles.fs16, styles.lh24, styles.fw400]}>- {(context?.customerForm.price * 0.03 / 1000).toFixed(2)}K</Text>
                 </View>
                 <Text style={[styles.fs12, styles.fw400, styles.textGray77]}>
                     (Trừ sau khi kết thúc chuyến đi)

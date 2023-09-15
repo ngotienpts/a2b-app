@@ -58,6 +58,7 @@ const DriverFind = () => {
     const handleTurnOffDriver = async () => {
         fetchTurnOffDriver(contextToken.token)
         .then((data) => {
+
             if(data.res === 'success'){
                 navigation.goBack();
             }

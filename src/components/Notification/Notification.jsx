@@ -21,42 +21,35 @@ const Notification = () => {
     const [isDot, setIsDot] = useState(true);
     const isFocused = useIsFocused();
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(2);
+    const [page, setPage] = useState(1);
     const [count, setCount] = useState(0);
     const cardWidth = Dimensions.get("window").width * 0.8;
     // useEffect này chỉ chạy một lần khi component mount
-    useEffect(() => {
-        listNotification();
-    }, []);
 
     useEffect(() => {
-        if (!isFocused) {
-            // Màn hình bị blur, thực hiện unmount
-            setIsUnmounted(true);
-        } else {
-            // Màn hình được focus lại, không cần unmount
-            setIsUnmounted(false);
+        if (isFocused) {
+            // Gọi API hoặc tác vụ khác...
+            listNotification(page);
         }
     }, [isFocused]);
 
-    useEffect(() => {
-        // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
-        // console.log(isUnmounted);
-        // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
-        if (!isUnmounted) {
-            // Gọi API hoặc tác vụ khác...
-            listNotification();
-            // console.log(1);
-
-        }
-    }, [isUnmounted]);
-
-    const listNotification = () => {
-        let params = {}
+    const listNotification = (newPage, isLoading = false) => {
+        let params = {
+            page: newPage
+        };
         fetchListNoti(params, context.token)
             .then((data) => {
                 if (data.res === 'success') {
-                    setNotifications(data.result);
+                    let newData = data.result;
+                    if (newPage > 1 || isLoading) {
+                        //tranh truong hợp về cuối dễ bị trùng khi unmount lại
+                        newData = newData.filter(item => !notifications.some((noti) => noti.notify_id == item.notify_id));
+                        // some la phuong thuc kiem tra neu dung tra ve true con khong ve false 
+                        setNotifications([...notifications, ...newData]);
+                    } else {
+                        setNotifications(newData);
+                    }
+                    setPage(newPage);
                     handleHiddenNoti(data.count);
                     setCount(data.count - 1);
                 }
@@ -68,7 +61,6 @@ const Notification = () => {
                 setLoading(true);
             });
     };
-
     // Xử lý khi thông báo được ẩn
     const handleHideNotification = () => {
         const updatedNotifications = notifications.map((noti) => ({
@@ -88,27 +80,28 @@ const Notification = () => {
 
     // Xử lý từng thông báo bị ẩn
     const handleClickOneNoti = (noti) => {
-        // const index = notifications.findIndex((n) => n.notify_id === noti.notify_id && n.status == 0); //tim vi tri key noti chon voi danh sach noti api
-        // if (index !== -1) {
-        //     // Đánh dấu thông báo là đã đọc bằng cách đặt isRead thành true
-        //     const updatedNotifications = [...notifications]; // lay danh sách noti của api kết hợp
-        //     updatedNotifications[index] = { ...noti, isRead: true }; // kết hợp noti thứ i của api với noti được chọn và thêm key isRead = true
-        //     setNotifications(updatedNotifications); // cập nhật lại noti
-        //     setCount(prevCount => Math.max(0, prevCount - 1));
-        //     handleHiddenNoti(count)
-        // }
+        const index = notifications.findIndex((n) => n.notify_id === noti.notify_id && n.status == 0); //tim vi tri key noti chon voi danh sach noti api
+        if (index !== -1) {
+            // Đánh dấu thông báo là đã đọc bằng cách đặt isRead thành true
+            const updatedNotifications = [...notifications]; // lay danh sách noti của api kết hợp
+            updatedNotifications[index] = { ...noti, isRead: true }; // kết hợp noti thứ i của api với noti được chọn và thêm key isRead = true
+            setNotifications(updatedNotifications); // cập nhật lại noti
+            setCount(prevCount => Math.max(0, prevCount - 1));
+            handleHiddenNoti(count)
+        }
         fetchReadOneNoti({
             notify_id: noti.notify_id
         }, context.token)
             .then((data) => {
                 if (data.res === 'success') {
-                    // console.log(data, noti);
-                    // console.log(JSON.parse(noti.data));
-                    if (JSON.parse(noti.data).trip_id) {
-                        getDetailTrip(JSON.parse(noti.data));
+                    if (noti.data) {
+                        if (JSON.parse(noti.data).trip_id) {
+                            getDetailTrip(JSON.parse(noti.data));
+                        }
                     } else {
                         navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
                     }
+
                 }
             })
     }
@@ -117,7 +110,7 @@ const Notification = () => {
         await fetchDetailTrip({
             trip_id: notiData.trip_id
         }, context.token)
-        .then((data) => {
+            .then((data) => {
                 if (data.res === 'success') {
                     if (notiData.is_user) {
                         getDataDriver(data.result)
@@ -134,10 +127,9 @@ const Notification = () => {
         })
             .then((data) => {
                 if (data.res === 'success') {
-                    let obj = {...dataTrip, ...data.result};
+                    let obj = { ...dataTrip, ...data.result };
                     let a = statusDriver.filter((status) => status.id == dataTrip.status);
                     obj.is_notify = 1;
-                    // console.log(a[0].screen);
                     navigation.navigate(a[0].screen, obj);
                 }
             })
@@ -149,7 +141,7 @@ const Notification = () => {
         })
             .then((data) => {
                 if (data.res === 'success') {
-                    let obj = {...data.result, ...dataTrip};
+                    let obj = { ...data.result, ...dataTrip };
                     let a = statusUser.filter((status) => status.id == dataTrip.status);
                     obj.is_notify = 1;
                     // console.log(dataTrip);
@@ -162,33 +154,10 @@ const Notification = () => {
         const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
         const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 80;
         if (isCloseToBottom) {
-            loadMoreData();
+            listNotification(page + 1, true);
         }
 
     };
-
-    const loadMoreData = async () => {
-        setLoading(true);
-        const params = {
-            page: page
-        }
-        fetchListNoti(params, context.token)
-            .then((data) => {
-                if (data.res === 'success') {
-                    setNotifications([...notifications, ...data.result]);
-                    setPage(page + 1);
-                    setLoading(false);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {
-                setLoading(true);
-                // console.log('render');
-            });
-
-    }
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
@@ -199,8 +168,8 @@ const Notification = () => {
 
                 {/* body */}
                 <ScrollView
-                    showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
+                    showsVerticalScrollIndicator={false}
                     onScroll={handleScroll}
                     scrollEventThrottle={1600}
                 >

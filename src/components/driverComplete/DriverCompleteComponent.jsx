@@ -141,10 +141,8 @@ const DriverCompleteComponent = () => {
         const params = {
             trip_id: context?.customerForm.tripId ? context?.customerForm.tripId : item?.user_id
         }
-        // console.log(params);
         await fetchGetOneRate(params,contextToken.token)
         .then((data) => {
-            // console.log(data);
             if(data.res === 'success'){
                 setStatusReview(parseInt(data.result.status));
                 setReviewText(data.result.content)
@@ -185,7 +183,6 @@ const DriverCompleteComponent = () => {
     }
 
     useEffect(() => {
-        // console.log(item);
         if(item?.isFlag == 1 || item?.is_notify == 1){
             detailTrip();
         }

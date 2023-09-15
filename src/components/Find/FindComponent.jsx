@@ -50,24 +50,12 @@ const FindComponent = () => {
     }
 
     useEffect(() => {
-        if (!isFocused) {
-            // Màn hình bị blur, thực hiện unmount
-            setIsUnmounted(true);
-        } else {
-            // Màn hình được focus lại, không cần unmount
-            setIsUnmounted(false);
-        }
-    }, [isFocused]);
-
-    useEffect(() => {
-        // Gọi API hoặc các tác vụ khác tại đây khi màn hình được render
-        // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
-        if (!isUnmounted) {
+        if (isFocused) {
             // Gọi API hoặc tác vụ khác...
             detailTrip(paramsTrip, item?.isFlag, item?.is_notify)
             listReport(paramsTrip)
         }
-    }, [isUnmounted]);
+    }, [isFocused]);
 
     useEffect(() => {
         // Truyền giá trị từ context vào biến local
@@ -146,11 +134,7 @@ const FindComponent = () => {
                 console.log(err);
             })
             .finally(() => {
-                // if (status != 0) {
-                //     setLoadingDetailTrip(false);
-                // } else {
-                    setLoadingDetailTrip(true);
-                // }
+                setLoadingDetailTrip(true);
             })
     }
 

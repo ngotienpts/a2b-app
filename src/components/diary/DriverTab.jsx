@@ -23,18 +23,32 @@ const DriverTab = () => {
     const startOfMonth = moment().startOf('month');
     const startOfLastMonth = moment().subtract(1, 'months').startOf('month');
     const [drivers, setDrivers] = useState({});
+    const [driversSectionList, setDriversSectionList] = useState({});
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
     const contextToken = useContext(TokenContext);
     const cardWidth = Dimensions.get("window").width * 0.8;
 
-    const listDrivers = () => {
-        fetchListHistoryDriver(contextToken.token)
+    const listDrivers = (isLoading = 0) => {
+        const params = {
+            page: page,
+        }
+        fetchListHistoryDriver(isLoading ? params : {}, contextToken.token)
             .then((data) => {
-                // console.log('data',data);
                 if (data.res === 'success') {
-                    // console.log(data.result);
-                    // // setDrivers(data.result);
-                    setHistoryDriver(data.result);
+                    if(page >= 2){
+                        setDrivers([...drivers, ...data.result])
+                    }else{
+                        setDrivers(data.result);
+                    }
+                    if (isLoading) {
+                        setHistoryPassengers([...drivers, ...data.result]);
+                        setPage(page + 1);
+                        setLoading(false);
+                    } else {
+                        setHistoryDriver(data.result);
+                        setPage(page + 1);
+                    }
                 }
             })
             .catch((err) => {
@@ -87,8 +101,14 @@ const DriverTab = () => {
             return result;
         }, []);
 
-        setDrivers(convertArr);
+        setDriversSectionList(convertArr);
     }
+
+    const handleScroll = ({ distanceFromEnd }) => {
+        if (distanceFromEnd > 150) {
+            listDrivers(1);
+        }
+    };
 
     const listMyCar = async (Screen, item) => {
         await fetchListMyCar(contextToken.token)
@@ -130,7 +150,6 @@ const DriverTab = () => {
                     obj.trip_id = item?.trip_id;
                     obj.cancel_reason = item?.cancel_reason;
                     obj.driver_id = item?.id_driver;
-                    // console.log(obj);
                     navigation.navigate(Screen, obj);
                 }
             })
@@ -140,7 +159,6 @@ const DriverTab = () => {
     }
 
     const handleNavigation = async (item) => {
-        // console.log(item?.id_user);
         if (item?.status_number == 0) {
             listMyCar('DriverFindScreen');
         }
@@ -172,95 +190,79 @@ const DriverTab = () => {
             {loading ? (
                 <View>
                     <View style={[styles.pb50]}>
-                        {drivers.length !== undefined ?
-                            (
-                                <SectionList
-                                    sections={drivers}
-                                    keyExtractor={(item, index) => item.trip_id}
-                                    renderItem={({ item }) => (
-                                        <View>
-                                            <View style={[styles.bg161e, styles.p15, styles.mb15]}>
-                                                <TouchableOpacity
-                                                    key={item?.trip_id}
-                                                    onPress={() => handleNavigation(item)}
-                                                >
-                                                    <View style={[styles.flexStart, styles.mb5]}>
-                                                        <CheckCircleIcon
-                                                            size={20}
-                                                            color={
-                                                                item?.color_status === 'status--danger' ? '#E8424A' : (item?.color_status === 'status--success' ? '#2F9881' : '#FFB848')
-                                                            }
+                        {drivers.length !== undefined ? (
+                            <SectionList
+                                sections={driversSectionList}
+                                keyExtractor={(item, index) => index.toString()}
+                                onEndReached={handleScroll}
+                                onEndReachedThreshold={0.5}
+                                renderItem={({ item }) => (
+                                    <View>
+                                        <View style={[styles.bg161e, styles.p15, styles.mb15]}>
+                                            <TouchableOpacity
+                                                key={item?.trip_id}
+                                                onPress={() => handleNavigation(item)}
+                                            >
+                                                <View style={[styles.flexStart, styles.mb5]}>
+                                                    <CheckCircleIcon
+                                                        size={20}
+                                                        color={
+                                                            item?.color_status === 'status--danger' ? '#E8424A' : (item?.color_status === 'status--success' ? '#2F9881' : '#FFB848')
+                                                        }
 
-                                                        />
-                                                        <Text
-                                                            style={[
-                                                                styles.fs16,
-                                                                styles.fw700,
-                                                                item?.color_status === 'status--danger' ? styles.textRedE8 :
-                                                                    (item?.color_status === 'status--success' ? styles.textCyan2F : styles.textYellow),
-                                                                styles.mb5,
-                                                                styles.ml5,
-                                                                styles.flexFull,
-                                                            ]}
-                                                        >
-                                                            {item?.status}
-                                                        </Text>
-                                                    </View>
-                                                    <View style={[styles.flexStart, styles.mb5]}>
-                                                        <StopCircleIcon
-                                                            size={20}
-                                                            color={'white'}
-                                                        />
-                                                        <Text
-                                                            style={[
-                                                                styles.fs16,
-                                                                styles.fw700,
-                                                                styles.textWhite,
-                                                                styles.mb5,
-                                                                styles.ml5,
-                                                                styles.flexFull,
-                                                            ]}
-                                                        >
-                                                            {item?.start_location}
-                                                        </Text>
-                                                    </View>
-                                                    <View style={[styles.flexRow]}>
-                                                        <MapPinIcon size={22} color={'white'} style={{ marginTop: -2 }} />
-                                                        <Text
-                                                            style={[
-                                                                styles.fs16,
-                                                                styles.fw700,
-                                                                styles.textWhite,
-                                                                styles.mb5,
-                                                                styles.ml5,
-                                                                styles.flexFull,
-                                                            ]}
-                                                        >
-                                                            {item?.end_location}
-                                                        </Text>
-                                                    </View>
-                                                </TouchableOpacity>
-                                            </View>
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            styles.fs16,
+                                                            styles.fw700,
+                                                            item?.color_status === 'status--danger' ? styles.textRedE8 :
+                                                                (item?.color_status === 'status--success' ? styles.textCyan2F : styles.textYellow),
+                                                            styles.mb5,
+                                                            styles.ml5,
+                                                            styles.flexFull,
+                                                        ]}
+                                                    >
+                                                        {item?.status}
+                                                    </Text>
+                                                </View>
+                                                <View style={[styles.flexStart, styles.mb5]}>
+                                                    <StopCircleIcon
+                                                        size={20}
+                                                        color={'white'}
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            styles.fs16,
+                                                            styles.fw700,
+                                                            styles.textWhite,
+                                                            styles.mb5,
+                                                            styles.ml5,
+                                                            styles.flexFull,
+                                                        ]}
+                                                    >
+                                                        {item?.start_location}
+                                                    </Text>
+                                                </View>
+                                                <View style={[styles.flexRow]}>
+                                                    <MapPinIcon size={22} color={'white'} style={{ marginTop: -2 }} />
+                                                    <Text
+                                                        style={[
+                                                            styles.fs16,
+                                                            styles.fw700,
+                                                            styles.textWhite,
+                                                            styles.mb5,
+                                                            styles.ml5,
+                                                            styles.flexFull,
+                                                        ]}
+                                                    >
+                                                        {item?.end_location}
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
                                         </View>
-                                    )}
-                                    renderSectionHeader={({ section: { title } }) => (
-                                        <Text
-                                            style={[
-                                                styles.textWhite,
-                                                styles.fs16,
-                                                styles.fw400,
-                                                styles.lh24,
-                                                styles.px15,
-                                                styles.mb15,
-                                            ]}
-                                        >
-                                            {title}
-                                        </Text>
-                                    )}
-                                    stickySectionHeadersEnabled={false}
-                                />
-                            ) : (
-                                <View style={[styles.px10, styles.py10, styles.mb12]}>
+                                    </View>
+                                )}
+                                renderSectionHeader={({ section: { title } }) => (
                                     <Text
                                         style={[
                                             styles.textWhite,
@@ -271,10 +273,27 @@ const DriverTab = () => {
                                             styles.mb15,
                                         ]}
                                     >
-                                        Không có lịch sử nào
+                                        {title}
                                     </Text>
-                                </View>
-                            )
+                                )}
+                                stickySectionHeadersEnabled={false}
+                            />
+                        ) : (
+                            <View style={[styles.px10, styles.py10, styles.mb12]}>
+                                <Text
+                                    style={[
+                                        styles.textWhite,
+                                        styles.fs16,
+                                        styles.fw400,
+                                        styles.lh24,
+                                        styles.px15,
+                                        styles.mb15,
+                                    ]}
+                                >
+                                    Không có lịch sử nào
+                                </Text>
+                            </View>
+                        )
                         }
                     </View>
                 </View>

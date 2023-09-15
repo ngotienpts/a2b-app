@@ -66,7 +66,7 @@ const DiaryComponent = () => {
     const navigation = useNavigation();
     const { params: item } = useRoute();
 
-    const [index, setIndex] = useState(item !== undefined ? item.data : 1); // đặt tab đươc active mặc định ban đầu là 1
+    const [index, setIndex] = useState(item?.index ? item?.index : 1); // đặt tab đươc active mặc định ban đầu là 1
     const [routes] = useState([
         { key: 'first', title: 'Hành khách' },
         { key: 'second', title: 'Tài xế' },

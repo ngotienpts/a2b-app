@@ -117,7 +117,7 @@ export const fetchListReport = (params,token) => {
     return apiCall(listReport,params);
 }
 //lich su chuyen di khach hang 
-export const fetchListHistoryPassenger = (params, token) => {
+export const fetchListHistoryPassenger = (params={}, token) => {
     const listHistoryPassenger = `${baseUrl}/${token}/history/customer`;
     return apiCall(listHistoryPassenger, params);
 }
@@ -127,9 +127,9 @@ export const fetchListHistoryDriver = (token) => {
     return apiCall(listHistoryDriver);
 }
 //lich su giao dich
-export const fetchListHistoryTransfer = (token) => {
+export const fetchListHistoryTransfer = (params={},token) => {
     const listHistoryTransfer = `${baseUrl}/${token}/history/payment`;
-    return apiCall(listHistoryTransfer);
+    return apiCall(listHistoryTransfer,params);
 }
 //danh sach danh gia cua tai xe
 export const fetchListReviewDriver = (params) => {
@@ -211,7 +211,7 @@ export const fetchUpdateRoad = (data,token) => {
     const updateRoad = `${baseUrl}/${token}/vehicle/updateRoad`;
     return postApi(updateRoad,data);
 }
-//tro thanh tai xe
+//bat dau tim khach
 export const fetchBecomeDriver = (token) => {
     const becomeDriver = `${baseUrl}/${token}/vehicle/find`;
     return postApi(becomeDriver);
@@ -291,6 +291,11 @@ export const fetchCancelTrip = (data,token) => {
 export const fetchGetLocationDriver = (params) => {
     const getLocationDriver = `${baseUrl}/1/vehicle/location`;
     return apiCall(getLocationDriver,params);
+}
+//tro thanh tai xe
+export const fetchTurnOnDriver = (token) => {
+    const turnOnDriver = `${baseUrl}/${token}/profile/turnOn`;
+    return postApi(turnOnDriver);
 }
 //lay số xu của người dùng
 export const fetchGetCoin = (token) => {

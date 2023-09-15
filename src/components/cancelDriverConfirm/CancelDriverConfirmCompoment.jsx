@@ -25,17 +25,17 @@ const CancelDriverConfirmCompoment = () => {
             trip_id: item?.trip_id
         }
         await fetchDetailTrip(params, contextToken.token)
-            .then((data) => {
-                if (data.res === 'success') {
-                    createContext(data);
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {
-                setIsLoading(true);
-            })
+        .then((data) => {
+            if (data.res === 'success') {
+                createContext(data);
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoading(true);
+        })
     }
 
     const createContext = (data) => {
@@ -65,7 +65,6 @@ const CancelDriverConfirmCompoment = () => {
     }
 
     const handleBackToHome = () => {
-        // console.log(context.bookingForm.eniqueId);
         navigation.navigate('HomeScreen')
         context.setCustomerForm({
             tripId: '',
@@ -83,7 +82,7 @@ const CancelDriverConfirmCompoment = () => {
     }
 
     useEffect(() => {
-        if(item?.is_notify == 1 || item?.isFlag == 1){
+        if (item?.is_notify == 1 || item?.isFlag == 1) {
             detailTrip();
         }else{
             setIsLoading(true);
@@ -227,7 +226,7 @@ const CancelDriverConfirmCompoment = () => {
                                 styles.border4,
                                 styles.mx15,
                             ]}
-                            onPresstyle={handleBackToHome}
+                            onPress={handleBackToHome}
                         >
                             <Text style={[styles.fs16, styles.textWhite]}>Trang chủ</Text>
                         </TouchableOpacity>

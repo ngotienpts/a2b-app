@@ -5,10 +5,12 @@ import { ChevronDownIcon, ClockIcon, PencilIcon, TruckIcon } from 'react-native-
 import Collapsible from 'react-native-collapsible';
 
 import styles from '../../styles';
+import { useNavigation } from '@react-navigation/native';
 
 const SentFormBooking = ({ title, context, contextMap }) => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
     const rotationValue = useState(new Animated.Value(0))[0];
+    const navigation = useNavigation();
 
     useEffect(() => {
         Animated.timing(rotationValue, {
@@ -19,8 +21,6 @@ const SentFormBooking = ({ title, context, contextMap }) => {
         }).start();
     }, [isDropdownVisible]);
 
-    // const detailTrip = async() => {
-    // }
     const toogleDropdown = () => {
         setDropdownVisible((isDropdownVisible) => !isDropdownVisible);
     };

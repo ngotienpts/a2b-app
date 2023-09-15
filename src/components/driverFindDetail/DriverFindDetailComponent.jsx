@@ -41,7 +41,6 @@ const DriverFindDetailComponent = () => {
     const cancelObjRef = useRef(null);
     const screenRef = useRef(null);
 
-
     const handlePriceChange = (newPrice) => {
         setPrice(newPrice);
     };
@@ -61,12 +60,7 @@ const DriverFindDetailComponent = () => {
             console.log(err);
         })
         .finally(() => {
-            // if(item?.is_notify){
-            //     setIsLoadingCustomer(false);
-            // }
-            // else{
-                // setIsLoadingCustomer(true);
-            // }
+
         })
     }
 
@@ -121,9 +115,6 @@ const DriverFindDetailComponent = () => {
         .catch((err) => {
             console.log(err);
         })
-        // .finally(() => {
-        //     setIsLoadingCustomer(true);
-        // })
     }
     
     const detailCustomer = async (result) => {
@@ -131,15 +122,14 @@ const DriverFindDetailComponent = () => {
             const data = await fetchDetailCustomer({
                 user_id: result.user_id
             });
-            const obj = data.result;
+            const obj = data.result
             if (result?.status != 0 && result?.status != 1) {
                 obj.cancel_reason = result.cancel_reason;
                 obj.is_notify = item?.is_notify ? item?.is_notify : ''
                 cancelObjRef.current = obj;
                 setShouldNavigateToCancel(true);
-            let a = statusDriver.filter((status) => status.id == result?.status);
-            screenRef.current = a[0].screen;
-            // console.log(screenRef.current);
+                let status = statusDriver.filter((status) => status.id == result?.status);
+                screenRef.current = status[0].screen;
             }
             setCustomer(obj);
         } catch (err) {

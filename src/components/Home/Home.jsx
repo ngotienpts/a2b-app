@@ -87,11 +87,17 @@ const Home = () => {
         }
       }
 
-      let { coords } = await Location.getCurrentPositionAsync({});
-      if(coords){
-        await AsyncStorage.setItem('lat', coords.latitude.toString());
-        await AsyncStorage.setItem('lng', coords.longitude.toString());
-      }
+      const locationListener = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 60000, // milliseconds
+          distanceInterval: 10, // meters
+        },
+        async (newLocation) => {
+          await AsyncStorage.setItem('lat', newLocation.coords.latitude.toString());
+          await AsyncStorage.setItem('lng', newLocation.coords.longitude.toString());
+        }
+      );
 
     } catch (error) {
       Alert.alert(
@@ -107,11 +113,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    // const interval = setInterval(requestLocationService, 120000);
     requestLocationService()
-    // return () => {
-    //   clearInterval(interval);
-    // };
   }, []);
 
   const showProfile = () => {

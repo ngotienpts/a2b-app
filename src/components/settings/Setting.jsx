@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image, Alert, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert, StatusBar, KeyboardAvoidingView } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -13,6 +13,8 @@ import { dataGender } from '../../constants';
 import ChoseImage from './ChoseImage';
 import { TokenContext } from '../../redux/tokenContext';
 import LoadingSetting from './LoadingSetting';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Platform } from 'react-native';
 
 const Setting = () => {
     const navigation = useNavigation();
@@ -140,263 +142,270 @@ const Setting = () => {
 
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
-            <StatusBar barStyle="light-content" animated={true} />
-            <View style={[styles.flexFull, styles.bgBlack]}>
-                {/* header */}
-                <Header navigation={navigation} title="Tài khoản" />
-                {loading ? (
-                    <LoadingSetting />
-                ) : (
-                    /* body */
-                    <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
-                        {/* top */}
-                        <View style={[styles.bg161e, styles.px15, styles.py12]}>
-                            <Text
-                                style={[styles.fs16, styles.lh24, styles.textWhite, styles.textCenter]}
-                            >
-                                Điểm của bạn
-                            </Text>
-                            <View style={[styles.flexBaseLine, styles.justifyCenter, styles.my10]}>
-                                <Text style={[styles.fs32, styles.textRedE8, styles.fw700]}>{userProfile?.coin}</Text>
-                                <Text style={[styles.fs18, styles.textRedE8, styles.fw700]}>k</Text>
-                            </View>
-                            <View style={[styles.flexBetween, styles.gap15]}>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.flexFull,
-                                        styles.border1,
-                                        styles.borderColor777,
-                                        styles.borderSolid,
-                                        styles.border4,
-                                        styles.h32,
-                                        styles.flexCenter,
-                                    ]}
-                                    onPress={() => navigation.navigate('DiaryScreen',{data:2})}
+            <KeyboardAwareScrollView 
+                contentContainerStyle={styles.flexFull}
+                style={[styles.flexFull]} 
+            >
+                <StatusBar barStyle="light-content" animated={true} />
+                <View style={[styles.flexFull, styles.bgBlack]}>
+                    {/* header */}
+                    <Header navigation={navigation} title="Tài khoản" />
+                    {loading ? (
+                        <LoadingSetting />
+                    ) : (
+                        /* body */
+                        <ScrollView showsVerticalScrollIndicator={false} style={[styles.flexFull]}>
+                            {/* top */}
+                            <View style={[styles.bg161e, styles.px15, styles.py12]}>
+                                <Text
+                                    style={[styles.fs16, styles.lh24, styles.textWhite, styles.textCenter]}
                                 >
-                                    <Text
+                                    Điểm của bạn
+                                </Text>
+                                <View style={[styles.flexBaseLine, styles.justifyCenter, styles.my10]}>
+                                    <Text style={[styles.fs32, styles.textRedE8, styles.fw700]}>{userProfile?.coin}</Text>
+                                    <Text style={[styles.fs18, styles.textRedE8, styles.fw700]}>k</Text>
+                                </View>
+                                <View style={[styles.flexBetween, styles.gap15]}>
+                                    <TouchableOpacity
                                         style={[
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.textGray77,
-                                            styles.fw400,
+                                            styles.flexFull,
+                                            styles.border1,
+                                            styles.borderColor777,
+                                            styles.borderSolid,
+                                            styles.border4,
+                                            styles.h32,
+                                            styles.flexCenter,
                                         ]}
+                                        onPress={() => navigation.navigate('DiaryScreen',{data:2})}
                                     >
-                                        Lịch sử giao dịch
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.flexFull,
-                                        styles.border1,
-                                        styles.borderColor777,
-                                        styles.borderSolid,
-                                        styles.border4,
-                                        styles.h32,
-                                        styles.flexCenter,
-                                    ]}
-                                    onPress={() => navigation.navigate('AddCoinScreen')}
-                                >
-                                    <Text
+                                        <Text
+                                            style={[
+                                                styles.fs16,
+                                                styles.lh24,
+                                                styles.textGray77,
+                                                styles.fw400,
+                                            ]}
+                                        >
+                                            Lịch sử giao dịch
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
                                         style={[
-                                            styles.fs16,
-                                            styles.lh24,
-                                            styles.textGray77,
-                                            styles.fw400,
+                                            styles.flexFull,
+                                            styles.border1,
+                                            styles.borderColor777,
+                                            styles.borderSolid,
+                                            styles.border4,
+                                            styles.h32,
+                                            styles.flexCenter,
                                         ]}
+                                        onPress={() => navigation.navigate('AddCoinScreen')}
                                     >
-                                        Nạp điểm
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-
-                        {/* avatar */}
-                        <View style={[styles.flexCenter, styles.my24]}>
-                            <ChoseImage
-                                avatar={avatar}
-                                width={114}
-                                height={114}
-                                aspect={[1, 1]}
-                                borderFull={styles.borderFull}
-                                onChangeImage={handleAvaterChange}
-                            />
-                        </View>
-
-                        {/* list */}
-                        <View>
-                            {/* thông tin cá nhân */}
-                            <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
-                                {/* title */}
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.textGray77,
-                                        styles.uppercase,
-                                        styles.px15,
-                                        styles.mb10,
-                                    ]}
-                                >
-                                    Thông tin cá nhân
-                                </Text>
-                                {/* Tên */}
-                                <PersonalInfoItem
-                                    label="Tên"
-                                    type="text"
-                                    value={name}
-                                    onChangeText={handleNameChange}
-                                />
-                                {/* Ngày sinh */}
-                                <PersonalInfoItem
-                                    label="Ngày sinh"
-                                    type="date"
-                                    value={dateOfBirth}
-                                    onDateChange={handleDateChange}
-                                />
-                                {/* Giới tính */}
-                                <PersonalInfoItem
-                                    label="Giới tính"
-                                    type="dropdown"
-                                    data={dataGender}
-                                    selectedName={gender == 0 ? 'Nam' : 'Nữ'}
-                                    onChangeDropdown={handleGenderChange}
-                                />
-                                {/* Xác minh danh tính */}
-                                <NextPageSetting
-                                    onPress={() => navigation.navigate('VerificationScreen')}
-                                    title={'Xác minh danh tính'}
-                                    value={identity == 0 ? 'Chưa xác thực' : 'Đang xác thực'}
-                                />
-                            </View>
-                            {/* thông tin liên hệ */}
-                            <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
-                                {/* title */}
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.textGray77,
-                                        styles.uppercase,
-                                        styles.px15,
-                                        styles.mb10,
-                                    ]}
-                                >
-                                    Thông tin liên hệ
-                                </Text>
-                                {/* sô điện thoại */}
-                                <PersonalInfoItem
-                                    label="Số điện thoại"
-                                    type="phoneNumber"
-                                    value={phoneNumber ? phoneNumber.replace('84', 0) : phoneNumber}
-                                    onValueChange={handlePhoneNumberChange}
-                                />
-                                {/* Liên kết fb */}
-                                <PersonalInfoItem
-                                    label="Liên kết Facebook"
-                                    type="Url_Fb"
-                                    linkFb={linkFb}
-                                    value={linkFb}
-                                    onChangeText={handleLinkFbChange}
-                                    maxLength={20}
-                                />
-                            </View>
-                            {/* tôi làm tài xế  */}
-                            <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
-                                {/* title */}
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.lh24,
-                                        styles.textGray77,
-                                        styles.uppercase,
-                                        styles.px15,
-                                        styles.mb10,
-                                    ]}
-                                >
-                                    Tôi làm tài xế
-                                </Text>
-                                {/*  */}
-                                <View>
-                                    {/* Xe của tôi */}
-                                    <NextPageSetting
-                                        onPress={() => navigation.navigate('MyCarScreen')}
-                                        title={'Xe của tôi'}
-                                        value={carName}
-                                    />
-                                    {/* Số tài khoản */}
-                                    <PersonalInfoItem
-                                        type={'bankAccount'}
-                                        label={'Số tài khoản'}
-                                        value={bankAccount}
-                                        onChangeText={handleBankAccountChange}
-                                        maxLength={19}
-                                    />
-                                    {/* Tên ngân hàng */}
-                                    <PersonalInfoItem
-                                        label="Tên ngân hàng"
-                                        type="dropdownBankData"
-                                        data={bankNameData}
-                                        selectedName={bankName}
-                                        onChangeDropdown={handleBankNameChange}
-                                    />
-                                    {/* Tên tài khoản */}
-                                    <PersonalInfoItem
-                                        label="Tên tài khoản"
-                                        type="text"
-                                        value={nameBankAccount}
-                                        onChangeText={handleNameBankAccountChange}
-                                    />
-                                    {/* Giới thiệu cho bạn bè */}
-                                    <NextPageSetting
-                                        onPress={() => navigation.navigate('ShareScreen')}
-                                        title={'Giới thiệu bạn bè'}
-                                        value={<ChevronRightIcon size={20} color={'white'} />}
-                                    />
+                                        <Text
+                                            style={[
+                                                styles.fs16,
+                                                styles.lh24,
+                                                styles.textGray77,
+                                                styles.fw400,
+                                            ]}
+                                        >
+                                            Nạp điểm
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
-                        </View>
 
-                        <View style={[styles.flexRow]}>
-                            <TouchableOpacity
-                                style={[
-                                    styles.h48,
-                                    styles.bgBlack,
-                                    styles.flexFull,
-                                    styles.itemsCenter,
-                                    styles.justifyCenter,
-                                    styles.border1,
-                                    styles.borderColorWhite,
-                                    styles.borderSolid,
-                                    styles.border4,
-                                    styles.mx15,
-                                ]}
-                                onPress={updateProfile}
-                            >
-                                <Text style={[styles.fs16, styles.textWhite]}>Cập nhật</Text>
-                            </TouchableOpacity>
-                        </View>
-                        {/* log out */}
-                        <TouchableOpacity onPress={handleLogout} style={[styles.flexCenter, styles.mb24]}>
-                            <View style={[styles.my24]}>
-                                <Text style={[styles.fs16, styles.textCenter, styles.textRedE8]}>
-                                    Đăng xuất
-                                </Text>
-                                <View
-                                    style={[
-                                        styles.borderColorRedE8,
-                                        styles.mt5,
-                                        { borderBottomWidth: 1 },
-                                    ]}
+                            {/* avatar */}
+                            <View style={[styles.flexCenter, styles.my24]}>
+                                <ChoseImage
+                                    avatar={avatar}
+                                    width={114}
+                                    height={114}
+                                    aspect={[1, 1]}
+                                    borderFull={styles.borderFull}
+                                    onChangeImage={handleAvaterChange}
                                 />
                             </View>
-                        </TouchableOpacity>
 
-                    </ScrollView>
+                            {/* list */}
+                            <View>
+                                {/* thông tin cá nhân */}
+                                <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
+                                    {/* title */}
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.textGray77,
+                                            styles.uppercase,
+                                            styles.px15,
+                                            styles.mb10,
+                                        ]}
+                                    >
+                                        Thông tin cá nhân
+                                    </Text>
+                                    {/* Tên */}
+                                    <PersonalInfoItem
+                                        label="Tên"
+                                        type="text"
+                                        value={name}
+                                        onChangeText={handleNameChange}
+                                    />
+                                    {/* Ngày sinh */}
+                                    <PersonalInfoItem
+                                        label="Ngày sinh"
+                                        type="date"
+                                        value={dateOfBirth}
+                                        onDateChange={handleDateChange}
+                                    />
+                                    {/* Giới tính */}
+                                    <PersonalInfoItem
+                                        label="Giới tính"
+                                        type="dropdown"
+                                        data={dataGender}
+                                        selectedName={gender == 0 ? 'Nam' : 'Nữ'}
+                                        onChangeDropdown={handleGenderChange}
+                                    />
+                                    {/* Xác minh danh tính */}
+                                    <NextPageSetting
+                                        onPress={() => navigation.navigate('VerificationScreen')}
+                                        title={'Xác minh danh tính'}
+                                        value={identity == 0 ? 'Chưa xác thực' : 'Đang xác thực'}
+                                    />
+                                </View>
+                                {/* thông tin liên hệ */}
+                                <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
+                                    {/* title */}
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.textGray77,
+                                            styles.uppercase,
+                                            styles.px15,
+                                            styles.mb10,
+                                        ]}
+                                    >
+                                        Thông tin liên hệ
+                                    </Text>
+                                    {/* sô điện thoại */}
+                                    <PersonalInfoItem
+                                        label="Số điện thoại"
+                                        type="phoneNumber"
+                                        value={phoneNumber ? phoneNumber.replace('84', 0) : phoneNumber}
+                                        onValueChange={handlePhoneNumberChange}
+                                    />
+                                    {/* Liên kết fb */}
+                                    <PersonalInfoItem
+                                        label="Liên kết Facebook"
+                                        type="Url_Fb"
+                                        linkFb={linkFb}
+                                        value={linkFb}
+                                        onChangeText={handleLinkFbChange}
+                                        maxLength={20}
+                                    />
+                                </View>
+                                {/* tôi làm tài xế  */}
+                                <View keyboardShouldPersistTaps="handled" style={[styles.mb24]}>
+                                    {/* title */}
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.lh24,
+                                            styles.textGray77,
+                                            styles.uppercase,
+                                            styles.px15,
+                                            styles.mb10,
+                                        ]}
+                                    >
+                                        Tôi làm tài xế
+                                    </Text>
+                                    {/*  */}
+                                    <View>
+                                        {/* Xe của tôi */}
+                                        <NextPageSetting
+                                            onPress={() => navigation.navigate('MyCarScreen')}
+                                            title={'Xe của tôi'}
+                                            value={carName}
+                                        />
+                                        {/* Số tài khoản */}
+                                        <PersonalInfoItem
+                                            type={'bankAccount'}
+                                            label={'Số tài khoản'}
+                                            value={bankAccount}
+                                            onChangeText={handleBankAccountChange}
+                                            maxLength={19}
+                                        />
+                                        {/* Tên ngân hàng */}
+                                        <PersonalInfoItem
+                                            label="Tên ngân hàng"
+                                            type="dropdownBankData"
+                                            data={bankNameData}
+                                            selectedName={bankName}
+                                            onChangeDropdown={handleBankNameChange}
+                                        />
+                                        {/* Tên tài khoản */}
+                                        <PersonalInfoItem
+                                            label="Tên tài khoản"
+                                            type="text"
+                                            value={nameBankAccount}
+                                            onChangeText={handleNameBankAccountChange}
+                                        />
+                                        {/* Giới thiệu cho bạn bè */}
+                                        <NextPageSetting
+                                            onPress={() => navigation.navigate('ShareScreen')}
+                                            title={'Giới thiệu bạn bè'}
+                                            value={<ChevronRightIcon size={20} color={'white'} />}
+                                        />
+                                    </View>
+                                </View>
+                            </View>
+                            
+                            <KeyboardAvoidingView>
+                                <View>
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.h48,
+                                            styles.bgBlack,
+                                            styles.flexFull,
+                                            styles.itemsCenter,
+                                            styles.justifyCenter,
+                                            styles.border1,
+                                            styles.borderColorWhite,
+                                            styles.borderSolid,
+                                            styles.border4,
+                                            styles.mx15,
+                                        ]}
+                                        onPress={updateProfile}
+                                    >
+                                        <Text style={[styles.fs16, styles.textWhite]}>Cập nhật</Text>
+                                    </TouchableOpacity>
+                                    {/* log out */}
+                                    <TouchableOpacity onPress={handleLogout} style={[styles.flexCenter, styles.mb24]}>
+                                        <View style={[styles.my24]}>
+                                            <Text style={[styles.fs16, styles.textCenter, styles.textRedE8]}>
+                                                Đăng xuất
+                                            </Text>
+                                            <View
+                                                style={[
+                                                    styles.borderColorRedE8,
+                                                    styles.mt5,
+                                                    { borderBottomWidth: 1 },
+                                                ]}
+                                            />
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            </KeyboardAvoidingView>
 
-                )}
+                        </ScrollView>
+
+                    )}
 
 
-            </View>
+                </View>
+            </KeyboardAwareScrollView>
         </SafeAreaView>
     );
 };

@@ -1,6 +1,5 @@
 import { Text, TouchableOpacity, View, Platform } from 'react-native';
 import React, {useEffect, useContext } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Google from 'expo-auth-session/providers/google';
 import styles from '../../styles';
 import { useNavigation } from '@react-navigation/native';
@@ -8,6 +7,8 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import jwtDecode from 'jwt-decode';
 import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { makeRedirectUri } from 'expo-auth-session';
 const ios = Platform.OS == 'ios';
 
 const LoginBtn = () => {
@@ -20,7 +21,7 @@ const LoginBtn = () => {
     androidClientId: androidClientId,
     webClientId: webClientId,
     expoClientId: webClientId,
-    iosClientId: iosClientId
+    iosClientId: iosClientId,
   });
 
   // Hành động được thực hiện sau khi component được render hoặc state thay đổi
@@ -103,7 +104,7 @@ const LoginBtn = () => {
     <View style={styles.mt60}>
       <TouchableOpacity onPress={() => handleGoogleLogin()}>
         <View style={[styles.bgRed, styles.flexCenter, styles.w250, styles.h48, styles.border4]}>
-          <Icon name={'google'} style={[styles.textWhite, styles.fs28, styles.mr10]} />
+          <FontAwesome name="google" style={[styles.textWhite, styles.fs28, styles.mr10]} />
           <Text style={[styles.fs16, styles.lh24, styles.textWhite]}>Đăng nhập qua Google</Text>
         </View>
       </TouchableOpacity>
@@ -119,7 +120,7 @@ const LoginBtn = () => {
               styles.mt20,
             ]}
           >
-            <Icon name={'apple'} style={[styles.textWhite, styles.fs28, styles.mr10]} />
+            <FontAwesome name={'apple'} style={[styles.textWhite, styles.fs28, styles.mr10]} />
             <Text style={[styles.fs16, styles.lh24, styles.textWhite]}>Đăng nhập qua Apple</Text>
           </View>
         </TouchableOpacity>

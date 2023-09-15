@@ -112,6 +112,10 @@ const PassengerTab = () => {
             getDetailDriver(item, 'ConfirmScreen');
         }
         else if(item?.status_number == 2){
+            getDetailDriver(item);
+        }
+        else if(item?.status_number == 3){
+ 
             getDetailDriver(item, 'PickScreen');
         }
         else if(item?.status_number == 3){
