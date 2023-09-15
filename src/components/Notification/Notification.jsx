@@ -6,11 +6,11 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import styles from '../../styles';
 import Header from '../header';
 import MomentComponent from '../moment';
-import { fetchListNoti, fetchReadAllNoti, fetchReadOneNoti } from '../../api/DataFetching';
+import { fetchListNoti, fetchReadAllNoti, fetchReadOneNoti, fetchDetailTrip, fetchDetailDriver, fetchDetailCustomer } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import { useNotification } from '../../redux/notificationContext';
 import Skenleton from '../skeleton/Skenleton';
-import { waiting } from '../../constants';
+import { waiting, statusDriver, statusUser } from '../../constants';
 
 const Notification = () => {
     const { handleHiddenNoti } = useNotification();
@@ -37,13 +37,13 @@ const Notification = () => {
         let params = {
             page: newPage
         };
-        fetchListNoti(params,'79ee7846612b106c445826c19')
+        fetchListNoti(params, context.token)
             .then((data) => {
                 if (data.res === 'success') {
                     let newData = data.result;
                     if (newPage > 1 || isLoading) {
                         //tranh truong hợp về cuối dễ bị trùng khi unmount lại
-                        newData = newData.filter(item => !notifications.some((noti) => noti.notify_id == item.notify_id)); 
+                        newData = newData.filter(item => !notifications.some((noti) => noti.notify_id == item.notify_id));
                         // some la phuong thuc kiem tra neu dung tra ve true con khong ve false 
                         setNotifications([...notifications, ...newData]);
                     } else {
@@ -80,21 +80,72 @@ const Notification = () => {
 
     // Xử lý từng thông báo bị ẩn
     const handleClickOneNoti = (noti) => {
-        // const index = notifications.findIndex((n) => n.notify_id === noti.notify_id && n.status == 0); //tim vi tri key noti chon voi danh sach noti api
-        // if (index !== -1) {
-        //     // Đánh dấu thông báo là đã đọc bằng cách đặt isRead thành true
-        //     const updatedNotifications = [...notifications]; // lay danh sách noti của api kết hợp
-        //     updatedNotifications[index] = { ...noti, isRead: true }; // kết hợp noti thứ i của api với noti được chọn và thêm key isRead = true
-        //     setNotifications(updatedNotifications); // cập nhật lại noti
-        //     setCount(prevCount => Math.max(0, prevCount - 1));
-        //     handleHiddenNoti(count)
-        // }
+        const index = notifications.findIndex((n) => n.notify_id === noti.notify_id && n.status == 0); //tim vi tri key noti chon voi danh sach noti api
+        if (index !== -1) {
+            // Đánh dấu thông báo là đã đọc bằng cách đặt isRead thành true
+            const updatedNotifications = [...notifications]; // lay danh sách noti của api kết hợp
+            updatedNotifications[index] = { ...noti, isRead: true }; // kết hợp noti thứ i của api với noti được chọn và thêm key isRead = true
+            setNotifications(updatedNotifications); // cập nhật lại noti
+            setCount(prevCount => Math.max(0, prevCount - 1));
+            handleHiddenNoti(count)
+        }
         fetchReadOneNoti({
             notify_id: noti.notify_id
         }, context.token)
             .then((data) => {
                 if (data.res === 'success') {
-                    navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
+                    if (noti.data) {
+                        if (JSON.parse(noti.data).trip_id) {
+                            getDetailTrip(JSON.parse(noti.data));
+                        }
+                    } else {
+                        navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
+                    }
+
+                }
+            })
+    }
+
+    const getDetailTrip = async (notiData) => {
+        await fetchDetailTrip({
+            trip_id: notiData.trip_id
+        }, context.token)
+            .then((data) => {
+                if (data.res === 'success') {
+                    if (notiData.is_user) {
+                        getDataDriver(data.result)
+                    } else if (notiData.is_driver) {
+                        getDataUser(data.result)
+                    }
+                }
+            })
+    }
+
+    const getDataUser = async (dataTrip) => {
+        await fetchDetailCustomer({
+            user_id: dataTrip.user_id,
+        })
+            .then((data) => {
+                if (data.res === 'success') {
+                    let obj = { ...dataTrip, ...data.result };
+                    let a = statusDriver.filter((status) => status.id == dataTrip.status);
+                    obj.is_notify = 1;
+                    navigation.navigate(a[0].screen, obj);
+                }
+            })
+    }
+
+    const getDataDriver = async (dataTrip) => {
+        await fetchDetailDriver({
+            driver_id: dataTrip.driver_id,
+        })
+            .then((data) => {
+                if (data.res === 'success') {
+                    let obj = { ...data.result, ...dataTrip };
+                    let a = statusUser.filter((status) => status.id == dataTrip.status);
+                    obj.is_notify = 1;
+                    // console.log(dataTrip);
+                    navigation.navigate(a[0].screen, obj);
                 }
             })
     }

@@ -297,3 +297,8 @@ export const fetchTurnOnDriver = (token) => {
     const turnOnDriver = `${baseUrl}/${token}/profile/turnOn`;
     return postApi(turnOnDriver);
 }
+//lay số xu của người dùng
+export const fetchGetCoin = (token) => {
+    const getCoin = `${baseUrl}/${token}/profile/getCoin`;
+    return apiCall(getCoin);
+}

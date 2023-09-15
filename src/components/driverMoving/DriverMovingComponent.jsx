@@ -13,7 +13,7 @@ import {
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchReviewListEndpoint, fetchSuccessTrip } from '../../api/DataFetching';
+import { fallbackImage, fetchReviewListEndpoint, fetchSuccessTrip, fetchDetailTrip, fetchGetOneCategoryVehicle } from '../../api/DataFetching';
 import MomentComponent from '../moment';
 import ToggleSwipeable from '../toggleSwiperable';
 import FormCustomer from '../formCustomer';
@@ -23,6 +23,7 @@ import SpreadSheet from '../spreadSheet';
 import DistanceInfomation from '../distanceInfomation/DistanceInfomation';
 import ReviewCustomer from '../reviewCustomer';
 import { TokenContext } from '../../redux/tokenContext';
+import { format } from 'date-fns';
 
 const DriverMovingComponent = () => {
     const context = useContext(CustomerFormContext);
@@ -33,8 +34,77 @@ const DriverMovingComponent = () => {
     const handleToggleBtn = (value, item) => {
         return setToggleStateBtn(value);
     };
+    const [isLoading, setIsLoading] = useState(false);
+
+    const detailTrip = async () => {
+        const params = {
+            trip_id: item?.id ? item?.id : item?.trip_id
+        }
+        await fetchDetailTrip(params,contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                oneCateVehicle(data);
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        // .finally(() => {
+        //     setIsLoading(true);
+        // })
+    }
+
+    const createContext = (data, nameCar) => {
+        context.setCustomerForm({
+            ...context.customerForm,
+            tripId: data.result.trip_id,
+            startPoint: {
+                start_name: data.result.start_name,
+                start: data.result.start_location, 
+            },
+            endPoint: {
+                end_name: data.result.end_name,
+                end: data.result.end_location, 
+            },
+            typeCar: data.result.vehicle_category_id,
+            nameCar: nameCar,
+            startTime: data.result.start_time,
+            comment: data.result.comment,
+            duration: data?.result.duration_all,
+            distance: data?.result.distance_all, 
+            coordinates: {
+                start: data.result.coordinates_start,
+                end: data.result.coordinates_end,
+            },
+            price: data.result.status_report == 1 ? parseFloat(data.result.price_report) : parseFloat(data.result.price_per_km * data.result.distance_price)
+        })
+    }
+
+    const oneCateVehicle = async (data) => {
+        await fetchGetOneCategoryVehicle(contextToken.token,{
+            vehicle_category_id: data?.result.vehicle_category_id
+        })
+        .then((res) => {
+            if(res.res === 'success'){
+                createContext(data,res.result.category_name)
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() => {
+            setIsLoading(true);
+        })
+    }
 
     useEffect(() => {
+        // console.log(isLoading);
+        if(item?.isFlag || item?.is_notify){
+            detailTrip();
+        }else{
+            setIsLoading(true);
+        }
+        
         if (toggleStateBtn) {
             fetchSuccessTrip({
                 trip_id: context.customerForm.tripId
@@ -55,6 +125,7 @@ const DriverMovingComponent = () => {
                 <Header navigation={navigation} title="Chi tiết chuyến đi" />
 
                 {/* body */}
+                {isLoading && (
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={[styles.flexFull, styles.pt15]}
@@ -129,6 +200,7 @@ const DriverMovingComponent = () => {
                         <ReviewCustomer />
                     </View>
                 </ScrollView>
+                )}
 
                 {/* buttom  ket thuc chuyen di*/}
                 <View style={[styles.flexRow, styles.bgBlack, styles.flexCenter]}>

@@ -23,7 +23,7 @@ const CancelBookDriverComponent = () => {
 
     const handleCancelTrip = () => {
         const reason = 'Tài xế hủy vì lý do: '+selectedName+' (Thời gian hủy: '+format(new Date(), 'HH:mm dd/MM/yyyy')+')';
-        item.reason = reason;
+        item.cancel_reason = reason;
         navigation.navigate('CancelDriverConfirmScreen', item);
 
         // fetchCancelTrip({

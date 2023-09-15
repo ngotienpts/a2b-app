@@ -9,6 +9,7 @@ import styles from '../../styles';
 import { BookingFormContext } from '../../redux/bookingFormContext';
 import { MapContext } from '../../redux/mapContext';
 import { CustomerFormContext } from '../../redux/customerFormContext';
+import { format } from 'date-fns';
 
 const Header = ({ navigation, title }) => {
     const context = useContext(BookingFormContext);

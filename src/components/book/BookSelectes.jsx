@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Platform, Alert } from 'react-native';
 import {
     ClockIcon,
     CubeTransparentIcon,
@@ -28,6 +28,7 @@ const BookSelects = ({ context }) => {
     const [timeUpdate, setTimeUpdate] = useState('');
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
+    const [now, setNow] = useState(format(new Date(),'dd-MM-yyyy HH:mm'))
     const [showPicker, setShowPicker] = useState(false);
     const [showPickerTime, setShowPickerTime] = useState(false);
     const [categoryVehicleList, setCategoryVehicleList] = useState([]);
@@ -51,14 +52,19 @@ const BookSelects = ({ context }) => {
                     time: timeUpdate,
                 }
             case 'TIME_ELEMENT':
-                // return `${format(date, 'dd-MM-yyyy')} ${format(time, 'HH:mm:ss')}`;
+                let timeFormat = format(time,'dd-MM-yyyy HH:mm');
+                let timeChange = '';
+                if(now > timeFormat){
+                    timeChange = format(new Date(),'HH:mm');
+                }else{
+                    timeChange = format(time, 'HH:mm');
+                }
                 return {
-                    title: `${format(date, 'dd-MM-yyyy')} ${format(time, 'HH:mm')}`,
+                    title: `${format(date, 'dd-MM-yyyy')} ${timeChange}`,
                     time: `${format(date, 'yyyy-MM-dd')} ${format(time, 'HH:mm')}`,
                     isPunish: 1,
                 };
             default:
-                // return 'Vui lòng lựa chọn';
                 return {
                     title: 'Vui lòng lựa chọn',
                     isPunish: 0,
@@ -388,6 +394,8 @@ const BookSelects = ({ context }) => {
                                                 mode="date"
                                                 display="default"
                                                 onChange={onChangeDate}
+                                                themeVariant="dark"
+                                                minimumDate={new Date()}
                                             />
                                         )}
                                     </View>
@@ -408,9 +416,13 @@ const BookSelects = ({ context }) => {
                                         </TouchableOpacity>
                                         {showPickerTime && (
                                             <DateTimePicker
+                                                style={styles.textWhite}
                                                 value={time}
                                                 mode="time"
                                                 display="default"
+                                                themeVariant="dark"
+                                                is24Hour={true}
+                                                timeZoneName={'Asia/Ho_Chi_Minh'}
                                                 onChange={onChangeTime}
                                             />
                                         )}

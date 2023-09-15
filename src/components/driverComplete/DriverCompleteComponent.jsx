@@ -121,9 +121,9 @@ const DriverCompleteComponent = () => {
 
     const detailTrip = async () => {
         const params = {
-            trip_id: item?.trip_id
+            trip_id: item?.trip_id ? item?.trip_id : item?.id
         }
-        await fetchDetailTrip(params,'79ee7846612b106c445826c19')
+        await fetchDetailTrip(params,contextToken.token)
         .then((data) => {
             if(data.res === 'success'){
                 createContext(data);
@@ -178,7 +178,7 @@ const DriverCompleteComponent = () => {
                 start: data.result.coordinates_start,
                 end: data.result.coordinates_end,
             },
-            price: data.result.status_report == 1 ? parseFloat(data.result.price_report) : parseFloat(data.result.price_per_km * data.result.distance_price)
+            price: parseFloat(data.result.price_report)
         })
     }
 

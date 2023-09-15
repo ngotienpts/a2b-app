@@ -55,7 +55,7 @@ const Home = () => {
 
   const requestLocationService = async () => {
     try {
-      if (Platform.OS === 'android') {
+      if (Platform.OS === 'android' && !PermissionsAndroid.RESULTS.GRANTED ) {
         const result = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
@@ -65,13 +65,13 @@ const Home = () => {
             buttonNegative: 'Hủy',
             buttonPositive: 'Đồng ý',
           }
-        );
-        if (result === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Đã bật GPS');
-        } else {
-          console.log('You cannot use Geolocation');
-          return false;
-        }
+          );
+          if (result === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log('Đã bật GPS');
+          } else {
+            console.log('You cannot use Geolocation');
+            return false;
+          }
       } else if (Platform.OS === 'ios') {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {

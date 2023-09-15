@@ -133,12 +133,19 @@ const DriverPickComponent = () => {
         if (toggleStateBtn) {
             fetchOnAJourney({
                 trip_id: context.customerForm.tripId ? context.customerForm.tripId : item?.trip_id
-            }, contextToken.token)
-                .then((data) => {
-                    if (data.res === 'success') {
-                        navigation.navigate('DriverMovingScreen', item);
-                    }
-                })
+            },contextToken.token)
+            .then((data) => {
+                if(data.res === 'success'){
+                    navigation.navigate('DriverMovingScreen', item);
+                }
+            })
+        }
+        if((item?.is_notify || item?.isFlag) && (item?.trip_id || item?.id)){
+            detailOneCustomer(item?.trip_id ? item?.trip_id : item?.id);
+            detailOneDriver(item?.driver_id);
+        }else{
+            setIsLoading(true);
+            setIsLoadingDriver(true);
         }
     }, [toggleStateBtn, navigation]);
 
@@ -181,34 +188,34 @@ const DriverPickComponent = () => {
                         </Text>
                     </View>
                     <GestureHandlerRootView style={[styles.flexFull, styles.bgBlack]}>
-                        <MapView
-                            style={[styles.flexFull]}
-                            initialRegion={{
-                                latitude: contextMap.map.start.coordinates.lat,
-                                longitude: contextMap.map.start.coordinates.lng,
-                                latitudeDelta: 0.0922,
-                                longitudeDelta: 0.0421,
-                            }}
-                        >
-                            <Marker
-                                coordinate={{
-                                    latitude: contextMap.map.start.coordinates.lat,
-                                    longitude: contextMap.map.start.coordinates.lng
+                        {isLoading && isLoadingDriver && (
+                            <MapView
+                                style={[styles.flexFull]}
+                                initialRegion={{
+                                    latitude: parseFloat(contextMap.map.start.coordinates.lat),
+                                    longitude: parseFloat(contextMap.map.start.coordinates.lng),
+                                    latitudeDelta: 0.0922,
+                                    longitudeDelta: 0.0421,
                                 }}
-                                title="Tài xế"
-                                description="Đây là tọa độ của tài xế"
-                            />
-                            <Marker
-                                coordinate={{
-                                    latitude: context.customerForm.coordinates.start.split(',')[0],
-                                    longitude: context.customerForm.coordinates.start.split(',')[1]
-                                }}
-                                title="Khách hàng"
-                                description="Đây là tọa độ của khách hàng"
-                            />
-                        </MapView>
-
-
+                            >
+                                <Marker
+                                    coordinate={{ 
+                                        latitude: parseFloat(contextMap.map.start.coordinates.lat), 
+                                        longitude: parseFloat(contextMap.map.start.coordinates.lng) 
+                                    }}
+                                    title="Tài xế"
+                                    description="Đây là tọa độ của tài xế"
+                                />
+                                <Marker
+                                    coordinate={{ 
+                                        latitude: parseFloat(context.customerForm.coordinates.start.split(',')[0]), 
+                                        longitude: parseFloat(context.customerForm.coordinates.start.split(',')[1])
+                                    }}
+                                    title="Khách hàng"
+                                    description="Đây là tọa độ của khách hàng"
+                                /> 
+                            </MapView> 
+                        )}
                         {/* Bottom Sheet Drawer */}
                         <BottomSheet
                             ref={bottomSheetRef}

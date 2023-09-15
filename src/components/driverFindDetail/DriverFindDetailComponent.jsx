@@ -13,7 +13,7 @@ import {
 import styles from '../../styles';
 import Header from '../header/Header';
 import { Image } from 'react-native';
-import { fallbackImage, fetchCancelReport, fetchCheckReport, fetchDetailCustomer, fetchDetailTrip, fetchGetLocationDriver, fetchGetOneCategoryVehicle, fetchPickUpCustomer, fetchSendReport } from '../../api/DataFetching';
+import { fallbackImage, fetchCancelReport, fetchCheckReport, fetchDetailCustomer, fetchDetailTrip, fetchGetLocationDriver, fetchGetOneCategoryVehicle, fetchPickUpCustomer, fetchSendReport, fetchGetCoin } from '../../api/DataFetching';
 import PayNumber from '../editPayNumber';
 import { MapContext } from '../../redux/mapContext';
 import FormCustomer from '../formCustomer';
@@ -23,6 +23,7 @@ import { CustomerFormContext } from '../../redux/customerFormContext';
 import DistanceInfomation from '../distanceInfomation/DistanceInfomation';
 import ReviewCustomer from '../reviewCustomer/ReviewCustomer';
 import ContentLoader from 'react-native-easy-content-loader';
+import { statusDriver } from '../../constants';
 
 const DriverFindDetailComponent = () => {
     const context = useContext(CustomerFormContext);
@@ -36,7 +37,9 @@ const DriverFindDetailComponent = () => {
     const [shouldNavigateToCancel, setShouldNavigateToCancel] = useState(false);
     const [coords, setCoords] = useState(null);
     const [status, setStatus] = useState(null);
+    const [coin, setCoin] = useState(null);
     const cancelObjRef = useRef(null);
+    const screenRef = useRef(null);
 
     const handlePriceChange = (newPrice) => {
         setPrice(newPrice);
@@ -50,18 +53,14 @@ const DriverFindDetailComponent = () => {
         .then((data) => {
             if(data.res === 'success'){
                 oneCateVehicle(data);
-                detailCustomer(data.result)
+                detailCustomer(data?.result)
             }
         })
         .catch((err) => {
             console.log(err);
         })
         .finally(() => {
-            if(item?.is_notify){
-                setIsLoadingCustomer(false);
-            }else{
-                setIsLoadingCustomer(true);
-            }
+
         })
     }
 
@@ -123,17 +122,20 @@ const DriverFindDetailComponent = () => {
             const data = await fetchDetailCustomer({
                 user_id: result.user_id
             });
-            const obj = data.result;
-            if (result?.status == 5) {
-                obj.reason = result.cancel_reason;
+            const obj = data.result
+            if (result?.status != 0 && result?.status != 1) {
+                obj.cancel_reason = result.cancel_reason;
+                obj.is_notify = item?.is_notify ? item?.is_notify : ''
                 cancelObjRef.current = obj;
                 setShouldNavigateToCancel(true);
+                let status = statusDriver.filter((status) => status.id == result?.status);
+                screenRef.current = status[0].screen;
             }
             setCustomer(obj);
         } catch (err) {
             console.log(err);
         } finally {
-            if(item?.is_notify && result?.status == 5){
+            if(item?.is_notify && (result?.status != 0 && result?.status != 1) ){
                 setIsLoadingCustomer(false);
             }else{
                 setIsLoadingCustomer(true);
@@ -229,27 +231,38 @@ const DriverFindDetailComponent = () => {
         }
     }
 
-    const handlePickUpCustomer = async () => {
-        navigation.navigate('DriverPickScreen', customer)
-        // fetchPickUpCustomer({
-        //     trip_id: item?.id,
-        //     user_id: customer?.user_id
-        // },contextToken.token)
-        // .then((data) => {
-        //     if(data.res === 'success'){
-        //         navigation.navigate('DriverPickScreen', customer)
-        //     }
-        // })
+    const getCoin = async () => {
+        fetchGetCoin(contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                setCoin(data.result.coin);
+            }
+        })
     }
 
+    const handlePickUpCustomer = async () => {
+        // navigation.navigate('DriverPickScreen', customer)
+        fetchPickUpCustomer({
+            trip_id: item?.id,
+            user_id: customer?.user_id
+        },contextToken.token)
+        .then((data) => {
+            if(data.res === 'success'){
+                navigation.navigate('DriverPickScreen', customer)
+            }
+        })
+    }
+    
     useEffect(() => {
         detailTrip();
         checkReport();
+        getCoin();
         if(item?.is_notify || item?.driver_id || item?.isFlag){
             getLocationDriver(item?.driver_id);
         }
         if (shouldNavigateToCancel) {
-            navigation.navigate('CancelDriverConfirmScreen', cancelObjRef.current);
+            // console.log(screenRef.current);
+            navigation.navigate(screenRef.current, cancelObjRef.current);
         }
     }, [item.id,shouldNavigateToCancel]);
 
@@ -353,7 +366,7 @@ const DriverFindDetailComponent = () => {
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>30K</Text>
+                                <Text style={[styles.fs16, styles.lh24, styles.fw400]}>{coin}K</Text>
                             </View>
                             {/* phi nen tang */}
                             <View style={[styles.py10]}>
@@ -407,7 +420,7 @@ const DriverFindDetailComponent = () => {
                                     >
                                         {customer?.fullname}
                                     </Text>
-                                    {item?.protected && (
+                                    {customer?.is_confirmed == 2 && (
                                         <View style={[styles.pl10]}>
                                             <ShieldCheckIcon size={16} color={'white'} />
                                         </View>
