@@ -14,7 +14,9 @@ import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'react-native';
 import { useNotification } from '../../redux/notificationContext';
-
+import * as Notifications from 'expo-notifications';
+import registerNNPushToken from 'native-notify';
+import { registerIndieID } from 'native-notify';
 const Home = () => {
   const { handleHiddenNoti } = useNotification();
   const navigation = useNavigation();
@@ -23,12 +25,22 @@ const Home = () => {
   const [name, setName] = useState('');
   const [history, setHistory] = useState({});
   const context = useContext(TokenContext);
-
+  registerNNPushToken(12127, '9iPvC2aT5Tw3lk04kqEmdD');
+  registerIndieID(context.token,12127, '9iPvC2aT5Tw3lk04kqEmdD');
+  
   useEffect(() => {
+    getNoti();
     showProfile();
     historySearch();
     listNotification();
   }, [context.token]) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
+
+  const getNoti = () => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      const url = response.notification.request.content.data;
+      console.log(url);
+    })
+  };
 
   const listNotification = () => {
     let params = {}

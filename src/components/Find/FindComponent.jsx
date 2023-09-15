@@ -149,7 +149,7 @@ const FindComponent = () => {
                 // if (status != 0) {
                 //     setLoadingDetailTrip(false);
                 // } else {
-                    setLoadingDetailTrip(true);
+                setLoadingDetailTrip(true);
                 // }
             })
     }
@@ -185,6 +185,31 @@ const FindComponent = () => {
         } catch (err) {
             console.log(err);
         }
+    }
+
+    const openGoogleMap = async () => {
+        const data = {
+            source: {
+                latitude: parseFloat(context.bookingForm.startPoint.coordinates.lat),
+                longitude: parseFloat(context.bookingForm.startPoint.coordinates.lng)
+            },
+            destination: {
+                latitude: parseFloat(context.bookingForm.endPoint.coordinates.lat),
+                longitude: parseFloat(context.bookingForm.endPoint.coordinates.lng)
+            },
+            params: [
+                {
+                    key: "travelmode",
+                    value: "driving"        // may be "walking", "bicycling" or "transit" as well
+                },
+                {
+                    key: "dir_action",
+                    value: "navigate"       // this instantly initializes navigation using the given travel mode
+                }
+            ]
+        }
+
+        getDirections(data)
     }
 
     return (
@@ -285,28 +310,33 @@ const FindComponent = () => {
                                     <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
                                 </View>
                             </View>
-                            <View style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.textGray77,
-                                        styles.lh24,
-                                        styles.textCenter,
-                                    ]}
-                                >
-                                    Google map
-                                </Text>
-                                <View
-                                    style={[
-                                        styles.flexCenter,
-                                        styles.bgGray161,
-                                        styles.mt20,
-                                        { width: 73, height: 42 },
-                                    ]}
-                                >
-                                    <ArrowUturnRightIcon size={25} color={'white'} />
+                            <TouchableOpacity
+                                onPress={openGoogleMap}
+                                style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}
+                            >
+                                <View >
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.textGray77,
+                                            styles.lh24,
+                                            styles.textCenter,
+                                        ]}
+                                    >
+                                        Google map
+                                    </Text>
+                                    <View
+                                        style={[
+                                            styles.flexCenter,
+                                            styles.bgGray161,
+                                            styles.mt20,
+                                            { width: 73, height: 42 },
+                                        ]}
+                                    >
+                                        <ArrowUturnRightIcon size={25} color={'white'} />
+                                    </View>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         </View>
 
                         {/* driver list */}

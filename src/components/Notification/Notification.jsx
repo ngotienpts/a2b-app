@@ -88,27 +88,28 @@ const Notification = () => {
 
     // Xử lý từng thông báo bị ẩn
     const handleClickOneNoti = (noti) => {
-        // const index = notifications.findIndex((n) => n.notify_id === noti.notify_id && n.status == 0); //tim vi tri key noti chon voi danh sach noti api
-        // if (index !== -1) {
-        //     // Đánh dấu thông báo là đã đọc bằng cách đặt isRead thành true
-        //     const updatedNotifications = [...notifications]; // lay danh sách noti của api kết hợp
-        //     updatedNotifications[index] = { ...noti, isRead: true }; // kết hợp noti thứ i của api với noti được chọn và thêm key isRead = true
-        //     setNotifications(updatedNotifications); // cập nhật lại noti
-        //     setCount(prevCount => Math.max(0, prevCount - 1));
-        //     handleHiddenNoti(count)
-        // }
+        const index = notifications.findIndex((n) => n.notify_id === noti.notify_id && n.status == 0); //tim vi tri key noti chon voi danh sach noti api
+        if (index !== -1) {
+            // Đánh dấu thông báo là đã đọc bằng cách đặt isRead thành true
+            const updatedNotifications = [...notifications]; // lay danh sách noti của api kết hợp
+            updatedNotifications[index] = { ...noti, isRead: true }; // kết hợp noti thứ i của api với noti được chọn và thêm key isRead = true
+            setNotifications(updatedNotifications); // cập nhật lại noti
+            setCount(prevCount => Math.max(0, prevCount - 1));
+            handleHiddenNoti(count)
+        }
         fetchReadOneNoti({
             notify_id: noti.notify_id
         }, context.token)
             .then((data) => {
                 if (data.res === 'success') {
-                    // console.log(data, noti);
-                    // console.log(JSON.parse(noti.data));
-                    if (JSON.parse(noti.data).trip_id) {
+                    if(noti.data){
+                      if (JSON.parse(noti.data).trip_id) {
                         getDetailTrip(JSON.parse(noti.data));
-                    } else {
+                        }  
+                    }else {
                         navigation.navigate(noti.screen, noti.data && JSON.parse(noti.data));
                     }
+                     
                 }
             })
     }
