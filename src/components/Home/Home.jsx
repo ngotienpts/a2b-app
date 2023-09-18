@@ -59,6 +59,28 @@ const Home = () => {
                     >
                         Bạn cần đi đâu?
                     </Text>
+                    {/* back home */}
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('HomeBackPrimary');
+                        }}
+                    >
+                        <Text style={[styles.textWhite]}>back home 1</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('HomeBackSecondary');
+                        }}
+                    >
+                        <Text style={[styles.textWhite]}>back home 2</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigation.navigate('HomeBackTertiary');
+                        }}
+                    >
+                        <Text style={[styles.textWhite]}>back home 3</Text>
+                    </TouchableOpacity>
 
                     {/* search */}
                     <View

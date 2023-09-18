@@ -5,6 +5,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BellIcon, CalendarIcon, HomeIcon } from 'react-native-heroicons/outline';
 
 import HomeScreen from '../screens/HomeScreen';
+import HomeBackPrimaryScreen from '../screens/HomeBackPrimaryScreen';
+import HomeBackSecondaryScreen from '../screens/HomeBackSecondaryScreen';
+import HomeBackTertiaryScreen from '../screens/HomeBackTertiaryScreen';
 import LoginScreen from '../screens/LoginScreen';
 import BookScreen from '../screens/BookScreen';
 import DiaryScreen from '../screens/DiaryScreen';
@@ -93,6 +96,18 @@ const AppNavigation = () => {
                         <Stack.Navigator screenOptions={{ headerShown: false }}>
                             <Stack.Screen name="Login" component={LoginScreen} />
                             <Stack.Screen name="Home" component={HomeStackNavigation} />
+                            <Stack.Screen
+                                name="HomeBackPrimary"
+                                component={HomeBackPrimaryScreen}
+                            />
+                            <Stack.Screen
+                                name="HomeBackSecondary"
+                                component={HomeBackSecondaryScreen}
+                            />
+                            <Stack.Screen
+                                name="HomeBackTertiary"
+                                component={HomeBackTertiaryScreen}
+                            />
                             <Stack.Screen name="Book" component={BookScreen} />
                             <Stack.Screen name="DriverScreen" component={DriverScreen} />
                             <Stack.Screen name="UserScreen" component={UserScreen} />
