@@ -9,7 +9,7 @@ import Header from './Header';
 import Result from './Result';
 import ResultDefault from './ResultDefault';
 import { debounce } from 'lodash';
-import { fetchHistorySearch, fetchListNoti, fetchProfileUser, fetchSearchEndpoint } from '../../api/DataFetching';
+import { fetchHistorySearch, fetchListNoti, fetchProfileUser, fetchSearchEndpoint, fetchDetailCustomer, fetchDetailDriver, fetchDetailTrip } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'react-native';
@@ -17,6 +17,8 @@ import { useNotification } from '../../redux/notificationContext';
 import * as Notifications from 'expo-notifications';
 import registerNNPushToken from 'native-notify';
 import { registerIndieID } from 'native-notify';
+import { statusDriver, statusUser } from '../../constants';
+
 const Home = () => {
   const { handleHiddenNoti } = useNotification();
   const navigation = useNavigation();
@@ -25,22 +27,74 @@ const Home = () => {
   const [name, setName] = useState('');
   const [history, setHistory] = useState({});
   const context = useContext(TokenContext);
-  registerNNPushToken(12127, '9iPvC2aT5Tw3lk04kqEmdD');
-  registerIndieID(context.token,12127, '9iPvC2aT5Tw3lk04kqEmdD');
-  
+  registerNNPushToken(9548, 'lMdBy39oqOxDJr8zzB1f1L');
+  registerIndieID(context.token, 9548, 'lMdBy39oqOxDJr8zzB1f1L');
+
   useEffect(() => {
-    getNoti();
     showProfile();
     historySearch();
     listNotification();
   }, [context.token]) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
 
-  const getNoti = () => {
+
+  useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-      const url = response.notification.request.content.data;
-      console.log(url);
+      const data = response.notification.request.content.data;
+      if (JSON.parse(data.data).trip_id) {
+        // console.log(JSON.parse(data.data).trip_id);
+        // navigation.navigate(data.screen);
+        getDetailTrip(JSON.parse(data.data));
+      } else {
+        navigation.navigate(data.screen, data.data && JSON.parse(data.data));
+      }
     })
-  };
+    return () => subscription.remove();
+  }, [])
+
+  const getDetailTrip = async (notiData) => {
+    await fetchDetailTrip({
+        trip_id: notiData.trip_id
+    }, context.token)
+    .then((data) => {
+            if (data.res === 'success') {
+                if (notiData.is_user) {
+                    getDataDriver(data.result)
+                } else if (notiData.is_driver) {
+                    getDataUser(data.result)
+                }
+            }
+        })
+}
+
+  const getDataUser = async (dataTrip) => {
+    await fetchDetailCustomer({
+      user_id: dataTrip.user_id,
+    })
+      .then((data) => {
+        if (data.res === 'success') {
+          let obj = { ...dataTrip, ...data.result };
+          let a = statusDriver.filter((status) => status.id == dataTrip.status);
+          obj.is_notify = 1;
+          // console.log(a[0].screen);
+          navigation.navigate(a[0].screen, obj);
+        }
+      })
+  }
+
+  const getDataDriver = async (dataTrip) => {
+    await fetchDetailDriver({
+      driver_id: dataTrip.driver_id,
+    })
+      .then((data) => {
+        if (data.res === 'success') {
+          let obj = { ...data.result, ...dataTrip };
+          let a = statusUser.filter((status) => status.id == dataTrip.status);
+          obj.is_notify = 1;
+          // console.log(dataTrip);
+          navigation.navigate(a[0].screen, obj);
+        }
+      })
+  }
 
   const listNotification = () => {
     let params = {}
@@ -67,7 +121,7 @@ const Home = () => {
 
   const requestLocationService = async () => {
     try {
-      if (Platform.OS === 'android' && !PermissionsAndroid.RESULTS.GRANTED ) {
+      if (Platform.OS === 'android' && !PermissionsAndroid.RESULTS.GRANTED) {
         const result = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
@@ -77,13 +131,13 @@ const Home = () => {
             buttonNegative: 'Hủy',
             buttonPositive: 'Đồng ý',
           }
-          );
-          if (result === PermissionsAndroid.RESULTS.GRANTED) {
-            console.log('Đã bật GPS');
-          } else {
-            console.log('You cannot use Geolocation');
-            return false;
-          }
+        );
+        if (result === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Đã bật GPS');
+        } else {
+          console.log('You cannot use Geolocation');
+          return false;
+        }
       } else if (Platform.OS === 'ios') {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
@@ -100,7 +154,7 @@ const Home = () => {
       }
 
       let { coords } = await Location.getCurrentPositionAsync({});
-      if(coords){
+      if (coords) {
         await AsyncStorage.setItem('lat', coords.latitude.toString());
         await AsyncStorage.setItem('lng', coords.longitude.toString());
       }
