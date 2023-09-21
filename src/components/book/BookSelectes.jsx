@@ -35,17 +35,14 @@ const BookSelects = ({ context }) => {
 
 
     const getActiveText = useCallback(() => {
-        // let obj = {};
         switch (activeElement) {
             case 'NOW_ELEMENT':
-                // return 'Tôi cần đi luôn';
                 return {
                     title: 'Tôi cần đi luôn',
                     time: format(date, 'yyyy-MM-dd HH:mm'),
                     isPunish: 0
                 }
             case 'RANGE_ELEMENT':
-                // return timeString;
                 return {
                     title: timeString,
                     isPunish: 0,

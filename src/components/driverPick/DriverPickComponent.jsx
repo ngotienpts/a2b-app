@@ -27,6 +27,8 @@ import { MapContext } from '../../redux/mapContext';
 import DistanceInfomation from '../distanceInfomation/DistanceInfomation';
 import ReviewCustomer from '../reviewCustomer';
 import { TokenContext } from '../../redux/tokenContext';
+import socketService from '../../../service/socketService';
+import * as Location from 'expo-location';
 
 const DriverPickComponent = () => {
     const [toggleStateBtn, setToggleStateBtn] = useState(false);
@@ -41,9 +43,11 @@ const DriverPickComponent = () => {
     const bottomSheetRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingDriver, setIsLoadingDriver] = useState(false);
+    const [coords, setCoords] = useState('');
     const { params: item } = useRoute();
     const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
     const notiRef = useRef(null);
+    let isSendingLocation = false;
 
     const detailOneCustomer = async (tripId) => {
         let status = '';
@@ -118,6 +122,34 @@ const DriverPickComponent = () => {
                 setIsLoadingDriver(true);
             })
     }
+
+    const takeCoordinates = async () => {
+        await Location.watchPositionAsync(
+            {
+              accuracy: Location.Accuracy.BestForNavigation,
+              timeInterval: 60000, // milliseconds
+              distanceInterval: 300, // meters
+            },
+            async (newLocation) => {
+                if (!isSendingLocation) {
+                    const coords = {
+                        lat: newLocation.coords.latitude,
+                        lng: newLocation.coords.longitude
+                    }
+                    socketService.emit('coords', coords);
+                    isSendingLocation = true;
+                }
+            }
+        );
+    }
+
+    useEffect(() => {
+        socketService.initSocket();
+    },[])
+    
+    useEffect(() => {
+        takeCoordinates()
+    },[])
 
     useEffect(() => {
         if (item?.is_noti && item?.trip_id) {
@@ -216,7 +248,7 @@ const DriverPickComponent = () => {
                                 /> 
                             </MapView> 
                         )}
-                        {/* Bottom Sheet Drawer */}
+
                         <BottomSheet
                             ref={bottomSheetRef}
                             snapPoints={snapPoints}
@@ -225,9 +257,9 @@ const DriverPickComponent = () => {
                         >
                             <BottomSheetScrollView style={[styles.bgBlack, styles.pt24]}>
                                 <FormCustomer context={context} title="Đi đón khách" />
-                                {/* khoang cach & thoi gian */}
+                
                                 <DistanceInfomation context={context} />
-                                {/* thông tin tài xế */}
+                     
                                 <View style={[styles.pt10]}>
                                     <Text
                                         style={[
@@ -242,7 +274,7 @@ const DriverPickComponent = () => {
                                         Thông tin hành khách
                                     </Text>
                                     <View style={[styles.flexColumn, styles.itemsCenter, styles.mb20]}>
-                                        {/* avatar */}
+                              
                                         <Image
                                             source={{ uri: item?.image || fallbackImage }}
                                             style={[
@@ -251,7 +283,7 @@ const DriverPickComponent = () => {
                                             ]}
                                             resizeMode="cover"
                                         />
-                                        {/* name */}
+                                        
                                         <View style={[styles.flexRow, styles.itemsCenter]}>
                                             <Text
                                                 style={[
@@ -270,7 +302,7 @@ const DriverPickComponent = () => {
                                             )}
                                         </View>
 
-                                        {/* đánh sao*/}
+                                   
                                         <View style={[styles.flexRow, styles.itemsCenter]}>
                                             <StarIcon size={'16'} color={'white'} />
                                             <Text
@@ -281,10 +313,10 @@ const DriverPickComponent = () => {
                                         </View>
                                     </View>
 
-                                    {/* contact */}
+                                    
                                     <Contact item={item} />
 
-                                    {/* đánh giá */}
+                                    
                                     <ReviewCustomer />
 
                                 </View>

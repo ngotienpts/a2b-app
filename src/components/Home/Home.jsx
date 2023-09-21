@@ -14,7 +14,14 @@ import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'react-native';
 import { useNotification } from '../../redux/notificationContext';
-
+import * as BackgroundFetch from 'expo-background-fetch';
+import * as TaskManager from 'expo-task-manager';
+const BACKGROUND_FETCH_TASK = 'background-fetch-task';
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+  // Thực hiện công việc nền ở đây
+  console.log('Nhiệm vụ nền đã chạy.');
+  return BackgroundFetch.Result.NewData; // Trả về kết quả để cho biết công việc nền đã hoàn thành và có dữ liệu mới.
+});
 const Home = () => {
   const { handleHiddenNoti } = useNotification();
   const navigation = useNavigation();
@@ -87,18 +94,6 @@ const Home = () => {
         }
       }
 
-      const locationListener = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 60000, // milliseconds
-          distanceInterval: 10, // meters
-        },
-        async (newLocation) => {
-          await AsyncStorage.setItem('lat', newLocation.coords.latitude.toString());
-          await AsyncStorage.setItem('lng', newLocation.coords.longitude.toString());
-        }
-      );
-
     } catch (error) {
       Alert.alert(
         'Thông báo',
@@ -112,8 +107,22 @@ const Home = () => {
     }
   };
 
+  const registerBackgroundFetchTask = async () => {
+    try {
+      await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+        minimumInterval: 15, // Khoảng thời gian tối thiểu (phút) giữa các lần chạy nhiệm vụ
+        stopOnTerminate: false, // Có dừng nhiệm vụ khi ứng dụng bị tắt không?
+        startOnBoot: true, // Có chạy nhiệm vụ khi thiết bị khởi động lại không?
+      });
+      console.log('Đã đăng ký nhiệm vụ nền.');
+    } catch (error) {
+      console.error('Lỗi khi đăng ký nhiệm vụ nền:', error);
+    }
+  };
+
   useEffect(() => {
-    requestLocationService()
+    requestLocationService();
+    registerBackgroundFetchTask();
   }, []);
 
   const showProfile = () => {

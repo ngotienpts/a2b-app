@@ -21,7 +21,7 @@ const Header = ({ navigation, title }) => {
     }
 
     const setContext = async () => {
-        if(context.setBookingForm.length != undefined){
+        if(context.setBookingForm != undefined){
             await context.setBookingForm({
                 eniqueId: '',
                 startPoint: '',
@@ -33,13 +33,13 @@ const Header = ({ navigation, title }) => {
                 isPunish: 0
             })
         }
-        if(contextMap.setMap.length != undefined){
+        if(contextMap.setMap != undefined){
             await contextMap.setMap({
                 start: '',
                 end:''
             })
         }
-        if(contextCustomer.setMap.length != undefined){
+        if(contextCustomer.setMap != undefined){
             await contextCustomer.setCustomer({
                 tripId: '',
                 startPoint: '',

@@ -53,7 +53,6 @@ const DriverComponent = () => {
             coordinates: coords
         }, contextToken.token)
         .then((data) => {
-            // console.log(data);
             if (data.res == 'success') {
                 const parts = data.result.start_location.split(', ');
                 const country = parts.pop(); // "Việt Nam"
@@ -119,7 +118,7 @@ const DriverComponent = () => {
             currentPosition: currentPosition,
         }
         
-        if(!contextMap.map.end && !driver?.end_location){          
+        if(!driver?.end_location){          
             Alert.alert(
                 'Thông báo',
                 'Yêu cầu bạn hãy chọn điểm kết thúc để bắt đầu tìm khách!',
@@ -130,33 +129,36 @@ const DriverComponent = () => {
             )
         }else{
             if(driver?.end_location && !contextMap.map.end){
-                const nameEnd = driver?.end_location.substring(0,driver?.end_location.indexOf(','));
-                const addressEnd = driver?.end_location.replace(nameEnd + ',','').trim();
-                contextMap.setMap({
-                    ...contextMap.map,
-                    end: {
-                        coordinates: {
-                            lat: driver?.end_lat,
-                            lng: driver?.end_lng
-                        },
-                        name: nameEnd,
-                        address: addressEnd
-                    },
-                    start: {
-                        coordinates: {
-                            lat: await AsyncStorage.getItem('lat'),
-                            lng: await AsyncStorage.getItem('lng'),
-                        },
-                        name: currentPosition.title,
-                        address: currentPosition.address
-                    }
-                })
+                createContextMap()
             }
             becomeDriver();
             updateStatusPrice(!isEnabled ? 0 : 1, priceRange)
-            updateRoadDriver(timeRange,contextMap.map.end)
+            updateRoadDriver(timeRange,driver)
             navigation.navigate('DriverFindScreen', item)
         } 
+    }
+
+    const createContextMap = async () => {
+        const nameEnd = driver?.end_location.substring(0,driver?.end_location.indexOf(','));
+        const addressEnd = driver?.end_location.replace(nameEnd + ',','').trim();
+        contextMap.setMap({
+            end: {
+                coordinates: {
+                    lat: driver?.end_lat,
+                    lng: driver?.end_lng
+                },
+                name: nameEnd,
+                address: addressEnd
+            },
+            start: {
+                coordinates: {
+                    lat: await AsyncStorage.getItem('lat'),
+                    lng: await AsyncStorage.getItem('lng'),
+                },
+                name: currentPosition.title,
+                address: currentPosition.address
+            }
+        })
     }
 
     const updateStatusPrice = async (statusPrice, price) => {
@@ -172,11 +174,12 @@ const DriverComponent = () => {
         })
     }
 
-    const updateRoadDriver = async (radius, context) => {
+    const updateRoadDriver = async (radius) => {
         await fetchUpdateRoad({
             radius: radius,
-            end: context.name+', '+context.address,
-            coordinates_end: context.coordinates.lat+','+context.coordinates.lng
+            status: 2,
+            end: contextMap.map.end.length == undefined ? contextMap.map.end.name+', '+contextMap.map.end.address : driver?.end_location,
+            coordinates_end: contextMap.map.end.length == undefined ? contextMap.map.end.coordinates.lat+','+contextMap.map.end.coordinates.lng : driver?.end_lat+','+driver?.end_lng
         },contextToken.token)
         .then((data) => {
             console.log(data);

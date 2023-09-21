@@ -25,6 +25,7 @@ import { Dimensions } from 'react-native';
 import { waiting } from '../../constants';
 import Skenleton from '../skeleton/Skenleton';
 import { statusUser } from '../../constants';
+import getDirections from 'react-native-google-maps-directions';
 
 const FindComponent = () => {
     const context = useContext(BookingFormContext);
@@ -33,10 +34,8 @@ const FindComponent = () => {
     const contextDetailTrip = useContext(DetailTripContext);
     const [detail, setDetail] = useState({});
     const [reports, setReports] = useState({});
-    const [detailDriver, setDetailDriver] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadingDetailTrip, setLoadingDetailTrip] = useState(false);
-    const [isUnmounted, setIsUnmounted] = useState(false);
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const [shouldNavigate, setShouldNavigate] = useState(false);
@@ -119,6 +118,25 @@ const FindComponent = () => {
                             note: data?.result.comment,
                             isPunish: data?.result.is_punish
                         })
+                        contextMap.setMap({
+                            ...contextMap.map,
+                            start: {
+                                coordinates: {
+                                    lat: data?.result.coordinates_start.split(',')[0],
+                                    lng: data?.result.coordinates_start.split(',')[1],
+                                },
+                                name: data?.result.start_name,
+                                address: data?.result.start_location,
+                            },
+                            end: {
+                                coordinates: {
+                                    lat: data?.result.coordinates_end.split(',')[0],
+                                    lng: data?.result.coordinates_end.split(',')[1],
+                                },
+                                name: data?.result.end_name,
+                                address: data?.result.end_location,
+                            }
+                        })
                         if (data.result.status != 0) {
                             return getDetailDriver(data.result.driver_id).then(() => {
                                 setShouldNavigate(true);
@@ -140,7 +158,6 @@ const FindComponent = () => {
 
     const listReport = async (paramsTrip) => {
         await fetchListReport(paramsTrip, contextToken.token)
-            // await fetchListReport(paramsTrip,'e1358385819f12b01db7990c1')
             .then((data) => {
                 if (data.res === 'success') {
                     setReports(data.result);
@@ -153,7 +170,6 @@ const FindComponent = () => {
                 setLoading(true);
             })
     }
-
     const getDetailDriver = async (driverId) => {
         const params = {
             driver_id: driverId,
@@ -169,6 +185,31 @@ const FindComponent = () => {
         } catch (err) {
             console.log(err);
         }
+    }
+
+    const openGoogleMap = () => {
+        const data = {
+            source: {
+                latitude: contextMap.map.start.length !== 0 && parseFloat(contextMap.map.start.coordinates.lat),
+                longitude: contextMap.map.start.length !== 0 && parseFloat(contextMap.map.start.coordinates.lng)
+            },
+            destination: {
+                latitude: contextMap.map.end.length !== 0 && parseFloat(contextMap.map.end.coordinates.lat),
+                longitude: contextMap.map.end.length !== 0 && parseFloat(contextMap.map.end.coordinates.lng)
+            },
+            params: [
+                {
+                    key: "travelmode",
+                    value: "driving"        // may be "walking", "bicycling" or "transit" as well
+                },
+                {
+                    key: "dir_action",
+                    value: "navigate"       // this instantly initializes navigation using the given travel mode
+                }
+            ]
+        }
+      
+        getDirections(data)
     }
 
     return (
@@ -269,28 +310,30 @@ const FindComponent = () => {
                                     <Text style={[styles.fs16, styles.textWhite, styles.pl5]}>ph</Text>
                                 </View>
                             </View>
-                            <View style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.textGray77,
-                                        styles.lh24,
-                                        styles.textCenter,
-                                    ]}
-                                >
-                                    Google map
-                                </Text>
-                                <View
-                                    style={[
-                                        styles.flexCenter,
-                                        styles.bgGray161,
-                                        styles.mt20,
-                                        { width: 73, height: 42 },
-                                    ]}
-                                >
-                                    <ArrowUturnRightIcon size={25} color={'white'} />
+                            <TouchableOpacity onPress={openGoogleMap} style={[styles.flexFull, styles.justifyBetween, styles.itemsCenter]}>
+                                <View>
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.textGray77,
+                                            styles.lh24,
+                                            styles.textCenter,
+                                        ]}
+                                    >
+                                        Google map
+                                    </Text>
+                                    <View
+                                        style={[
+                                            styles.flexCenter,
+                                            styles.bgGray161,
+                                            styles.mt20,
+                                            { width: 73, height: 42 },
+                                        ]}
+                                    >
+                                        <ArrowUturnRightIcon size={25} color={'white'} />
+                                    </View>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         </View>
 
                         {/* driver list */}

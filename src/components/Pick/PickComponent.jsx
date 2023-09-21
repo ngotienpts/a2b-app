@@ -26,6 +26,7 @@ import { MapContext } from '../../redux/mapContext';
 import Contact from '../contact';
 import { TokenContext } from '../../redux/tokenContext';
 import { statusUser } from '../../constants';
+import socketService from '../../../service/socketService';
 
 const PickComponent = () => {
     const contextToken = useContext(TokenContext);
@@ -42,6 +43,20 @@ const PickComponent = () => {
     const [shouldNavigate, setShouldNavigate] = useState(false);
     const screenRef = useRef(null);
     const objRef = useRef(null);
+
+    useEffect(() => {
+        const handleReceivedCoords = (coords) => {
+            console.log('tin nhắn được nhận bên này', coords);
+            // setReceivedMessage(msg);
+          };
+        
+          // Đăng ký lắng nghe sự kiện khi thành phần được mount
+        socketService.on('recived message', handleReceivedCoords);
+    
+        return () => {
+            socketService.off('recived message', handleReceivedCoords);
+        }
+    })
 
     useEffect(() => {
         getCoordinates();
