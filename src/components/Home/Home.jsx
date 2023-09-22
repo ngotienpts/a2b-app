@@ -1,21 +1,24 @@
 import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Alert } from 'react-native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
 import * as Location from 'expo-location';
 import styles from '../../styles';
 import Header from './Header';
 import Result from './Result';
 import ResultDefault from './ResultDefault';
+import HomeBackPrimary from './HomeBackPrimary';
+import HomeBackSecondary from './HomeBackSecondary';
+import HomebackTertiary from './HomebackTertiary';
 import { debounce } from 'lodash';
-import { fetchHistorySearch, fetchListNoti, fetchProfileUser, fetchSearchEndpoint, fetchDetailCustomer, fetchDetailDriver, fetchDetailTrip } from '../../api/DataFetching';
+import { fetchHistorySearch, fetchListNoti, fetchProfileUser, fetchSearchEndpoint, fetchDetailCustomer, fetchDetailDriver, fetchDetailTrip, fetchListMyCar } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'react-native';
 import { useNotification } from '../../redux/notificationContext';
 import * as Notifications from 'expo-notifications';
-import registerNNPushToken from 'native-notify';
+// import registerNNPushToken from 'native-notify';
 import { registerIndieID } from 'native-notify';
 import { statusDriver, statusUser } from '../../constants';
 
@@ -24,18 +27,28 @@ const Home = () => {
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [name, setName] = useState('');
+  const [profile, setProfile] = useState({});
+  const [vehicle, setVehicle] = useState({})
   const [history, setHistory] = useState({});
+  const isFocused = useIsFocused();
   const context = useContext(TokenContext);
-  registerNNPushToken(9548, 'lMdBy39oqOxDJr8zzB1f1L');
-  registerIndieID(context.token, 9548, 'lMdBy39oqOxDJr8zzB1f1L');
+  // registerNNPushToken(9548, 'lMdBy39oqOxDJr8zzB1f1L');
 
   useEffect(() => {
+    pushNotification();
     showProfile();
     historySearch();
     listNotification();
   }, [context.token]) // dependences: 1 trong cac biến trong mang thay doi thi se thực thi lại useEffect
 
+  useEffect(() => {
+    if (isFocused) {
+      // Màn hình bị blur, thực hiện unmount
+      showProfile();
+      historySearch();
+      listNotification();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
@@ -51,20 +64,24 @@ const Home = () => {
     return () => subscription.remove();
   }, [])
 
+  const pushNotification = () => {
+    registerIndieID(context.token, 9548, 'lMdBy39oqOxDJr8zzB1f1L');
+  }
+
   const getDetailTrip = async (notiData) => {
     await fetchDetailTrip({
-        trip_id: notiData.trip_id
+      trip_id: notiData.trip_id
     }, context.token)
-    .then((data) => {
-            if (data.res === 'success') {
-                if (notiData.is_user) {
-                    getDataDriver(data.result)
-                } else if (notiData.is_driver) {
-                    getDataUser(data.result)
-                }
-            }
-        })
-}
+      .then((data) => {
+        if (data.res === 'success') {
+          if (notiData.is_user) {
+            getDataDriver(data.result)
+          } else if (notiData.is_driver) {
+            getDataUser(data.result)
+          }
+        }
+      })
+  }
 
   const getDataUser = async (dataTrip) => {
     await fetchDetailCustomer({
@@ -180,11 +197,11 @@ const Home = () => {
     // };
   }, []);
 
-  const showProfile = () => {
-    fetchProfileUser(context.token)
+  const showProfile = async () => {
+    await fetchProfileUser(context.token)
       .then((data) => {
         if (data.res == 'success') {
-          setName(data.result.fullname)
+          setProfile(data.result);
         }
       })
   }
@@ -230,61 +247,81 @@ const Home = () => {
         {/* header */}
         <Header navigation={navigation} />
         {/* body */}
-        <View style={[styles.px15, styles.flexFull]}>
-          <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.mb12]}>
-            Xin chào, {name}
-          </Text>
-          <Text
-            style={[
-              styles.textWhite,
-              styles.fs27,
-              styles.lh40,
-              styles.fw300,
-              styles.mb10,
-            ]}
-          >
-            Bạn cần đi đâu?
-          </Text>
+        {/* <HomeBackPrimary profile = {profile}/> */}
 
-          {/* search */}
-          <View
-            style={[
-              styles.relative,
-              styles.bg161e,
-              styles.h48,
-              styles.flexRow,
-              styles.itemsCenter,
-              styles.mb24,
-            ]}
-          >
-            <TextInput
-              onChangeText={(text) => {
-                setInputValue(text);
-                handleSearchDebounce(text);
-              }}
-              value={inputValue}
-              style={[styles.fs16, styles.textWhite, styles.flexFull, styles.pl24, styles.pr50]}
-              placeholder="Tìm kiếm"
-              placeholderTextColor={'white'}
-            />
-            <View style={[styles.absolute, styles.r0, styles.p12, styles.bg161e]}>
-              {inputValue.length > 0 ? (
-                <TouchableOpacity onPress={handleClearInput}>
-                  <XMarkIcon size={24} color={'white'} />
-                </TouchableOpacity>
-              ) : (
-                <MagnifyingGlassIcon size={24} color={'white'} />
-              )}
+        {(profile?.status == 0 && profile?.trip_id.toString() == 0) && (
+          <View style={[styles.px15, styles.flexFull]}>
+            <Text style={[styles.textWhite, styles.fs16, styles.lh24, styles.mb12]}>
+              Xin chào, {profile?.fullname}
+            </Text>
+            <Text
+              style={[
+                styles.textWhite,
+                styles.fs27,
+                styles.lh40,
+                styles.fw300,
+                styles.mb10,
+              ]}
+            >
+              Bạn cần đi đâu?
+            </Text>
+
+            {/* search */}
+            <View
+              style={[
+                styles.relative,
+                styles.bg161e,
+                styles.h48,
+                styles.flexRow,
+                styles.itemsCenter,
+                styles.mb24,
+              ]}
+            >
+              <TextInput
+                onChangeText={(text) => {
+                  setInputValue(text);
+                  handleSearchDebounce(text);
+                }}
+                value={inputValue}
+                style={[styles.fs16, styles.textWhite, styles.flexFull, styles.pl24, styles.pr50]}
+                placeholder="Tìm kiếm"
+                placeholderTextColor={'white'}
+              />
+              <View style={[styles.absolute, styles.r0, styles.p12, styles.bg161e]}>
+                {inputValue.length > 0 ? (
+                  <TouchableOpacity onPress={handleClearInput}>
+                    <XMarkIcon size={24} color={'white'} />
+                  </TouchableOpacity>
+                ) : (
+                  <MagnifyingGlassIcon size={24} color={'white'} />
+                )}
+              </View>
             </View>
-          </View>
 
-          {/* result */}
-          {inputValue.length > 0 ? (
-            <Result results={results} navigation={navigation} />
-          ) : (
-            <ResultDefault data={history} navigation={navigation} />
-          )}
-        </View>
+            {/* result */}
+            {inputValue.length > 0 ? (
+              <Result results={results} navigation={navigation} />
+            ) : (
+              <ResultDefault data={history} navigation={navigation} />
+            )}
+          </View>
+        )}
+
+        {/* HomeBackPrimary */}
+        {(profile?.status == 0 && profile?.trip_id.toString() != 0) && (
+          <HomeBackPrimary profile={profile} token={context.token} />
+        )}
+
+        {/* HomeBackSecondary */}
+        {profile?.status == 1 && (
+          <HomeBackSecondary profile={profile} token={context.token} />
+        )}
+
+        {/* HomebackTertiary */}
+        {profile?.status == 2 && (
+          <HomebackTertiary profile={profile} token={context.token} />
+        )}
+
       </View>
     </SafeAreaView >
   );

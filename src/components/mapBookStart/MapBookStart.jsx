@@ -187,8 +187,8 @@ const MapBookStart = () => {
                 <MapView
                     style={{ flex: 1 }}
                     initialRegion={{
-                        latitude: coordinates.latitude,
-                        longitude: coordinates.longitude,
+                        latitude: parseFloat(coordinates.latitude),
+                        longitude: parseFloat(coordinates.longitude),
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}
@@ -196,8 +196,8 @@ const MapBookStart = () => {
                 >
                     <Marker
                         coordinate={{
-                            latitude: coordinates.latitude,
-                            longitude: coordinates.longitude,
+                            latitude: parseFloat(coordinates.latitude),
+                            longitude: parseFloat(coordinates.longitude),
                         }}
                         title={item?.address}
                         description={item?.name}

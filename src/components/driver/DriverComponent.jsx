@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, StatusBar, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StatusBar, Alert, Dimensions } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -13,6 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchBecomeDriver, fetchGetAndUpdateGPSDriver, fetchListMyCar, fetchStartGPS, fetchUpdateRoad, fetchUpdateStatusPrice } from '../../api/DataFetching';
 import { TokenContext } from '../../redux/tokenContext';
 import { MapContext } from '../../redux/mapContext';
+import Skenleton from '../skeleton/Skenleton';
+
 
 const DriverComponent = () => {
     const navigation = useNavigation();
@@ -25,6 +27,8 @@ const DriverComponent = () => {
     const [item, setItem] = useState(null);
     const contextToken = useContext(TokenContext)
     const contextMap = useContext(MapContext);
+    const cardWidth = Dimensions.get("window").width * 0.8;
+
     // console.log(contextMap);
     const toggleSwitch = () => {
         setIsEnabled((previousState) => !previousState)
@@ -32,7 +36,6 @@ const DriverComponent = () => {
             setPriceRange(0);
         }
     };
-
     useEffect(() => {
         takeAddressFromGPS();
         infomationDriver();
@@ -49,7 +52,6 @@ const DriverComponent = () => {
             coordinates: coords
         }, contextToken.token)
         .then((data) => {
-            // console.log(data);
             if (data.res == 'success') {
                 const parts = data.result.start_location.split(', ');
                 const country = parts.pop(); // "Việt Nam"
@@ -66,6 +68,9 @@ const DriverComponent = () => {
         .catch((err) => {
             console.log(err);
         })
+        .finally(() => {
+            setIsLoading(true);
+        })
     }
 
     const infomationDriver = async () => {
@@ -76,7 +81,6 @@ const DriverComponent = () => {
                 setTimeRange(data.result.distane_to_customer)
                 setPriceRange(parseInt(data.result.price_per_km))
                 if(data.result.end_location){
-                    // console.log(1);
                     setIsEnabled(true)
                     setItem({
                         name: data.result.end_location,
@@ -93,9 +97,6 @@ const DriverComponent = () => {
         })
         .catch((err) => {
             console.log(err);
-        })
-        .finally(() => {
-            setIsLoading(true);
         })
     }
 
@@ -115,8 +116,7 @@ const DriverComponent = () => {
             currentPosition: currentPosition,
         }
         
-        if(!contextMap.map.end && !driver?.end_location){
-            
+        if(!driver?.end_location){          
             Alert.alert(
                 'Thông báo',
                 'Yêu cầu bạn hãy chọn điểm kết thúc để bắt đầu tìm khách!',
@@ -127,33 +127,36 @@ const DriverComponent = () => {
             )
         }else{
             if(driver?.end_location && !contextMap.map.end){
-                const nameEnd = driver?.end_location.substring(0,driver?.end_location.indexOf(','));
-                const addressEnd = driver?.end_location.replace(nameEnd + ',','').trim();
-                contextMap.setMap({
-                    ...contextMap.map,
-                    end: {
-                        coordinates: {
-                            lat: driver?.end_lat,
-                            lng: driver?.end_lng
-                        },
-                        name: nameEnd,
-                        address: addressEnd
-                    },
-                    start: {
-                        coordinates: {
-                            lat: await AsyncStorage.getItem('lat'),
-                            lng: await AsyncStorage.getItem('lng'),
-                        },
-                        name: currentPosition.title,
-                        address: currentPosition.address
-                    }
-                })
+                createContextMap()
             }
             becomeDriver();
             updateStatusPrice(!isEnabled ? 0 : 1, priceRange)
-            updateRoadDriver(timeRange,contextMap.map.end)
+            updateRoadDriver(timeRange,driver)
             navigation.navigate('DriverFindScreen', item)
         } 
+    }
+
+    const createContextMap = async () => {
+        const nameEnd = driver?.end_location.substring(0,driver?.end_location.indexOf(','));
+        const addressEnd = driver?.end_location.replace(nameEnd + ',','').trim();
+        contextMap.setMap({
+            end: {
+                coordinates: {
+                    lat: driver?.end_lat,
+                    lng: driver?.end_lng
+                },
+                name: nameEnd,
+                address: addressEnd
+            },
+            start: {
+                coordinates: {
+                    lat: await AsyncStorage.getItem('lat'),
+                    lng: await AsyncStorage.getItem('lng'),
+                },
+                name: currentPosition.title,
+                address: currentPosition.address
+            }
+        })
     }
 
     const updateStatusPrice = async (statusPrice, price) => {
@@ -169,11 +172,12 @@ const DriverComponent = () => {
         })
     }
 
-    const updateRoadDriver = async (radius, context) => {
+    const updateRoadDriver = async (radius) => {
         await fetchUpdateRoad({
             radius: radius,
-            end: context.name+', '+context.address,
-            coordinates_end: context.coordinates.lat+','+context.coordinates.lng
+            status: 2,
+            end: contextMap.map.end.length == undefined ? contextMap.map.end.name+', '+contextMap.map.end.address : driver?.end_location,
+            coordinates_end: contextMap.map.end.length == undefined ? contextMap.map.end.coordinates.lat+','+contextMap.map.end.coordinates.lng : driver?.end_lat+','+driver?.end_lng
         },contextToken.token)
         .then((data) => {
             console.log(data);
@@ -236,10 +240,13 @@ const DriverComponent = () => {
                                             styles.mb5,
                                         ]}
                                     >
-                                        Vị trí hiện tại: {currentPosition?.title}
+                                        Vị trí hiện tại: 
+                                        {isLoading ? 
+                                        ' '+currentPosition?.title : 
+                                        (<Skenleton height={16} width={cardWidth - 170} style={{marginLeft: 10, alignItems: 'flex-end' }}/>)}
                                     </Text>
                                     <Text style={[styles.textGray77, styles.fs15]}>
-                                        {currentPosition?.address}
+                                        {isLoading ? currentPosition?.address : (<Skenleton height={16} width={cardWidth - 30} style={{ marginTop: 10, alignItems: 'flex-end' }}/>)}
                                     </Text>
                                 </View>
                             </View>

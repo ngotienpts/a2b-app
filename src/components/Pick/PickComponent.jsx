@@ -46,7 +46,7 @@ const PickComponent = () => {
     useEffect(() => {
         getCoordinates();
         // console.log(item);
-        if (item?.is_notify || item?.isFlag) {
+        if (item?.is_notify || item?.isFlag || item?.isHome) {
             const paramsTrip = {
                 trip_id: item?.id ? item?.id : item?.trip_id
             }

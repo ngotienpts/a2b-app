@@ -64,14 +64,14 @@ const FindComponent = () => {
         // Hãy chắc chắn kiểm tra isUnmounted trước khi thực hiện bất kỳ công việc nào tại đây
         if (!isUnmounted) {
             // Gọi API hoặc tác vụ khác...
-            detailTrip(paramsTrip, item?.isFlag, item?.is_notify)
+            detailTrip(paramsTrip, item?.isFlag, item?.is_notify, item?.isHome)
             listReport(paramsTrip)
         }
     }, [isUnmounted]);
 
     useEffect(() => {
         // Truyền giá trị từ context vào biến local
-        detailTrip(paramsTrip, item?.isFlag, item?.is_notify)
+        detailTrip(paramsTrip, item?.isFlag, item?.is_notify, item?.isHome)
         listReport(paramsTrip)
         automaticQuote(paramsTrip);
         if (shouldNavigate) {
@@ -92,7 +92,7 @@ const FindComponent = () => {
             })
     }
 
-    const detailTrip = async (paramsTrip, isFlag = 0, is_notify = 0) => {
+    const detailTrip = async (paramsTrip, isFlag = 0, is_notify = 0, isHome = 0) => {
         let status = 1;
         await fetchDetailTrip(paramsTrip, contextToken.token)
             // await fetchDetailTrip(paramsTrip,'e1358385819f12b01db7990c1')
@@ -105,7 +105,7 @@ const FindComponent = () => {
                         distance: data.result.distance_all
                     })
 
-                    if (isFlag || is_notify) {
+                    if (isFlag || is_notify || isHome) {
                         context.setBookingForm({
                             ...context.bookingForm,
                             eniqueId: data?.result.trip_id,

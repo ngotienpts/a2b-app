@@ -35,7 +35,7 @@ const Confirm = () => {
         trip_id: item?.id ? item?.id : item?.trip_id
     }
 
-    const detailTrip = async (paramsTrip, isFlag = 0, is_notify = 0) => {
+    const detailTrip = async (paramsTrip, isFlag = 0, is_notify = 0, isHome = 0) => {
         await fetchDetailTrip(paramsTrip, contextToken.token)
         // await fetchDetailTrip(paramsTrip, 'e1358385819f12b01db7990c1')
             .then((data) => {
@@ -47,7 +47,7 @@ const Confirm = () => {
                         distance: data.result.distance_all,
                         price_distance: data.result.price_report,
                     })
-                    if (isFlag || is_notify) {
+                    if (isFlag || is_notify || isHome) {
                         context.setBookingForm({
                             ...context.bookingForm,
                             eniqueId: data?.result.trip_id,
@@ -85,8 +85,8 @@ const Confirm = () => {
     }
 
     useEffect(() => {
-        detailTrip(paramsTrip, item?.isFlag, item?.is_notify);
-        // console.log('confirm',item);
+        detailTrip(paramsTrip, item?.isFlag, item?.is_notify, item?.isHome);
+        // console.log('confirm',item?.isHome);
     }, [])
 
 

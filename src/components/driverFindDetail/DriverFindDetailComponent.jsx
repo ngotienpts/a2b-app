@@ -267,7 +267,7 @@ const DriverFindDetailComponent = () => {
         detailTrip();
         checkReport();
         getCoin();
-        if(item?.is_notify || item?.driver_id || item?.isFlag){
+        if(item?.is_notify || item?.driver_id || item?.isFlag || item?.isHome){
             getLocationDriver(item?.driver_id);
         }
         if (shouldNavigateToCancel) {

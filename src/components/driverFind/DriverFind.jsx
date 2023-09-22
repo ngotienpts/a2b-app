@@ -24,7 +24,7 @@ import { format } from 'date-fns';
 
 const DriverFind = () => {
     const navigation = useNavigation();
-    const {params: item} = useRoute();
+    const { params: item } = useRoute();
     const contextToken = useContext(TokenContext);
     const contextMap = useContext(MapContext);
     const [customers, setCustomers] = useState(null);
@@ -32,52 +32,52 @@ const DriverFind = () => {
 
     useEffect(() => {
         findCustomer();
-        console.log(item);
-    },[])
+    }, [])
 
     useInterval(() => {
         findCustomer();
-    },60000,true)
+    }, 60000, true)
 
     const findCustomer = async () => {
         await fetchFindCustomer(contextToken.token)
-        .then((data) => {
-            console.log('render');
-            if(data.res === 'success'){
-                setCustomers(data.result)
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            setIsLoading(true);
-        })
+            .then((data) => {
+                // console.log('render');
+                if (data.res === 'success') {
+                    setCustomers(data.result)
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoading(true);
+            })
     }
 
     const handleTurnOffDriver = async () => {
         fetchTurnOffDriver(contextToken.token)
-        .then((data) => {
-            if(data.res === 'success'){
-                navigation.goBack();
-            }
-        })
+            .then((data) => {
+                if (data.res === 'success') {
+                    navigation.goBack();
+                }
+            })
     }
 
-    const detailTrip = async (paramsTrip) => {
-        await fetchDetailTrip(paramsTrip, contextToken.token)
-        .then((data) => {
-            if (data.res === 'success') {
-                createContext(data); 
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            setIsLoading(true);
-        })
-    }
+    // const detailTrip = async (paramsTrip) => {
+    //     await fetchDetailTrip(paramsTrip, contextToken.token)
+    //     .then((data) => {
+    //         console.log(data);
+    //         if (data.res === 'success') {
+    //             createContext(data); 
+    //         }
+    //     })
+    //     .catch((err) => {
+    //         console.log(err);
+    //     })
+    //     .finally(() => {
+    //         setIsLoading(true);
+    //     })
+    // }
 
     const createContext = async (data) => {
         await contextMap.setMap({
@@ -105,126 +105,126 @@ const DriverFind = () => {
     return (
         <SafeAreaView style={[styles.flexFull, styles.relative, styles.bgBlack]}>
             <StatusBar barStyle="light-content" animated={true} />
-            <View style={[styles.flexFull, styles.bgBlack]}>
-                {/* header */}
-                <Header navigation={navigation} title="Xe tìm khách" />
+            {isLoading && (
+                <View style={[styles.flexFull, styles.bgBlack]}>
+                    {/* header */}
+                    <Header navigation={navigation} title="Xe tìm khách" />
 
-                {/* body */}
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={[styles.flexFull, styles.pt15]}
-                >
-                    <Text
-                        style={[
-                            styles.fs27,
-                            styles.textWhite,
-                            styles.lh32,
-                            styles.mb24,
-                            styles.fw300,
-                            styles.px15,
-                        ]}
+                    {/* body */}
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        style={[styles.flexFull, styles.pt15]}
                     >
-                        Cung đường của bạn
-                    </Text>
+                        <Text
+                            style={[
+                                styles.fs27,
+                                styles.textWhite,
+                                styles.lh32,
+                                styles.mb24,
+                                styles.fw300,
+                                styles.px15,
+                            ]}
+                        >
+                            Cung đường của bạn
+                        </Text>
 
-                    {/* location */}
-                    <View style={[styles.borderBot, styles.px15]}>
-                        {/* vị trí hiện tại */}
-                        <View style={[styles.flexRow, styles.mb24]}>
-                            <StopCircleIcon
-                                size={20}
-                                color={'white'}
-                                style={{ marginTop: 2 }}
-                            />
-                            <View style={[styles.ml5, styles.flexFull]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.textWhite,
-                                        styles.mb5,
-                                    ]}
-                                >
-                                    Vị trí hiện tại: {item?.currentPosition.title}
-                                </Text>
-                                <Text style={[styles.textGray77, styles.fs15]}>
-                                    {item?.currentPosition.address}
-                                </Text>
+                        {/* location */}
+                        <View style={[styles.borderBot, styles.px15]}>
+                            {/* vị trí hiện tại */}
+                            <View style={[styles.flexRow, styles.mb24]}>
+                                <StopCircleIcon
+                                    size={20}
+                                    color={'white'}
+                                    style={{ marginTop: 2 }}
+                                />
+                                <View style={[styles.ml5, styles.flexFull]}>
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.fw700,
+                                            styles.textWhite,
+                                            styles.mb5,
+                                        ]}
+                                    >
+                                        Vị trí hiện tại: {item?.currentPosition.title}
+                                    </Text>
+                                    <Text style={[styles.textGray77, styles.fs15]}>
+                                        {item?.currentPosition.address}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            {/* điểm đến */}
+                            <View style={[styles.flexRow, styles.mb24]}>
+                                <MapPinIcon size={22} color={'white'} style={{ marginTop: 2 }} />
+                                <View style={[styles.ml5, styles.flexFull]}>
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.fw700,
+                                            styles.textWhite,
+                                            styles.mb5,
+                                        ]}
+                                    >
+                                        {contextMap?.map.end.name ? contextMap?.map.end.name : (item?.endName && item?.endName)}
+                                    </Text>
+                                    <Text style={[styles.textGray77, styles.fs15]}>
+                                        {contextMap?.map.end.address ? contextMap?.map.end.address : (item?.endAddress && item?.endAddress)}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            {/* Báo giá tự động */}
+                            <View style={[styles.flexRow, styles.mb24]}>
+                                <BoltIcon size={22} color={'white'} style={{ marginTop: 2 }} />
+                                <View style={[styles.ml5, styles.flexFull]}>
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.fw700,
+                                            styles.textWhite,
+                                            styles.mb5,
+                                        ]}
+                                    >
+                                        Báo giá tự động
+                                    </Text>
+                                    <Text style={[styles.textGray77, styles.fs15]}>{item?.isEnabled ? 'Bật' : 'Tắt'}</Text>
+                                </View>
+                            </View>
+                            {/* Phạm vi đón trả khách */}
+
+                            <View style={[styles.flexRow, styles.mb24]}>
+                                <ViewfinderCircleIcon
+                                    size={22}
+                                    color={'white'}
+                                    style={{ marginTop: 2 }}
+                                />
+                                <View style={[styles.ml5, styles.flexFull]}>
+                                    <Text
+                                        style={[
+                                            styles.fs16,
+                                            styles.fw700,
+                                            styles.textWhite,
+                                            styles.mb5,
+                                        ]}
+                                    >
+                                        Phạm vi đón trả khách
+                                    </Text>
+                                    <Text style={[styles.textGray77, styles.fs15]}>{item?.radius} km</Text>
+                                </View>
                             </View>
                         </View>
 
-                        {/* điểm đến */}
-                        <View style={[styles.flexRow, styles.mb24]}>
-                            <MapPinIcon size={22} color={'white'} style={{ marginTop: 2 }} />
-                            <View style={[styles.ml5, styles.flexFull]}>
+                        {/* khách phù hợp */}
+                        <View style={[styles.mt24]}>
+                            <View style={[styles.flexBetween, styles.mb20, styles.px15]}>
                                 <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.textWhite,
-                                        styles.mb5,
-                                    ]}
+                                    style={[styles.fs27, styles.textWhite, styles.lh32, styles.fw300]}
                                 >
-                                    {contextMap?.map.end.name && contextMap?.map.end.name}
+                                    Khách phù hợp
                                 </Text>
-                                <Text style={[styles.textGray77, styles.fs15]}>
-                                    {contextMap?.map.end.address && contextMap?.map.end.address}
-                                </Text>
+                                <Text style={[styles.fs13, styles.textGray77]}>Sắp xếp</Text>
                             </View>
-                        </View>
-
-                        {/* Báo giá tự động */}
-                        <View style={[styles.flexRow, styles.mb24]}>
-                            <BoltIcon size={22} color={'white'} style={{ marginTop: 2 }} />
-                            <View style={[styles.ml5, styles.flexFull]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.textWhite,
-                                        styles.mb5,
-                                    ]}
-                                >
-                                    Báo giá tự động
-                                </Text>
-                                <Text style={[styles.textGray77, styles.fs15]}>{item?.isEnabled ? 'Bật' : 'Tắt'}</Text>
-                            </View>
-                        </View>
-                        {/* Phạm vi đón trả khách */}
-
-                        <View style={[styles.flexRow, styles.mb24]}>
-                            <ViewfinderCircleIcon
-                                size={22}
-                                color={'white'}
-                                style={{ marginTop: 2 }}
-                            />
-                            <View style={[styles.ml5, styles.flexFull]}>
-                                <Text
-                                    style={[
-                                        styles.fs16,
-                                        styles.fw700,
-                                        styles.textWhite,
-                                        styles.mb5,
-                                    ]}
-                                >
-                                    Phạm vi đón trả khách
-                                </Text>
-                                <Text style={[styles.textGray77, styles.fs15]}>{item?.radius} km</Text>
-                            </View>
-                        </View>
-                    </View>
-
-                    {/* khách phù hợp */}
-                    <View style={[styles.mt24]}>
-                        <View style={[styles.flexBetween, styles.mb20, styles.px15]}>
-                            <Text
-                                style={[styles.fs27, styles.textWhite, styles.lh32, styles.fw300]}
-                            >
-                                Khách phù hợp
-                            </Text>
-                            <Text style={[styles.fs13, styles.textGray77]}>Sắp xếp</Text>
-                        </View>
-                        {isLoading && (
                             <View>
                                 {customers && customers.map((customer) => (
                                     <TouchableOpacity
@@ -343,29 +343,31 @@ const DriverFind = () => {
                                     </TouchableOpacity>
                                 ))}
                             </View>
-                        )}
-                    </View>
-
-                    {/* tắt thông báo */}
-                    <View style={[styles.mt24, styles.pb50, styles.flexColumn, styles.itemsCenter]}>
-                        <View style={[styles.mb20]}>
-                            <CircleFade size={40} color="white" />
                         </View>
-                        <Text style={[styles.fs11, styles.textWhite30, { marginBottom: 2 }]}>
-                            Bạn có thể đóng ứng dụng
-                        </Text>
-                        <Text style={[styles.fs11, styles.textWhite30, { marginBottom: 2 }]}>
-                            Hệ thống sẽ thông báo khi có tài xế
-                        </Text>
-                        <TouchableOpacity>
-                            <Text style={[styles.fs16, styles.textWhite, styles.mt10]}>
-                                Tắt thông báo
+
+                        {/* tắt thông báo */}
+                        <View style={[styles.mt24, styles.pb50, styles.flexColumn, styles.itemsCenter]}>
+                            <View style={[styles.mb20]}>
+                                <CircleFade size={40} color="white" />
+                            </View>
+                            <Text style={[styles.fs11, styles.textWhite30, { marginBottom: 2 }]}>
+                                Bạn có thể đóng ứng dụng
                             </Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-            </View>
+                            <Text style={[styles.fs11, styles.textWhite30, { marginBottom: 2 }]}>
+                                Hệ thống sẽ thông báo khi có tài xế
+                            </Text>
+                            <TouchableOpacity>
+                                <Text style={[styles.fs16, styles.textWhite, styles.mt10]}>
+                                    Tắt thông báo
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                </View>
+            )}         
+            
             {/* buttom  huy chuyen & tim tai xe*/}
+            {isLoading && (
             <View style={[styles.flexRow, styles.bgBlack]}>
                 <TouchableOpacity
                     style={[
@@ -380,6 +382,8 @@ const DriverFind = () => {
                     <Text style={[styles.fs16, styles.textWhite]}>Tắt nhận chuyến</Text>
                 </TouchableOpacity>
             </View>
+            )}
+   
         </SafeAreaView>
     );
 };

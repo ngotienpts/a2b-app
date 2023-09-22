@@ -1,9 +1,8 @@
 import AppNavigation from './src/navigation/appNavigation';
-// import registerNNPushToken from 'native-notify';
+import registerNNPushToken from 'native-notify';
 // import { registerIndieID } from 'native-notify';
 
 export default function App() {
-    // registerNNPushToken(12127, '9iPvC2aT5Tw3lk04kqEmdD');
-    // registerIndieID('123',12127, '9iPvC2aT5Tw3lk04kqEmdD');
+    registerNNPushToken(9548, 'lMdBy39oqOxDJr8zzB1f1L');
     return <AppNavigation />;
 }
